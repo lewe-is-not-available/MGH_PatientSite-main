@@ -28,9 +28,6 @@ const Home = () => {
   //   if (Name.trim() === ''){
   //     return;
   //   }
-      
-    
-    
   // }
 
   //Doctor's data
