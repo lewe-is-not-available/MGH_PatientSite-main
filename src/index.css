@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.relative:hover {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.658);
+  color: white;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 2px;
+  transition: 150ms;
+  margin-top: -2px;
+}
+
+.back {
+  background-image: url('./components/images/background1.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+
+}
+.hero1 {
+  background-image: url('./components/images/hero1.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.hero2 {
+  background-image: url('./components/images/heroimg2.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.hero3 {
+  background-image: url('./components/images/hero3.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.hero4 {
+  background-image: url('./components/images/hero4.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+/* .os1 {
+    scale: 0;
+} */
+
+.swirl-in-fwd {
+	animation: swirl-in-fwd 0.6s ease-out both;
+}
+.absolute{
+  box-shadow: 1px 2px 15px rgba(0, 0, 0, 0.35);
+}
+
+.roll-in-left {
+	-webkit-animation: roll-in-left 1s ease-out 0.2s both;
+	        animation: roll-in-left 1s ease-out 0.2s both;
+}
+
+.find{
+  box-shadow: 0px 5px 10px rgba(0,0,0,0.3);
+}
+
+.docs{
+  box-shadow: 5px 10px 20px rgba(0, 0, 0, 0.08);
+}
+.docs:hover{
+  box-shadow: none;
+}
+.searchbg{
+ background-color: rgba(255, 255, 255, 0.87);
+ box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.3);
+}
+.show {
+  @apply transition-all duration-500 ease-in-out overflow-y-visible max-h-[45rem]
+}
+.hide{
+  @apply transition-all opacity-0 duration-500 ease-in-out overflow-y-hidden max-h-0
+}

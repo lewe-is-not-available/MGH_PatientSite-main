@@ -1,0 +1,50 @@
+[
+    {
+      "id": 1,
+      "SubSpecialization": "Addiction Psychiatry"
+    },
+    {
+      "id": 2,
+      "SubSpecialization": "Adult Psychiatry"
+    },
+    {
+      "id": 3,
+      "SubSpecialization": "Child and Adolescent Psychiatry"
+    },
+    {
+      "id": 4,
+      "SubSpecialization": "Clinical Toxicology"
+    },
+    {
+      "id": 6,
+      "SubSpecialization": "Consultation-Liason Psychiatry"
+    },
+    {
+      "id": 7,
+      "SubSpecialization": "General Psychiatry"
+    },
+    {
+      "id": 8,
+      "SubSpecialization": "Mood Disorder"
+    },
+    {
+      "id": 9,
+      "SubSpecialization": "Post Traumatic Stress Disorder"
+    },
+    {
+      "id": 10,
+      "SubSpecialization": "Psycho-Oncology"
+    },
+    {
+      "id": 11,
+      "SubSpecialization": "Psychopharmacology"
+    },
+    {
+      "id": 12,
+      "SubSpecialization": "Psychosomatic Medicine"
+    },
+    {
+    "id": 13,
+    "SubSpecialization": "Public Psychiatry"
+    }
+  ]
