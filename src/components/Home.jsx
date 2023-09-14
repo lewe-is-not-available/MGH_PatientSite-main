@@ -53,7 +53,7 @@ const Home = () => {
     FetchShow(true);
 
 
-     if (!Name && !spSelect && !Name){
+     if (!Name && !spSelect){
        setNoResult(true);
        setDoctors();
     
