@@ -13,12 +13,12 @@ const SearchResult = ({ Doctors }) => {
     <div className="Doc_Uniq">
       <div
         data-aos="zoom-out"
-        className="docs bg-[#A5DD9D] py-8 rounded-xl flex flex-col items-center space-y-3 w-[16rem] text-base transition duration-100 ease-in-out mb-4"
+        className="docs text-sm bg-[#A5DD9D] px-3 py-5 h-[98%] rounded-xl flex flex-col items-center space-y-3 w-[16rem] transition duration-100 ease-in-out mb-1"
       >
         <img
           src={doc}
           alt="/"
-          className="w-[60%] mb-6 rounded-lg"
+          className="w-[75%] mb-2 rounded-lg"
           data-aos="fade-up"
           data-aos-anchor-placement="bottom-bottom"
         />
@@ -28,7 +28,11 @@ const SearchResult = ({ Doctors }) => {
         </div>
         <div className="flex" data-aos="fade-up">
           <span className="mr-2 font-bold">Specialization: </span>{" "}
-          <p className="text-base">{Doctors.specialization}</p>
+          <p className="w-28 text-base whitespace-nowrap overflow-hidden overflow-ellipsis">{Doctors.specialization}</p>
+        </div>
+        <div className="flex" data-aos="fade-up">
+          <span className="mr-2 font-bold overflow whitespace-nowrap">Sub-Special: </span>{" "}
+          <p className="w-32 text-base whitespace-nowrap overflow-hidden overflow-ellipsis">{Doctors.SubSpecial}</p>
         </div>
         <div className="flex" data-aos="fade-up">
           <span className="mr-2 font-bold">Schedule: </span>

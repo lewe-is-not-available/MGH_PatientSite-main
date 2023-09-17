@@ -9,10 +9,10 @@ const Navbar = () => {
     <div>
       <div className="z-50 top-0 w-full bg-[#315E30] flex p-3 py-0 content-center pl-5">
         <Link to="/" className="hover:cursor-pointer flex p-3 ml-5">
-          <div className="w-[90px]">
+          <div className="w-[65px]">
             <img src={logo} alt="/" />
           </div>
-          <h1 className="font-bold text-7xl text-white mt-2 pl-2">MGH</h1>
+          <h1 className="font-bold text-6xl text-white pl-2">MGH</h1>
         </Link>
       </div>
 

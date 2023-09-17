@@ -10,91 +10,85 @@ import "aos/dist/aos.css";
 const Home = () => {
   //For Search window drop function
   const [Show, FetchShow] = useState(null);
-  
+
   const Close = () => FetchShow(false);
 
   //Search and reset Function
   const [Name, setName] = useState("");
   const [spSelect, setSpSelect] = useState();
-
-  // const handleSearch = async (e) => {
-  //   // e.preventDefault();
-  //   // return await supabase
-  //   // .from(`Dr information`)
-  //   // .then((response) => 
-  //   // setDoctors(response.data));
-  //   // setName("");
-  //   FetchShow(true);
-  //   if (Name.trim() === ''){
-  //     return;
-  //   }
-  // }
-
-  //Doctor's data
-  // const [fetchError, setFetch] = useState(null);
+  const [subSelect, setSubSelect] = useState();
   const [Doctors, setDoctors] = useState(null);
   const [noResult, setNoResult] = useState(false);
+  const [Hmo, setHmo] = useState();
+
+    //select option value
+    if(spSelect === '---'){
+      setSpSelect("");
+    }
+    if(subSelect === '---'){
+      setSubSelect("");
+    }
 
   const handleReset = async () => {
-    setName('');
-    
-    const { data, error } = await supabase
-    .from('Dr information')
-    .select('*')
+    setName("");
+    setSpSelect("---");
+    setSubSelect("---");
+    setHmo("");
 
-    if (error){
-      console.error('Failed to fetch', error.message);
+    const { data, error } = await supabase.from("Dr information").select("*");
+
+    if (error) {
+      console.error("Failed to fetch", error.message);
     }
     setDoctors(data);
     setNoResult(false);
-  }
+  };
 
   const handleSearch = async () => {
     FetchShow(true);
-
-
-     if (!Name && !spSelect){
-       setNoResult(true);
-       setDoctors();
-    
-  }
-    else{
+    if (!Name && !spSelect && !subSelect && !Hmo) {
+      setNoResult(true);
+      setDoctors(null);
+    } else {
       setNoResult(false);
-    
-  const { data, error } = await supabase
-      .from('Dr information')
-      .select('*');
 
-    if (spSelect === '---'){
-      setSpSelect(null);
-    }
-    if (error) {
-      console.error('Error searching for data:', error.message);
-      return;
-    }
+      const { data, error } = await supabase.from("Dr information").select("*");
 
-    const filteredData = data.filter((doctor) => {
-      if (spSelect && Name) {
-        return (
-          doctor.Name.toLowerCase().includes(Name.toLowerCase()) &&
-          doctor.specialization.toLowerCase().includes(spSelect.toLowerCase())
-        );
-      } else if (spSelect) {
-        return doctor.specialization.toLowerCase().includes(spSelect.toLowerCase());
-      } else if (Name) {
-        return doctor.Name.toLowerCase().includes(Name.toLowerCase());
+      if (error) {
+        console.error("Error searching for data:", error.message);
+        return;
       }
-      return true;
-    });
-
-    setDoctors(filteredData);
-  }
+      const filteredData = data.filter((doctor) => {
+        const nameMatch = Name
+          ? doctor.Name.toLowerCase().includes(Name.toLowerCase())
+          : true;
+        const specMatch = spSelect
+          ? doctor.specialization.toLowerCase().includes(spSelect.toLowerCase())
+          : true;
+        const subSpecMatch = subSelect
+          ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
+          : true;
+        const HmoMatch = Hmo
+          ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
+          : true;
+        return nameMatch && specMatch && subSpecMatch && HmoMatch;
+      }
+      );
+      setDoctors(filteredData);
+      if (filteredData.length === 0){
+        setNoResult(true);
+        setDoctors("");
+      }
+      else{
+        setNoResult(false);
+      }
+    }
   };
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
-  console.log(Name, spSelect);
+  console.log(Name, spSelect, SubSpecial, Hmo);
 
   return (
     <div>
@@ -127,23 +121,23 @@ const Home = () => {
         </h1>
         {/* Search box with filteration */}
         <div
-          className="find bg-white flex flex-col p-14 pb-8"
+          className="find bg-white flex flex-col p-8 pb-8"
           data-aos="zoom-in-up"
         >
-          <div className="flex flex-col items-center space-y-6">
+          <div className="flex flex-col items-center space-y-4">
             <table>
               <thead data-aos="fade-up" data-aos-anchor-placement="top-bottom">
                 <tr>
-                  <td className="text-2xl text-[#315E30] pr-6 pb-3">
+                  <td className="text-xl text-[#315E30] pb-3">
                     Doctor's Name
                   </td>
-                  <td className="text-2xl text-[#315E30] pr-6 pb-3">
+                  <td className="text-xl text-[#315E30] pb-3">
                     Specialization
                   </td>
-                  <td className="text-2xl text-[#315E30] pr-6 pb-3">
+                  <td className="text-xl text-[#315E30] pb-3">
                     Sub-Specialization
                   </td>
-                  <td className="text-2xl text-[#315E30] pr-6 pb-3">
+                  <td className="text-xl text-[#315E30] pb-3">
                     HMO Accredation
                   </td>
                 </tr>
@@ -154,7 +148,7 @@ const Home = () => {
                     <input
                       type="text"
                       placeholder="Enter Name"
-                      className="py-2 mr-6 bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
+                      className="py-1 mr-6 bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
                         focus:border-b-[#315E30]"
                       value={Name}
                       onChange={(e) => setName(e.target.value)}
@@ -165,7 +159,7 @@ const Home = () => {
                     <div className="flex mr-5">
                       {/* Specialization Dropdown */}
                       <select
-                        className="w-56 py-2 duration-100 border-b-2 focus:outline-[#315E30]"
+                        className="w-44 py-1 duration-100 border-b-2 focus:outline-[#315E30]"
                         value={spSelect}
                         onChange={(e) => setSpSelect(e.target.value)}
                       >
@@ -182,7 +176,9 @@ const Home = () => {
                       {/* Sub-Specialization Dropdown */}
                       <select
                         id="finddoctor-form-subspec"
-                        className="w-full py-2 duration-100 border-b-2 border-siteGreen-darker"
+                        value={subSelect}
+                        onChange={(e) => setSubSelect(e.target.value)}
+                        className="w-44 py-2 duration-100 border-b-2 border-siteGreen-darker"
                       >
                         <option key="">---</option>
                         {SubSpecial.map((subspec) => {
@@ -196,8 +192,11 @@ const Home = () => {
                     </div>
                   </td>
                   <td>
+                    {/* Hmo input */}
                     <input
                       type="text"
+                      value={Hmo}
+                      onChange={(e) => setHmo(e.target.value)}
                       placeholder="Enter Accredation"
                       className="py-2 pr-8 bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
               focus:border-b-[#315E30]"
@@ -207,11 +206,11 @@ const Home = () => {
               </tbody>
             </table>
             <button
-            type="submit"
+              type="submit"
               data-aos-anchor-placement="top-bottom"
               data-aos="fade-up"
               onClick={handleSearch}
-              className="bg-[#418D3F] w-1/2 py-1 font-semibold text-2xl text-white rounded-md transition duration-10 ease-in-out hover:bg-[#A5DD9D] hover:text-[#267124] hover:ring-[#418D3F] hover:ring-[3px]"
+              className="bg-[#418D3F] w-2/5 py-1 font-semibold text-xl text-white rounded-md transition duration-10 ease-in-out hover:bg-[#A5DD9D] hover:text-[#267124] hover:ring-[#418D3F] hover:ring-[3px]"
             >
               SEARCH
             </button>
@@ -226,13 +225,15 @@ const Home = () => {
           </div>
         </div>
         <div className={`${Show ? "show" : "hide"}`}>
-          <div className="searchbg rounded-xl pl-20 py-14 pr-16 pt-16 bg mt-8 flex">
+          <div className="searchbg rounded-xl pl-10 py-14 pr-[4.2rem] pt-12 bg mt-8 flex">
             {/* {fetchError && <p>{fetchError}</p>} */}
-             {noResult && <p className="grid grid-flow-col gap-x-12">No results found</p>} 
+            {noResult && (
+              <p className="grid grid-flow-col gap-x-12">No results found</p>
+            )}
             {Doctors && (
-              <div className="Doctors overflow-x-scroll w-[93rem] grid grid-flow-col gap-x-12"> 
+              <div className="Doctors overflow-x-scroll w-[73rem] grid grid-flow-col gap-x-12">
                 {Doctors.map((Doctors) => (
-                  <SearchRes key={Doctors.id} Doctors={Doctors}/>
+                  <SearchRes key={Doctors.id} Doctors={Doctors} />
                 ))}
               </div>
             )}
@@ -240,7 +241,7 @@ const Home = () => {
               type="submit"
               onClick={Close}
               className="
-            text-xl text-slate-400 bg-slate-200 px-1 py-2 w-[3%] h-full rounded-full ml-4 -mt-[50px] -mr-12
+            text-base text-slate-400 bg-slate-200 px-1 w-[27px] h-full rounded-full -ml-1 -mt-[35px] -mr-14
             transition duration-75 ease-in hover:bg-slate-300 hover:text-slate-500 hover:border-slate-400 border-2"
             >
               X
