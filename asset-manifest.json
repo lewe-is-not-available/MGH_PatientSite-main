@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/MGHsite/static/css/main.6e240a9d.css",
-    "main.js": "/MGHsite/static/js/main.bfaba0ab.js",
+    "main.js": "/MGHsite/static/js/main.f34ffa68.js",
     "static/media/RoomEx1.png": "/MGHsite/static/media/RoomEx1.9ec027e13e2c3901dabf.png",
     "static/media/RoomEx2.png": "/MGHsite/static/media/RoomEx2.33b4a6dfa85a4a015819.png",
     "static/media/hero4.png": "/MGHsite/static/media/hero4.fc0bd88174d93bfe02dd.png",
@@ -13,10 +13,10 @@
     "static/media/MGHlogo.png": "/MGHsite/static/media/MGHlogo.2214a25b1841baf7e49d.png",
     "index.html": "/MGHsite/index.html",
     "main.6e240a9d.css.map": "/MGHsite/static/css/main.6e240a9d.css.map",
-    "main.bfaba0ab.js.map": "/MGHsite/static/js/main.bfaba0ab.js.map"
+    "main.f34ffa68.js.map": "/MGHsite/static/js/main.f34ffa68.js.map"
   },
   "entrypoints": [
     "static/css/main.6e240a9d.css",
-    "static/js/main.bfaba0ab.js"
+    "static/js/main.f34ffa68.js"
   ]
 }
