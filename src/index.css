@@ -74,3 +74,6 @@
 .hide{
   @apply transition-all opacity-0 duration-500 ease-in-out overflow-y-hidden max-h-0
 }
+.Doc_Uniq{
+  z-index: 0;
+}

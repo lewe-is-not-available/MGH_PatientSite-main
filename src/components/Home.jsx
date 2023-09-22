@@ -8,6 +8,9 @@ import Aos from "aos";
 import "aos/dist/aos.css";
 
 const Home = () => {
+  //TODO: add sign in
+  //!FIX SUGGESTION FILTER
+  
   //For Search window drop function
   const [Show, FetchShow] = useState(null);
 
@@ -20,6 +23,7 @@ const Home = () => {
   const [Doctors, setDoctors] = useState(null);
   const [noResult, setNoResult] = useState(false);
   const [Hmo, setHmo] = useState();
+  const [Res, setRes] = useState();
 
     //select option value
     if(spSelect === '---'){
@@ -28,6 +32,16 @@ const Home = () => {
     if(subSelect === '---'){
       setSubSelect("");
     }
+
+  const Suggest = async () => {
+    const { data, error } = await supabase.from("Dr information").select("*");
+    if (error) {
+      console.error("Failed to fetch", error.message);
+    }
+    else{
+      setRes(data);
+    }
+  }
 
   const handleReset = async () => {
     setName("");
@@ -248,7 +262,13 @@ const Home = () => {
             </button>
           </div>
         </div>
-
+       {/* // TODO: ADD FILTER */}
+        <div className="absolute p-2 w-44 text-sm bg-white z-50 mr-[645px] mt-[195px]">
+          {Res.map((doc) => (
+            <td>{doc.Name}</td>
+          ))}
+          
+        </div>
         <section id="Contact-num">
           <div className="mt-[40px] mb-[33px] flex flex-col space-y-2 items-center">
             <p
