@@ -1,22 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "./images/MGHlogo.png";
 import { AiFillCaretDown } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
+import Login from "./Login";
+import Aos from "aos";
 
 const Navbar = () => {
+  const [Show, FetchShow] = useState(null);
+
+  const Close = () => FetchShow(false);
+  const Open = () => FetchShow(true);
+
+
+
   return (
     <div>
-      <div className="z-50 top-0 w-full bg-[#315E30] flex p-3 py-0 content-center pl-5">
-        <Link to="/" className="hover:cursor-pointer flex p-3 ml-5">
-          <div className="w-[65px]">
-            <img src={logo} alt="/" />
-          </div>
-          <h1 className="font-bold text-6xl text-white pl-2">MGH</h1>
-        </Link>
+      <div className="z-50 flex justify-between top-0 w-full bg-[#315E30] px-3 pl-5">
+        <div className="">
+          <Link to="/" className="hover:cursor-pointer flex p-3 ml-5">
+            <div className="w-[65px]">
+              <img src={logo} alt="/" />
+            </div>
+            <h1 className="font-bold text-6xl text-white pl-2">MGH</h1>
+          </Link>
+        </div>
+        <div className="  mt-7 mr-12 text-lg font-semibold">
+          <button
+            type="submit"
+            onClick={Open}
+            className="ring-2 text-white ring-white hover:ring-[#5f915a] hover:text-[#315E30] hover:bg-[#A5DD9D] transition duration-100 px-2 rounded-full self-center "
+          >
+            Sign-in
+          </button>
+        </div>
       </div>
 
-      <div className="w-full bg-[#A5DD9D] ">
+      <div className="w-full bg-[#A5DD9D]">
         <div className="flex pl-3">
           <Link
             to="/"
@@ -72,6 +92,16 @@ const Navbar = () => {
               Hospital Profile
             </Link>
           </div>
+        </div>
+      </div>
+      <div className={`${Show ? "flex justify-center " : "hidden"}`}>
+        <div className="absolute bg-white mt-40">
+          <div className="mb-12 mt-4 mr-4 flex justify-end">
+            <button onClick={Close} className="bg-slate-200 text-slate-500 hover:bg-slate-300 hover:text-slate-700 hover:ring-slate-500 ring-transparent transition duration-100 ring-2 text-lg rounded-full px-2">
+              close
+            </button>
+          </div>
+          <Login/>
         </div>
       </div>
     </div>

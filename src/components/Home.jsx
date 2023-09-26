@@ -263,12 +263,12 @@ const Home = () => {
           </div>
         </div>
        {/* // TODO: ADD FILTER */}
-        <div className="absolute p-2 w-44 text-sm bg-white z-50 mr-[645px] mt-[195px]">
-          {Res.map((doc) => (
-            <td>{doc.Name}</td>
+        {/* <div className="absolute p-2 w-44 text-sm bg-white z-50 mr-[645px] mt-[195px]">
+          {Doctors.map(Doctors => (
+            <td>{Doctors.Name}</td>
           ))}
           
-        </div>
+        </div> */}
         <section id="Contact-num">
           <div className="mt-[40px] mb-[33px] flex flex-col space-y-2 items-center">
             <p
