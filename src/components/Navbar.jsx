@@ -13,7 +13,6 @@ const Navbar = () => {
   const Open = () => FetchShow(true);
 
 
-
   return (
     <div>
       <div className="z-50 flex justify-between top-0 w-full bg-[#315E30] px-3 pl-5">
@@ -94,16 +93,11 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div className={`${Show ? "flex justify-center " : "hidden"}`}>
-        <div className="absolute bg-white mt-40">
-          <div className="mb-12 mt-4 mr-4 flex justify-end">
-            <button onClick={Close} className="bg-slate-200 text-slate-500 hover:bg-slate-300 hover:text-slate-700 hover:ring-slate-500 ring-transparent transition duration-100 ring-2 text-lg rounded-full px-2">
-              close
-            </button>
+       <div className={`${Show ? "visible" : "hidden"}`}>
+
+            
+          <Login close={Close}/>
           </div>
-          <Login/>
-        </div>
-      </div>
     </div>
   );
 };

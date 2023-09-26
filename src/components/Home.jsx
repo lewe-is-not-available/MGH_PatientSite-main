@@ -32,7 +32,7 @@ const Home = () => {
     if(subSelect === '---'){
       setSubSelect("");
     }
-
+  //TODO: continue the filteration
   const Suggest = async () => {
     const { data, error } = await supabase.from("Dr information").select("*");
     if (error) {
