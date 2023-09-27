@@ -54,9 +54,6 @@ const Navbar = () => {
           <Link to="/Contacts" className="px-4 py-1 font-bold relative">
             Contact Us
           </Link>
-          <Link to="/Rooms" className="px-4 py-1 font-bold relative">
-            Available Rooms
-          </Link>
           {/* Online Services Dropdown */}
           <div className="absolute opacity-0 max-h-0 flex transition-all duration-300 ease-in-out peer/osDp peer-hover/os:opacity-100 peer-hover/os:max-h-40 hover:max-h-40 hover:opacity-100 flex-col py-3 mt-8 ml-[60px] bg-[#A5DD9D] shadow-[0_10px_30px_-6px_rgba(0,0,0,0.5)] rounded-b-lg">
             <Link

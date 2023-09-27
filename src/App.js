@@ -2,7 +2,6 @@ import React from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
-import Rooms from "./components/Rooms";
 import Contacts from "./components/Contacts";
 import Appointment from "./components/Appointment";
 import MissonVision from "./components/MissonVision";
@@ -24,7 +23,6 @@ function App() {
         <main className="flex-grow roll-in-left">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/Rooms" element={<Rooms />} />
             <Route path="/Feedback-Form" element={<Feedback />} />
             <Route path="/Contacts" element={<Contacts />} />
             <Route path="/Appointment" element={<Appointment />} />
