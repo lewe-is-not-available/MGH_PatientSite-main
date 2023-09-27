@@ -9,10 +9,10 @@ const DocUniq = ({ Doctors }) => {
     Aos.init({ duration: 1000 });
   }, []);
   return (
-    <div className="Doc_Uniq">
+    <div className="">
       <div
         data-aos="fade-up"
-        className="docs bg-[#A5DD9D] py-9 px-2 mb-9 rounded-xl flex flex-col items-center space-y-3 w-[288px] text-base transition duration-75 ease-in"
+        className="docs bg-[#A5DD9D] py-9 px-2 mb-9 rounded-xl flex flex-col items-center space-y-3 w-[288px] text-base transition duration-100 ease-in-out"
       >
         <img
           src={doc}

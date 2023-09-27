@@ -18,7 +18,7 @@ function App() {
   return (
     <div>
       <div className="min-h-screen flex flex-col">
-        <header className="sticky w-screen top-0 z-40">
+        <header className="sticky w-screen top-0 z-50">
           <Navbar />
         </header>
         <main className="flex-grow roll-in-left">
@@ -38,7 +38,7 @@ function App() {
           </Routes>
         </main>
 
-        <footer className="sticky w-screen bottom-0">
+        <footer className="sticky w-screen bottom-0 z-50">
           <Footer />
         </footer>
       </div>

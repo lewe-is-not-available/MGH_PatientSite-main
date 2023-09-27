@@ -68,7 +68,7 @@ const Login = ({ close }) => {
     <div className="flex justify-center backdrop-blur-sm bg-slate-700 fixed inset-0 bg-opacity-30">
       <>
         <div className="absolute bg-white mt-40">
-          <div className="mb-12 mt-4 mr-4 flex justify-end">
+          <div className="mb-8 mt-4 mr-4 flex justify-end">
             <button
               onClick={close}
               className="bg-slate-200 text-slate-500 hover:bg-slate-300 hover:text-slate-700 hover:ring-slate-500 ring-transparent transition duration-100 ring-2 text-lg rounded-full px-2"
@@ -77,19 +77,22 @@ const Login = ({ close }) => {
             </button>
           </div>
           {success ? (
+             <div className="px-20 pb-12">
             <section>
               <h1>Logged in</h1>
             </section>
+            </div>
           ) : (
             <form onSubmit={handleSubmit}>
-              <div className="px-20 pb-12">
-                <p
+                 <p
                   ref={errRef}
-                  className={err ? "err" : "offscreen"}
+                  className={err ? "err text-center py-1 mx-12 mb-3 -mt-1 bg-red-300" : "offscreen"}
                   aria-live="assertive"
                 >
                   {err}
                 </p>
+              <div className="px-20 pb-12">
+             
                 <div className="flex -ml-7 mb-4">
                   <p>Username/email: </p>
                   <input
@@ -109,6 +112,7 @@ const Login = ({ close }) => {
                     type={isOpen}
                     value={pass}
                     onChange={(e) => setPass(e.target.value)}
+                    required
                     className=" ml-5 px-2 text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                   <div

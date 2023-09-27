@@ -48,6 +48,9 @@
 .absolute{
   box-shadow: 1px 2px 15px rgba(0, 0, 0, 0.35);
 }
+.drop{
+  box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.2);
+}
 
 .roll-in-left {
 	-webkit-animation: roll-in-left 1s ease-out 0.2s both;
@@ -73,7 +76,4 @@
 }
 .hide{
   @apply transition-all opacity-0 duration-500 ease-in-out overflow-y-hidden max-h-0
-}
-.Doc_Uniq{
-  z-index: 0;
 }

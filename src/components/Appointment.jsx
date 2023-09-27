@@ -7,24 +7,26 @@ import Aos from "aos";
 import "aos/dist/aos.css";
 
 const Appointment = () => {
-    //TODO: add sign in
-    
+  //TODO: Fix filter and suggestion drop
+  //TODO: add sign in
+
   //Search and reset Function
   const [Name, setName] = useState("");
   const [spSelect, setSpSelect] = useState("");
   const [subSelect, setSubSelect] = useState();
   const [Doctors, setDoctors] = useState(null);
+  const [filter, setFilter] = useState(null);
   const [noResult, setNoResult] = useState(false);
   const [Hmo, setHmo] = useState();
 
   //select option value
-    if(spSelect === '---'){
-      setSpSelect("");
-    }
-    if(subSelect === '---'){
-      setSubSelect("");
-    }
-    
+  if (spSelect === "---") {
+    setSpSelect("");
+  }
+  if (subSelect === "---") {
+    setSubSelect("");
+  }
+
   console.log(spSelect, subSelect);
 
   //DEFAULT DATA
@@ -43,6 +45,22 @@ const Appointment = () => {
     fetchDoc();
   }, []);
 
+  useEffect(() => {
+    const Drop = async () => {
+      const { data, error } = await supabase.from("Dr information").select("*");
+  
+      if(error) {
+        setFilter(null);
+        console.log(error);
+      }
+      if(data) {
+        return setFilter(data);
+      }
+      
+    };
+    Drop();
+  }, []);
+ 
   // RESET FUNCTION
   const handleReset = async () => {
     setName("");
@@ -86,13 +104,11 @@ const Appointment = () => {
           ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
           : true;
         return nameMatch && specMatch && subSpecMatch && HmoMatch;
-      }
-      );
+      });
       setDoctors(filteredData);
-      if (filteredData.length === 0){
+      if (filteredData.length === 0) {
         setNoResult(true);
-      }
-      else{
+      } else {
         setNoResult(false);
       }
     }
@@ -128,13 +144,11 @@ const Appointment = () => {
           className="find bg-white flex flex-col p-8 pb-8"
           data-aos="zoom-in-up"
         >
-          <div className="flex flex-col items-center space-y-">
+          <div className="flex flex-col items-center z-[99999]">
             <table>
               <thead data-aos="fade-up" data-aos-anchor-placement="top-bottom">
                 <tr>
-                  <td className="text-xl text-[#315E30] pb-3">
-                    Doctor's Name
-                  </td>
+                  <td className="text-xl text-[#315E30] pb-3">Doctor's Name</td>
                   <td className="text-xl text-[#315E30] pb-3">
                     Specialization
                   </td>
@@ -209,9 +223,7 @@ const Appointment = () => {
                 </tr>
               </tbody>
             </table>
-            <div className="absolute p-20 bg-white z-[50] mr-[750px] mt-20">
-              asd
-            </div>
+
             <button
               type="submit"
               data-aos-anchor-placement="top-bottom"
@@ -232,6 +244,10 @@ const Appointment = () => {
           </div>
         </div>
       </div>
+      {/* //TODO CONTINUE THIS
+      <div className="absolute drop p-8 w-52 max-h-64 overflow-y-scroll bg-white z-10 mr-[750px] mt-[40rem]">
+        {Doctors && filter.map((Doctors) => <p>{Doctors.Name}</p>)}
+      </div> */}
       {noResult && (
         <p
           className="grid grid-flow-col gap-x-12 py-8 text-2xl font-semibold text-[#1c531b]"
@@ -241,7 +257,7 @@ const Appointment = () => {
         </p>
       )}
       {Doctors && (
-        <div className="Doctors grid grid-cols-4 gap-x-10 gap-y-2">
+        <div className="Doctors grid -z-[0] grid-cols-4 gap-x-10 gap-y-2">
           {Doctors.map((Doctors) => (
             <DocUniq key={Doctors.id} Doctors={Doctors} />
           ))}
