@@ -2,27 +2,19 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { HashRouter, Router } from "react-router-dom";
-import { AuthProvider } from "./components/context/AuthProvider";
+//import { Auth0Provider }from "@auth0/auth0-react"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+// const domain = process.env.REACT_APP_AUTH0_DOMAIN;
+// const clientID = process.env.REACT_APP_AUTH0_CLIENT_ID;
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider
-        authType={"cookie"}
-        authName={"_auth"}
-        cookieDomain={window.location.hostname}
-        cookieSecure={window.location.protocol === "https:"}
-      >
         <Routes>
           <Route path="/*" element={<App />} />
         </Routes>
-        <HashRouter>
-          <App />
-        </HashRouter>
-      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

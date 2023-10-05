@@ -1,62 +1,88 @@
-import React, { useRef, useEffect, useState, useContext } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { AiOutlineEyeInvisible, AiFillEye } from "react-icons/ai";
-import AuthContext from "./context/AuthProvider";
-import axios from "./API/Axios";
-const LOGIN_URL = "/auth";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+//import useAuth from "../Hooks/useAuth";
+import axios from "../API/Axios";
+import LoginButton from "./LoginButton";
+import supabase from "../config/Supabase";
 
+const LOGIN_URL = "/auth";
 const Login = ({ close }) => {
   //TODO: Make registration
   //!Fix login
 
   //*get input
-  const [pass, setPass] = useState("");
-  const [user, setUser] = useState("");
+  const [formData,setFormData] = useState({
+    email:'',password:''
+})
+
+console.log(formData)
+
+function handleChange(event){
+setFormData((prevFormData)=>{
+  return{
+    ...prevFormData,
+    [event.target.name]:event.target.value
+  }
+})
+}
+
+  // const [pass, setPass] = useState("");
+  // const [user, setUser] = useState("");
 
   //*Login Function
-  const { setAuth } = useContext(AuthContext);
+  //const { setAuth } = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
   const userRef = useRef();
   const errRef = useRef();
   const [err, setErr] = useState("");
   const [success, setSuccess] = useState(false);
 
-  useEffect(() => {
-    userRef.current.focus();
-  }, []);
+  // console.log(user, pass);
+  // useEffect(() => {
+  //   userRef.current.focus();
+  // }, []);
 
-  useEffect(() => {
-    setErr("");
-  }, [user, pass]);
+  // useEffect(() => {
+  //   setErr("");
+  // }, [user, pass]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        LOGIN_URL,
-        JSON.stringify({ user, pass }),
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-      console.log(JSON.stringify(response?.data));
-      //console.log(JSON.stringify(response));
-      const accessToken = response?.data?.accessToken;
-      const roles = response?.data.roles;
-      setAuth({ user, pass, accessToken, roles });
-      setUser("");
-      setPass("");
-      setSuccess(true);
-    } catch (err) {
-      if (!err?.response) {
-        setErr("No Server Response");
-      } else if (err.response?.status === 400) {
-        setErr("Missing Username or Password");
-      } else if (err.response?.status === 401) {
-        setErr("Unauthorized");
-      } else {
-        setErr("Login Failed");
-      }
-      errRef.current.focus();
+      // const response = await axios.post(
+      //   LOGIN_URL,
+      //   JSON.stringify({ user, pass }),
+      //   {
+      //     headers: { "Content-Type": "application/json" },
+      //     withCredentials: true,
+      //   }
+      // );
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+    if (error) throw error
+    console.log(data)
+
+    } catch (error) {
+      alert(error)
+      // if (!err?.response) {
+      //   setErr("No Server Response");
+      // } else if (err.response?.status === 400) {
+      //   setErr("Missing Username or Password");
+      // } else if (err.response?.status === 401) {
+      //   setErr("Unauthorized");
+      // } else {
+      //   setErr("Login Failed");
+      // }
+      // errRef.current.focus();
     }
   };
 
@@ -77,30 +103,32 @@ const Login = ({ close }) => {
             </button>
           </div>
           {success ? (
-             <div className="px-20 pb-12">
-            <section>
-              <h1>Logged in</h1>
-            </section>
+            <div className="px-20 pb-12">
+              <section>
+                <h1>Logged in</h1>
+              </section>
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
-                 <p
-                  ref={errRef}
-                  className={err ? "err text-center py-1 mx-12 mb-3 -mt-1 bg-red-300" : "offscreen"}
-                  aria-live="assertive"
-                >
-                  {err}
-                </p>
+              <p
+                ref={errRef}
+                className={
+                  err
+                    ? "err text-center py-1 mx-12 mb-3 -mt-1 bg-red-300"
+                    : "offscreen"
+                }
+                aria-live="assertive"
+              >
+                {err}
+              </p>
               <div className="px-20 pb-12">
-             
                 <div className="flex -ml-7 mb-4">
                   <p>Username/email: </p>
                   <input
                     ref={userRef}
                     type="text"
                     id="username"
-                    onChange={(e) => setUser(e.target.value)}
-                    value={user}
+                    onChange={handleChange}
                     autoComplete="off"
                     required
                     className=" ml-3 px-2 text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -110,8 +138,7 @@ const Login = ({ close }) => {
                   <p className="ml-[13px]">Password: </p>
                   <input
                     type={isOpen}
-                    value={pass}
-                    onChange={(e) => setPass(e.target.value)}
+                    onChange={handleChange}
                     required
                     className=" ml-5 px-2 text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -123,9 +150,7 @@ const Login = ({ close }) => {
                   </div>
                 </div>
                 <div className="flex justify-center">
-                  <button className="bg-[#418D3F] w-2/5 py-1 font-semibold text-lg text-white rounded-md transition duration-100 ease-in-out hover:bg-[#A5DD9D] hover:text-[#267124] hover:ring-[#418D3F] hover:ring-[3px]">
-                    Login
-                  </button>
+                  <LoginButton />
                 </div>
                 <div className="text-center">
                   <p className="pt-4">No account?</p>
