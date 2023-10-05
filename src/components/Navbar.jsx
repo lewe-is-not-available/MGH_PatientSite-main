@@ -35,13 +35,14 @@ const Navbar = ({ token, setToken }) => {
       alert(error);
     }
     else{
-    sessionStorage.removeItem("token")
+    localStorage.removeItem("token")
     navigate("/")
     window.location.reload();
     }
   }
 
   return (
+    
     <div>
       <div className="z-50 flex justify-between top-0 w-full bg-[#315E30] px-3 pl-5">
         <div className="">

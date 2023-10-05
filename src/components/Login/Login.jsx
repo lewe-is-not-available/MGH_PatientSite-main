@@ -4,7 +4,7 @@ import { AiOutlineEyeInvisible, AiFillEye } from "react-icons/ai";
 import LoginButton from "./LoginButton";
 import supabase from "../config/Supabase";
 
-const Login = ({ close, openReg, setToken }) => {
+const Login = ({ close, openReg }) => {
   //TODO: Make registration
   //!Fix login
 
@@ -25,6 +25,7 @@ const Login = ({ close, openReg, setToken }) => {
     });
   }
   //*Login Function
+
   const errRef = useRef();
   const [err, setErr] = useState("");
   const [success, setSuccess] = useState(false);
@@ -39,8 +40,11 @@ const Login = ({ close, openReg, setToken }) => {
 
       if (error) throw error;
       console.log(data);
-      setToken(data)
       setSuccess(true)
+      // if (data) {
+      // localStorage.setItem("token", JSON.stringify(data));
+     
+      // }
     } catch (error) {
       setErr(error + "");
       console.log(err);

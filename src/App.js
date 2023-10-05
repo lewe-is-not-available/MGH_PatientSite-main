@@ -17,10 +17,18 @@ import Doctor from "./components/Doctor";
 import { Routes, Route } from "react-router-dom";
 import Signup from "./components/Login/register/Signup";
 import { useEffect, useState } from "react";
+import { AuthContext } from "./components/context/AuthContext";
 
 function App() {
   //*For getting token of user
   const [token, setToken] = useState(false);
+
+//   useEffect(() => {
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   if (token) {
+//     setToken(token);
+//   }
+// }, []);
 
   if (token) {
     sessionStorage.setItem("token", JSON.stringify(token));
@@ -37,9 +45,12 @@ function App() {
         <Navbar token={token} setToken={setToken} />
       </header>
       <main className="flex-grow">
-        <Routes>
+          <Routes>
             {/* public Routes */}
-            <Route path="/" element={<Home token={token} setToken={setToken}/>} />
+            <Route
+              path="/"
+              element={<Home token={token} setToken={setToken} />}
+            />
             <Route path="/Feedback-Form" element={<Feedback />} />
             <Route path="/Contacts" element={<Contacts />} />
             <Route path="/Mission-and-Vision" element={<MissonVision />} />
@@ -47,8 +58,8 @@ function App() {
             <Route path="/:id" element={<DocInfo />} />
 
             <Route path="/Signup" element={<Signup />} />
-            <Route path="Admin" element={<Admin />} />
 
+            <Route path="Admin" element={<Admin />} />
             <Route path="Doctor" element={<Doctor />} />
             {token ? (
               <Route path="/Appointment" element={<Appointment />} />
@@ -59,8 +70,8 @@ function App() {
             <Route path="/Online" element={<Online />} />
             <Route path="/DoctorInfo" element={<DocInfo />} />
             <Route path="/ChooseType" element={<OnlineOrF2f />} />
-          {/* </Route> */}
-        </Routes>
+            {/* </Route> */}
+          </Routes>
       </main>
 
       <footer className="sticky w-screen bottom-0 z-50">
