@@ -7,7 +7,7 @@ import SubSpecial from "./SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
-const Home = () => {
+const Home = ({token}) => {
   //TODO: add sign in
   //!FIX SUGGESTION FILTER
   
@@ -137,7 +137,9 @@ const Home = () => {
         <div
           className="find bg-white flex flex-col p-8 pb-8"
           data-aos="zoom-in-up"
-        >
+        >{token?"":<div className="flex z-30  fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
+        <div className=" absolute px-10 py-8 mt-20 bg-white">You need to Sign in first</div>
+      </div>}
           <div className="flex flex-col items-center space-y-4">
             <table>
               <thead data-aos="fade-up" data-aos-anchor-placement="top-bottom">

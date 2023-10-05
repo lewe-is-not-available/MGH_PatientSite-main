@@ -4,17 +4,19 @@ import { AiOutlineEyeInvisible, AiFillEye } from "react-icons/ai";
 import LoginButton from "./LoginButton";
 import supabase from "../config/Supabase";
 
-const Login = ({ close, openReg }) => {
+const Login = ({ close, openReg, setToken }) => {
+  
   //TODO: Make registration
   //!Fix login
+   // const navigate = useNavigate()
 
   //*get input
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
-  console.log(formData);
+  //console.log(formData);
 
   function handleChange(event) {
     setFormData((prevFormData) => {
@@ -25,34 +27,39 @@ const Login = ({ close, openReg }) => {
     });
   }
   //*Login Function
-
   const errRef = useRef();
   const [err, setErr] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async (e) => {
+  //*Login button funtion
+    async function handleSubmit(e){
     e.preventDefault();
+    
     try {
+      //*supabase user authentication
       const { data, error } = await supabase.auth.signInWithPassword({
+        
         email: formData.email,
         password: formData.password,
       });
 
-      if (error) throw error;
-      console.log(data);
-      setSuccess(true)
-      // if (data) {
-      // localStorage.setItem("token", JSON.stringify(data));
-     
-      // }
+      if (error) throw error
+
+      //*successful sign-in
+      setToken(data)
+      setSuccess(true);
+
+      //*Navigating back to 
+      //navigate('/')
+
+      //* error handling
     } catch (error) {
       setErr(error + "");
-      console.log(err);
+      console.log(error);
     }
   };
   //*show/hide password function
   const [visible, setVisible] = useState(false);
-
   const isOpen = visible ? "text" : "password";
 
   return (
@@ -117,7 +124,9 @@ const Login = ({ close, openReg }) => {
                   </div>
                 </div>
                 <div className="flex justify-center">
-                  <LoginButton />
+                 <button type="submit" className="bg-[#418D3F] w-2/5 py-1 font-semibold text-lg text-white rounded-md transition duration-100 ease-in-out hover:bg-[#A5DD9D] hover:text-[#267124] hover:ring-[#418D3F] hover:ring-[3px]">
+                 Sign in
+                 </button>
                 </div>
                 <div className="text-center">
                   <p className="pt-4">No account?</p>

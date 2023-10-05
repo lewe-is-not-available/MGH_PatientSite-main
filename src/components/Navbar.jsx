@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
 import Login from "./Login/Login";
 import SignIn from "./Login/SigninButton";
-import Reg from "./Login/register/Signup";
+import Reg from "./Login/Signup";
 import { useNavigate } from "react-router-dom";
 import supabase from "./config/Supabase";
 
@@ -35,7 +35,7 @@ const Navbar = ({ token, setToken }) => {
       alert(error);
     }
     else{
-    localStorage.removeItem("token")
+    sessionStorage.removeItem("token")
     navigate("/")
     window.location.reload();
     }
@@ -56,7 +56,7 @@ const Navbar = ({ token, setToken }) => {
         <div className="  mt-7 mr-12 text-lg font-semibold">
           {token ? (
             <div className="flex space-x-4">
-              <p>{token.user.user_metadata.username}</p>
+              <p className="text-white">{token.user.user_metadata.username}</p>
             <button 
             onClick={handleLogout}
             className="ring-2 text-white ring-white hover:ring-[#5f915a] hover:text-[#315E30] hover:bg-[#A5DD9D] transition duration-100 px-2 rounded-full self-center">
@@ -88,18 +88,18 @@ const Navbar = ({ token, setToken }) => {
           <Link to="/Contacts" className="px-4 py-1 font-bold relative">
             Contact Us
           </Link>
+         { token?<Link to="/Admin" className="px-4 py-1 font-bold relative">
+            Admin
+          </Link>:""}
           {/* Online Services Dropdown */}
           <div className="absolute opacity-0 max-h-0 flex transition-all duration-300 ease-in-out peer/osDp peer-hover/os:opacity-100 peer-hover/os:max-h-40 hover:max-h-40 hover:opacity-100 flex-col py-3 mt-8 ml-[60px] bg-[#A5DD9D] shadow-[0_10px_30px_-6px_rgba(0,0,0,0.5)] rounded-b-lg">
-            {token ? (
-              <Link
+            
+             <Link
                 to="/Appointment"
                 className="transition duration-300 ease-in-out hover:bg-[#4B974A] hover:cursor-pointer mb-2 px-2 w-full"
               >
                 Appointment
               </Link>
-            ) : (
-              ""
-            )}
             <Link
               to="/Feedback-Form"
               className="transition duration-300 ease-in-out hover:bg-[#4B974A] hover:cursor-pointer px-2 w-full"

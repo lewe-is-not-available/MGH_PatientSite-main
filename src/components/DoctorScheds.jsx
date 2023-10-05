@@ -26,7 +26,7 @@ const DoctorScheds = () => {
         .single();
 
       if (error) {
-        console.log(error);
+        //console.log(error);
       }
       if (data) {
         setMon(data.Monday);

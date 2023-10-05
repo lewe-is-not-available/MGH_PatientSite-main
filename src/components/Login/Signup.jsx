@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import supabase from "../../config/Supabase";
+import supabase from "../config/Supabase";
 import { AiOutlineEyeInvisible, AiFillEye } from "react-icons/ai";
 
 const Signup = ({ Closereg, open }) => {
@@ -8,6 +8,15 @@ const Signup = ({ Closereg, open }) => {
     password: "",
     username: ""
   });
+  function handleChange(event) {
+    setFormData((prevFormData) => {
+      return {
+        ...prevFormData,
+        [event.target.name]: event.target.value,
+      };
+    });
+  }
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -34,16 +43,9 @@ const Signup = ({ Closereg, open }) => {
   const [visible, setVisible] = useState(false);
   const isOpen = visible ? "text" : "password";
 
-  console.log(formData);
+  //console.log(formData);
 
-  function handleChange(event) {
-    setFormData((prevFormData) => {
-      return {
-        ...prevFormData,
-        [event.target.name]: event.target.value,
-      };
-    });
-  }
+ 
 
   return (
     <div className="flex justify-center backdrop-blur-sm bg-slate-700 fixed inset-0 bg-opacity-30">
@@ -66,7 +68,7 @@ const Signup = ({ Closereg, open }) => {
                   <input
                     name="username"
                     onChange={handleChange}
-                    autoComplete="off"
+                    autoComplete="on"
                     required
                     className="px-2 text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -76,7 +78,7 @@ const Signup = ({ Closereg, open }) => {
                   <input
                     name="email"
                     onChange={handleChange}
-                    autoComplete="off"
+                    autoComplete="on"
                     required
                     className="px-2 text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />

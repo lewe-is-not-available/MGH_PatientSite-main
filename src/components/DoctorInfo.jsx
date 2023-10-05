@@ -53,7 +53,7 @@ const DoctorInfo = () => {
           {" "}
           {Honor} {Name}
         </h1>
-        <div class=" mb-10 border-b-4  border-y-[#315E30] mx-2"></div>
+        <div className=" mb-10 border-b-4  border-y-[#315E30] mx-2"></div>
         {/* main details */}
         <div className="grid grid-cols-2">
           <div className="space-y-5">
@@ -77,7 +77,7 @@ const DoctorInfo = () => {
         <p className="font-bold text-3xl mt-12 mb-4 text-[#315E30]">
           Schedules:{" "}
         </p>
-        <div class=" mb-6 px-8 py-4 bg-[#52A84F] grid-cols-3 text-white text-3xl font-semibold flex">
+        <div className=" mb-6 px-8 py-4 bg-[#52A84F] grid-cols-3 text-white text-3xl font-semibold flex">
           <p className="px-28">DAY</p>
           <p className="px-32 pl-48">AM </p>
           <p className="px-4">PM</p>

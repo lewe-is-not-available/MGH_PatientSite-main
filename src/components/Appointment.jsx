@@ -6,7 +6,7 @@ import SubSpecial from "./SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
-const Appointment = () => {
+const Appointment = ({token}) => {
   //TODO: Fix filter and suggestion drop
   //TODO: add sign in
 
@@ -27,7 +27,7 @@ const Appointment = () => {
     setSubSelect("");
   }
 
-  console.log(spSelect, subSelect);
+  //console.log(spSelect, subSelect);
 
   //DEFAULT DATA
   useEffect(() => {
@@ -132,6 +132,7 @@ const Appointment = () => {
           Let us assist your appointment either online or onsite.
         </p>
       </div>
+    
       <div className="flex flex-col py-[80px] pb-6 items-center">
         <h1
           className="text-4xl font-semibold text-[#315E30] mb-10"
@@ -139,7 +140,11 @@ const Appointment = () => {
         >
           Find a Doctor
         </h1>
-
+        {token?
+        ""
+        :<div className="flex z-30 w-screen h-screen fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
+        <div className=" absolute px-10 py-8 mt-56 bg-white">You need to Sign in first</div>
+      </div>}
         <div
           className="find bg-white flex flex-col p-8 pb-8"
           data-aos="zoom-in-up"
