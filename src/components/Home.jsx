@@ -254,7 +254,6 @@ const Home = ({token}) => {
               </div>
             )}
             <button
-              type="submit"
               onClick={Close}
               className="
             text-base text-slate-400 bg-slate-200 px-1 w-[27px] h-full rounded-full -ml-1 -mt-[35px] -mr-14
