@@ -65,7 +65,7 @@ const Login = ({ close, openReg, setToken }) => {
   return (
     <div className="flex justify-center backdrop-blur-sm bg-slate-700 fixed inset-0 bg-opacity-30">
       <>
-        <div className="absolute bg-white mt-40">
+        <div className="absolute abs bg-white mt-40">
           <div className="mb-8 mt-4 mr-4 flex justify-end">
             <button
               onClick={close}
@@ -118,7 +118,7 @@ const Login = ({ close, openReg, setToken }) => {
                   />
                   <div
                     onClick={() => setVisible(!visible)}
-                    className="cursor-pointer"
+                    className="cursor-pointer mt-1 ml-1 text-lg"
                   >
                     {visible ? <AiFillEye /> : <AiOutlineEyeInvisible />}
                   </div>

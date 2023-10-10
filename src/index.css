@@ -1,8 +1,17 @@
 @tailwind base;
+@layer base {
+  html {
+    @apply text-neutral-800;
+  }
+  html.dark {
+    @apply text-neutral-50;
+    @apply bg-neutral-800;
+  }
+}
 @tailwind components;
 @tailwind utilities;
 
-.relative:hover {
+.nav:hover {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.658);
   color: white;
   text-decoration: underline;
@@ -45,7 +54,7 @@
 .swirl-in-fwd {
 	animation: swirl-in-fwd 0.6s ease-out both;
 }
-.absolute{
+.abs{
   box-shadow: 1px 2px 15px rgba(0, 0, 0, 0.35);
 }
 .drop{

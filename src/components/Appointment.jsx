@@ -6,7 +6,7 @@ import SubSpecial from "./SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
-const Appointment = ({token}) => {
+const Appointment = ({ token}) => {
   //TODO: Fix filter and suggestion drop
   //TODO: add sign in
 
@@ -143,7 +143,7 @@ const Appointment = ({token}) => {
         {token?
         ""
         :<div className="flex z-30 w-screen h-screen fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
-        <div className=" absolute px-10 py-8 mt-56 bg-white">You need to Sign in first</div>
+        <div className=" absolute abs px-10 py-8 mt-56 bg-white">You need to Sign in first</div>
       </div>}
         <div
           className="find bg-white flex flex-col p-8 pb-8"
@@ -250,7 +250,7 @@ const Appointment = ({token}) => {
         </div>
       </div>
       {/* //TODO CONTINUE THIS
-      <div className="absolute drop p-8 w-52 max-h-64 overflow-y-scroll bg-white z-10 mr-[750px] mt-[40rem]">
+      <div className="absolute abs drop p-8 w-52 max-h-64 overflow-y-scroll bg-white z-10 mr-[750px] mt-[40rem]">
         {Doctors && filter.map((Doctors) => <p>{Doctors.Name}</p>)}
       </div> */}
       {noResult && (

@@ -138,7 +138,7 @@ const Home = ({token}) => {
           className="find bg-white flex flex-col p-8 pb-8"
           data-aos="zoom-in-up"
         >{token?"":<div className="flex z-30  fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
-        <div className=" absolute px-10 py-8 mt-20 bg-white">You need to Sign in first</div>
+        <div className=" absolute abs px-10 py-8 mt-20 bg-white">You need to Sign in first</div>
       </div>}
           <div className="flex flex-col items-center space-y-4">
             <table>
@@ -264,7 +264,7 @@ const Home = ({token}) => {
           </div>
         </div>
        {/* // TODO: ADD FILTER */}
-        {/* <div className="absolute p-2 w-44 text-sm bg-white z-50 mr-[645px] mt-[195px]">
+        {/* <div className="absolute abs p-2 w-44 text-sm bg-white z-50 mr-[645px] mt-[195px]">
           {Doctors.map(Doctors => (
             <td>{Doctors.Name}</td>
           ))}
