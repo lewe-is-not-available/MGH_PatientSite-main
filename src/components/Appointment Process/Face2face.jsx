@@ -1,62 +1,83 @@
-import React from "react";
+import React, { useEffect } from "react";
 import doc from "../images/doc.jpg";
 import { Input, initTE } from "tw-elements";
-import Datetime from "react-datetime";
-import "react-datetime/css/react-datetime.css";
-import moment from "moment";
-import { AiOutlineCalendar, AiFillCalendar } from "react-icons/ai";
-
-var yesterday = moment().subtract(1, "day");
-var valid = function (current) {
-  return current.isAfter(yesterday);
-};
+import Aos from "aos";
+import "aos/dist/aos.css";
 
 initTE({ Input });
 
-
 const Face2face = () => {
-  
+
+    const disablePastDate = () => {
+      const today = new Date();
+      const dd = String(today.getDate() + 1).padStart(2, "0");
+      const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+      const yyyy = today.getFullYear();
+      return yyyy + "-" + mm + "-" + dd;
+  };
+
+  useEffect(() => {
+    Aos.init({ duration: 1000 });
+  }, []);
   return (
     <div className="back p-8 flex justify-between">
       <div className="text-center justify-center w-[16%] ml-52">
-        <img src={doc} className="px-5 py-3" alt="" />
-        <p className="font-semibold">Dr. asdfasdfad</p>
-        <p>special</p>
-        <p>sub special</p>
+        <img data-aos="fade-up" src={doc} className="px-5 py-3" alt="" />
+        <p data-aos="fade-up" className="font-semibold">
+          Dr. asdfasdfad
+        </p>
+        <p data-aos="fade-up">special</p>
+        <p data-aos="fade-up">sub special</p>
       </div>
-      <div className="bg-white text-center mt-3 w-[58%] mr-52 text-[#315E30]">
+      <div
+        data-aos="fade-up"
+        className="text-center mt-3 w-[58%] mr-52 text-[#315E30]"
+      >
         <h1 className="text-5xl font-semibold">
           Fill up the form to proceed reservation{" "}
         </h1>
         <span className="text-4xl">(face-to-face)</span>
-        <form>
-          <div className="grid font-semibold text-left grid-cols-3 gap-5 px-8 mt-5">
+        <form className="bg-white p-3 rounded-lg shadow-2xl mt-9">
+          <div
+            data-aos="fade-up"
+            className="grid font-semibold text-left grid-cols-3 gap-5 px-8 mt-5"
+          >
             <p>
               First Name: <br />
-              <input className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full" />
+              <input 
+
+              className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full" />
             </p>
             <p>
               Last Name: <br />
-              <input className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full" />
+              <input 
+
+              className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full" />
             </p>
             <p>
               Middle Name: <br />
-              <input className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full" />
+              <input 
+
+              className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full" />
             </p>
             <p>
               Mobile Number: <br />
               <input
+
                 type="number"
                 className="outline-none rounded-md font-thin border-2 px-2 grid- border-slate-300 focus:border-[#71b967d3] w-full"
               />
             </p>
             <p>
-              Last Name: <br />
-              <input className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full" />
+              Gmail: <br />
+              <input 
+
+              className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full" />
             </p>
             <div>
               <p>Are you an existing patient?</p>
-              <div className="flex space-x-5">
+              <div 
+              className="flex space-x-5">
                 <div className="font-thin mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
                   <input
                     className="relative float-left -ml-[1.5rem] mr-1 mt-0.5 h-5 w-5 appearance-none rounded-full border-2 border-solid
@@ -72,11 +93,9 @@ const Face2face = () => {
                    "
                     type="radio"
                     name="flexRadioDefault"
-                    id="radioDefault01"
                   />
                   <label
                     className="mt-px inline-block pl-[0.15rem] hover:cursor-pointer"
-                    htmlFor="radioDefault01"
                   >
                     Yes
                   </label>
@@ -98,11 +117,10 @@ const Face2face = () => {
                      checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s]"
                     type="radio"
                     name="flexRadioDefault"
-                    id="radioDefault02"
+                    checked
                   />
                   <label
                     className="mt-px inline-block pl-[0.15rem] hover:cursor-pointer"
-                    htmlFor="radioDefault02"
                   >
                     No
                   </label>
@@ -118,16 +136,38 @@ const Face2face = () => {
                 Select Date and time of appointment:
               </p>
               <input
-                className="outline-none border-2 font-thin px-2 h-9 rounded-lg border-slate-300 focus:border-[#71b967d3]"
-                type="datetime-local"
-                id="meeting-time"
-                name="meeting-time"
+                className="outline-none border-2 font-thin px-2 h-9 rounded-l-lg border-slate-300 focus:border-[#71b967d3]"
+                type="date"
+                min={disablePastDate()}
               />
+              <input type="time" className="outline-none border-2 font-thin px-2 h-9 rounded-r-lg border-l-0 border-slate-300 focus:border-[#71b967d3]"/>
             </div>
-            <div class="flex items-center mb-4">
-    <input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-    <label for="default-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Default checkbox</label>
-</div>
+            <p className="col-span-3">
+              Reason/s for booking an appointment: <br />
+              <textarea
+                placeholder="Your message here"
+                className="outline-none border-2 font-thin px-3 py-2 h-56 rounded-md border-slate-300 focus:border-[#71b967d3] w-full"
+              />
+            </p>
+            <div className="flex items-center">
+              <input
+                id="default-checkbox"
+                type="checkbox"
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+
+              <label className="ml-2 text-sm font-">
+                Do you accept giving us your detail?
+              </label>
+            </div>
+            <div className="col-span-3 mb-6">
+              <button
+                type="submit"
+                className="bg-[#418D3F] w-full py-1 font-semibold text-xl text-white rounded-md transition duration-10 ease-in-out hover:bg-[#A5DD9D] hover:text-[#267124] hover:ring-[#418D3F] hover:ring-[3px]"
+              >
+                Submit
+              </button>
+            </div>
           </div>
         </form>
       </div>
