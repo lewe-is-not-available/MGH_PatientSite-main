@@ -1,7 +1,13 @@
 @tailwind base;
 @layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
   html {
     @apply text-neutral-800;
+    @apply overflow-x-hidden
   }
   html.dark {
     @apply text-neutral-50;

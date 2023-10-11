@@ -51,25 +51,12 @@ const Contacts = () => {
             </p>
           </div>
           <div className="col-span-3">
-            <div class="relative mb-3 bg-white" data-te-input-wrapper-init>
-                <textarea
-                  class="peer block min-h-[auto] font-thin w-full h-[18rem] rounded border-0 bg-transparent px-3 py-[1rem] 
-                  leading-[1] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 
-                  peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none
-                   dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary 
-                   [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
-                  id="exampleFormControlTextarea1"
-                  rows="4"
-                  placeholder="Your message"
-                ></textarea>
-                <label
-                  for="exampleFormControlTextarea1"
-                  class="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
-                >
-                  Your message
-                </label>
-              {/* <textarea
-                class="peer block  min-h-[auto] w-full font-thin text-black rounded
+            <p> Your message here:</p>
+            <textarea
+              className="outline-none border-2 h-56 border-slate-300 focus:border-[#71b967d3] w-full"
+            ></textarea>
+            {/* <textarea
+                className="peer block  min-h-[auto] w-full font-thin text-black rounded
                  px-3 h-48 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100
                   peer-focus:text-[#315E30] data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none
                    dark:placeholder:text-neutral-200 dark:peer-focus:text-black
@@ -77,14 +64,13 @@ const Contacts = () => {
                 placeholder="Your message"
               ></textarea>
               <label
-                class="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] 
+                className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] 
                 truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.5rem]
                  peer-focus:scale-[0.9] peer-focus:text-[#315E30] peer-data-[te-input-state-active]:-translate-y-[1.5rem] 
                  peer-data-[te-input-state-active]:scale-[0.9] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-[#315E30]"
               >
                 Your Message
               </label> */}
-            </div>
           </div>
           <div className="col-span-3 flex justify-end mr-10 mt-4">
             <button
@@ -105,9 +91,9 @@ const Contacts = () => {
             width="740"
             height="400"
             data-aos="fade-up"
-            allowfullscreen="on"
+            allowFullScreen="on"
             loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
+            referrerPolicy="no-referrer-when-downgrade"
           ></iframe>
         </div>
       </form>

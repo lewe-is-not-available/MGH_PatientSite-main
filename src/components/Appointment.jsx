@@ -6,7 +6,7 @@ import SubSpecial from "./SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
-const Appointment = ({ token}) => {
+const Appointment = ({ token, isPatient}) => {
   //TODO: Fix filter and suggestion drop
   //TODO: add sign in
 
@@ -140,7 +140,7 @@ const Appointment = ({ token}) => {
         >
           Find a Doctor
         </h1>
-        {token?
+        {isPatient?
         ""
         :<div className="flex z-30 w-screen h-screen fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
         <div className=" absolute abs px-10 py-8 mt-56 bg-white">You need to Sign in first</div>

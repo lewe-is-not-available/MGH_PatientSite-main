@@ -24,24 +24,27 @@ function App() {
   //*For getting token of user
   const [token, setToken] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
- // const [isPatient, setIsPatient] = useState(false);
+  const [isDoctor, setIsDoctor] = useState(false);
+  const [isPatient, setIsPatient] = useState(false);
+  // const [isPatient, setIsPatient] = useState(false);
+  //*initiates after login
   if (token) {
     sessionStorage.setItem("token", JSON.stringify(token));
 
- 
     const fetchAdmin = async () => {
-    const { data } = await supabase
-      .from("profile")
-      .select("*")
-      .single();
-
-    if(data.role === "admin"){
-      setIsAdmin(true);
-    }
-  };
-  fetchAdmin();
-
- 
+      const { data } = await supabase.from("profile").select("*").single();
+      //*compare roles if matched
+      if (data.role === "admin") {
+        setIsAdmin(true);
+      }
+      if (data.role === "doctor") {
+        setIsDoctor(true);
+      }
+      if (data.role === "patient") {
+        setIsPatient(true);
+      }
+    };
+    fetchAdmin();
   }
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
@@ -51,25 +54,30 @@ function App() {
   }, []);
   console.log(token);
 
-
-  
-
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen w-screen flex flex-col ">
       <header className="sticky w-screen top-0 z-50">
-        <Navbar token={token} setToken={setToken} />
+        <Navbar
+          token={token}
+          setToken={setToken}
+          isAdmin={isAdmin}
+          isDoctor={isDoctor}
+        />
       </header>
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<Home token={token}/>} />
+          <Route path="/" element={<Home token={token} />} />
           <Route path="/Mission-and-Vision" element={<MissonVision />} />
           <Route path="/Feedback-Form" element={<Feedback />} />
           <Route path="/Contacts" element={<Contacts />} />
           <Route path="/Hospital-Profile" element={<Profile />} />
           <Route path="/:id" element={<DocInfo />} />
           <Route path="/Admin" element={<Admin />} />
-          <Route path="Doctor" element={<Doctor />} />
-          <Route path={"/Appointment"} element={<Appointment token={token} Admin={isAdmin}/>} />
+          <Route path="/Doctor" element={<Doctor />} />
+          <Route
+            path={"/Appointment"}
+            element={<Appointment token={token} isPatient={isPatient} />}
+          />
           <Route path="/Face-to-face" element={<F2f />} />
           <Route path="/Online" element={<Online />} />
           <Route path="/ChooseType" element={<OnlineOrF2f />} />

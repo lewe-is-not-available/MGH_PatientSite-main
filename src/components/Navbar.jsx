@@ -9,22 +9,33 @@ import Reg from "./Login/Signup";
 import { useNavigate } from "react-router-dom";
 import supabase from "./config/Supabase";
 
-const Navbar = ({ token, setToken }) => {
-  //*Admin Role access
-  const [isAdmin, setIsAdmin] = useState(false);
+const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
+  //*Page protections based on role
+  // const [isAdmin, setIsAdmin] = useState(false);
+  // const [isPatient, setIsPatient] = useState(false);
+  // const [isDoctor, setIsDoctor] = useState(false);
   const fetchAdmin = async () => {
-    const { data } = await supabase.from("profile").select("*").single();
-
     if (token) {
-      if (data.role === "admin") {
-        setIsAdmin(true);
-      }
-      else {
-        setIsAdmin(false);
-      }
+      const { data } = await supabase.from("profile").select("*").single();
+      //initiates after log in
+      // if (token) {
+      //compare roles if matched
+      //   if (data.role === "admin") {
+      //     setIsAdmin(true);
+      //   }
+      //   if (data.role === "doctor") {
+      //     setIsDoctor(true);
+      //   }
+      //   if (data.role === "patient") {
+      //     setIsPatient(true);
+      //   }
+      //   console.log(data.role);
+      // }
     }
   };
   fetchAdmin();
+
+  //*Patient Role access
 
   //*Function to show/hide registration and login
   const [Show, FetchShow] = useState(null);
@@ -49,6 +60,7 @@ const Navbar = ({ token, setToken }) => {
     if (error) {
       alert(error);
     } else {
+      setToken(false);
       sessionStorage.removeItem("token");
       navigate("/");
       window.location.reload();
@@ -63,7 +75,19 @@ const Navbar = ({ token, setToken }) => {
             <div className="w-[65px]">
               <img src={logo} alt="/" />
             </div>
-            <h1 className="font-bold text-6xl text-white pl-2">MGH</h1>
+            <h1 className="font-bold text-6xl text-white pl-2 flex">
+              MGH
+              {isAdmin ? (
+                <p className="ml-3 font-thin text-4xl mt-4">Admin's page</p>
+              ) : (
+                ""
+              )}
+              {isDoctor ? (
+                <p className="ml-3 font-thin text-4xl mt-4">Doctor's page</p>
+              ) : (
+                ""
+              )}
+            </h1>
           </Link>
         </div>
         <div className="  mt-7 mr-12 text-lg font-semibold">
@@ -91,20 +115,33 @@ const Navbar = ({ token, setToken }) => {
           >
             <AiFillHome className="peer-hover/ic:shadow-md shadow-sm" />
           </Link>
-          <li className="px-4 py-1 font-bold relative nav list-none peer/os hover:cursor-default flex">
-            Online Services
-          </li>
-          <AiFillCaretDown className="mt-2 -ml-4 mr-2 transition duration-500 ease-in-out peer-hover/os:rotate-180 peer-hover/os:text-white" />
-          <li className="px-4 py-1 font-bold relative nav list-none peer/about hover:cursor-default">
-            About Us
-          </li>
-          <AiFillCaretDown className="mt-2 -ml-4 mr-2 transition duration-500 ease-in-out peer-hover/about:rotate-180 peer-hover/about:text-white" />
-          <Link to="/Contacts" className="px-4 py-1 font-bold relative nav">
-            Contact Us
-          </Link>
+          {isAdmin || isDoctor ? (
+            ""
+          ) : (
+            <>
+              <li className="px-4 py-1 font-bold relative nav list-none peer/os hover:cursor-default flex">
+                Online Services
+              </li>
+              <AiFillCaretDown className="mt-2 -ml-4 mr-2 transition duration-500 ease-in-out peer-hover/os:rotate-180 peer-hover/os:text-white" />
+              <li className="px-4 py-1 font-bold relative nav list-none peer/about hover:cursor-default">
+                About Us
+              </li>
+              <AiFillCaretDown className="mt-2 -ml-4 mr-2 transition duration-500 ease-in-out peer-hover/about:rotate-180 peer-hover/about:text-white" />
+              <Link to="/Contacts" className="px-4 py-1 font-bold relative nav">
+                Contact Us
+              </Link>
+            </>
+          )}
           {isAdmin ? (
             <Link to="/Admin" className="px-4 py-1 font-bold relative nav">
               Admin
+            </Link>
+          ) : (
+            ""
+          )}
+           {isDoctor ? (
+            <Link to="/Doctor" className="px-4 py-1 font-bold relative nav">
+              Doctor
             </Link>
           ) : (
             ""
