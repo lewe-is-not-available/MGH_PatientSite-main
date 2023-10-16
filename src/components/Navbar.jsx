@@ -8,34 +8,17 @@ import SignIn from "./Login/SigninButton";
 import Reg from "./Login/Signup";
 import { useNavigate } from "react-router-dom";
 import supabase from "./config/Supabase";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
   //*Page protections based on role
-  // const [isAdmin, setIsAdmin] = useState(false);
-  // const [isPatient, setIsPatient] = useState(false);
-  // const [isDoctor, setIsDoctor] = useState(false);
   const fetchAdmin = async () => {
     if (token) {
       const { data } = await supabase.from("profile").select("*").single();
-      //initiates after log in
-      // if (token) {
-      //compare roles if matched
-      //   if (data.role === "admin") {
-      //     setIsAdmin(true);
-      //   }
-      //   if (data.role === "doctor") {
-      //     setIsDoctor(true);
-      //   }
-      //   if (data.role === "patient") {
-      //     setIsPatient(true);
-      //   }
-      //   console.log(data.role);
-      // }
     }
   };
   fetchAdmin();
-
-  //*Patient Role access
 
   //*Function to show/hide registration and login
   const [Show, FetchShow] = useState(null);
@@ -69,6 +52,7 @@ const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
 
   return (
     <div>
+      <ToastContainer />
       <div className="z-50 flex justify-between top-0 w-full bg-[#315E30] px-3 pl-5">
         <div className="">
           <Link to="/" className="hover:cursor-pointer flex p-3 ml-5">
@@ -133,13 +117,33 @@ const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
             </>
           )}
           {isAdmin ? (
-            <Link to="/Admin" className="px-4 py-1 font-bold relative nav">
-              Admin
-            </Link>
+            <>
+              <Link to="/Admin" className="px-4 py-1 font-bold relative nav">
+                Admin
+              </Link>
+              <Link
+                to="/Confirm_Appointments"
+                className="px-4 py-1 font-bold relative nav"
+              >
+                Appointments
+              </Link>
+              <Link
+                to="/Edit_doctors"
+                className="px-4 py-1 font-bold relative nav"
+              >
+                Edit Doctors
+              </Link>
+              <Link
+                to="/User_feedbacks"
+                className="px-4 py-1 font-bold relative nav"
+              >
+                Feedbacks
+              </Link>
+            </>
           ) : (
             ""
           )}
-           {isDoctor ? (
+          {isDoctor ? (
             <Link to="/Doctor" className="px-4 py-1 font-bold relative nav">
               Doctor
             </Link>

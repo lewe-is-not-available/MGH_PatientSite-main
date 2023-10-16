@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import supabase from "./config/Supabase";
-import DocUniq from "./DocUIniq";
-import Specials from "./Specials.json";
-import SubSpecial from "./SubSpecial.json";
+import supabase from "../config/Supabase";
+import DocUniq from "../Doctor read/Doctors";
+import Specials from "../Specials.json";
+import SubSpecial from "../SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
-const Appointment = ({ token, isPatient}) => {
+const Appointment = ({ token, isPatient }) => {
   //TODO: Fix filter and suggestion drop
   //TODO: add sign in
 
@@ -15,7 +15,7 @@ const Appointment = ({ token, isPatient}) => {
   const [spSelect, setSpSelect] = useState("");
   const [subSelect, setSubSelect] = useState();
   const [Doctors, setDoctors] = useState(null);
-  const [filter, setFilter] = useState(null);
+  const [Filter, setFilter] = useState([]);
   const [noResult, setNoResult] = useState(false);
   const [Hmo, setHmo] = useState();
 
@@ -27,7 +27,31 @@ const Appointment = ({ token, isPatient}) => {
     setSubSelect("");
   }
 
-  //console.log(spSelect, subSelect);
+  const [showFill, setShowFill] = useState(true);
+  useEffect(() => {
+    const fetchFilter = async () => {
+      const { data, error } = await supabase.from("Dr information").select("*");
+      if (error) {
+        console.error("Failed to fetch", error.message);
+      } else {
+        const nameSuggest = data.filter((doctor) =>
+          doctor.Name.toLowerCase().includes(Name.toLowerCase())
+        );
+        setFilter(nameSuggest);
+        if (Name === "") {
+          setFilter("");
+        }
+      }
+    };
+    fetchFilter();
+  }, [Name]);
+  const handleNameFilterClick = (clickedName) => {
+    setName(clickedName);
+    setShowFill(false);
+  };
+  useEffect(() => {
+    setShowFill(true);
+  }, [Name]);
 
   //DEFAULT DATA
   useEffect(() => {
@@ -45,22 +69,6 @@ const Appointment = ({ token, isPatient}) => {
     fetchDoc();
   }, []);
 
-  useEffect(() => {
-    const Drop = async () => {
-      const { data, error } = await supabase.from("Dr information").select("*");
-  
-      if(error) {
-        setFilter(null);
-        console.log(error);
-      }
-      if(data) {
-        return setFilter(data);
-      }
-      
-    };
-    Drop();
-  }, []);
- 
   // RESET FUNCTION
   const handleReset = async () => {
     setName("");
@@ -132,7 +140,7 @@ const Appointment = ({ token, isPatient}) => {
           Let us assist your appointment either online or onsite.
         </p>
       </div>
-    
+
       <div className="flex flex-col py-[80px] pb-6 items-center">
         <h1
           className="text-4xl font-semibold text-[#315E30] mb-10"
@@ -140,11 +148,15 @@ const Appointment = ({ token, isPatient}) => {
         >
           Find a Doctor
         </h1>
-        {isPatient?
-        ""
-        :<div className="flex z-30 w-screen h-screen fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
-        <div className=" absolute abs px-10 py-8 mt-56 bg-white">You need to Sign in first</div>
-      </div>}
+        {isPatient ? (
+          ""
+        ) : (
+          <div className="flex z-30 w-screen h-screen fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
+            <div className=" absolute abs px-10 py-8 mt-56 bg-white">
+              You need to Sign in first
+            </div>
+          </div>
+        )}
         <div
           className="find bg-white flex flex-col p-8 pb-8"
           data-aos="zoom-in-up"
@@ -248,11 +260,21 @@ const Appointment = ({ token, isPatient}) => {
             </button>
           </div>
         </div>
+        {showFill && Filter.length > 0 && (
+          <div className="absolute abs w-48 flex flex-wrap text-sm bg-white z-50 mr-[780px] mt-[195px]">
+            {Filter.map((Filter) => (
+              <li
+                onClick={() => handleNameFilterClick(Filter.Name)}
+                className="list-none px-2 my-1 cursor-pointer w-full hover:bg-primary hover:text-white"
+                key={Filter.id}
+              >
+                {Filter.Name}
+              </li>
+            ))}
+          </div>
+        )}
       </div>
-      {/* //TODO CONTINUE THIS
-      <div className="absolute abs drop p-8 w-52 max-h-64 overflow-y-scroll bg-white z-10 mr-[750px] mt-[40rem]">
-        {Doctors && filter.map((Doctors) => <p>{Doctors.Name}</p>)}
-      </div> */}
+
       {noResult && (
         <p
           className="grid grid-flow-col gap-x-12 py-8 text-2xl font-semibold text-[#1c531b]"

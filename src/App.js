@@ -3,16 +3,19 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
 import Contacts from "./components/Contacts";
-import Appointment from "./components/Appointment";
+import Appointment from "./components/Appointment Process/Appointment";
 import MissonVision from "./components/MissonVision";
 import Profile from "./components/HospitalProfile";
 import Feedback from "./components/Feedback";
-import DocInfo from "./components/DoctorInfo";
-import OnlineOrF2f from "./components/Appointment Process/OnlineOrF2f";
+import DocInfo from "./components/Doctor read/DoctorInfo";
+import OnlineOrF2f from "./components/Appointment Process/ChooseType";
 import F2f from "./components/Appointment Process/Face2face";
 import Online from "./components/Appointment Process/OnlineConsult";
-import Admin from "./components/Higher user level/Admin";
-import Doctor from "./components/Doctor";
+import Admin from "./components/Higher user level/Admin/AdminDashboard";
+import AppointConfirmation from "./components/Higher user level/Admin/AppointmentConfirmation";
+import EditDoctors from "./components/Higher user level/Admin/EditDoctors";
+import Doctor from "./components/Higher user level/DoctorPage";
+import AdminFeedback from "./components/Higher user level/Admin/feedback_Admin";
 //import RequireAuth from "./components/RequireAuth";
 import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -52,7 +55,6 @@ function App() {
       setToken(data);
     }
   }, []);
-  console.log(token);
 
   return (
     <div className="min-h-screen w-screen flex flex-col ">
@@ -66,21 +68,36 @@ function App() {
       </header>
       <main className="flex-grow">
         <Routes>
+          {/* Homepage */}
           <Route path="/" element={<Home token={token} />} />
+
+          {/* Doctor's side */}
+          <Route path="/Doctor" element={<Doctor />} />
+
+          {/* Admin's side */}
+          <Route path="/User_feedbacks" element={<AdminFeedback />} />
+          <Route path="/Edit_doctors" element={<EditDoctors />} />
+          <Route
+            path="/Confirm_Appointments"
+            element={<AppointConfirmation />}
+          />
+          <Route path="/Admin" element={<Admin />} />
+
+          {/*patient's side */}
           <Route path="/Mission-and-Vision" element={<MissonVision />} />
-          <Route path="/Feedback-Form" element={<Feedback />} />
-          <Route path="/Contacts" element={<Contacts />} />
+          <Route path="/Feedback-Form" element={<Feedback token={token} />} />
+          <Route path="/Contacts" element={<Contacts token={token} />} />
           <Route path="/Hospital-Profile" element={<Profile />} />
           <Route path="/:id" element={<DocInfo />} />
-          <Route path="/Admin" element={<Admin />} />
-          <Route path="/Doctor" element={<Doctor />} />
+
+          {/* Appointment procedures */}
           <Route
             path={"/Appointment"}
             element={<Appointment token={token} isPatient={isPatient} />}
           />
-          <Route path="/Face-to-face" element={<F2f />} />
-          <Route path="/Online" element={<Online />} />
-          <Route path="/ChooseType" element={<OnlineOrF2f />} />
+          <Route path="/Face-to-face/:id" element={<F2f token={token} />} />
+          <Route path="/Online/:id" element={<Online token={token} />} />
+          <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
           {/* </Route> */}
         </Routes>
       </main>

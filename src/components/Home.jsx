@@ -6,16 +6,15 @@ import Specials from "./Specials.json";
 import SubSpecial from "./SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
+import { ToastContainer } from "react-toastify";
 
-const Home = ({token}) => {
+const Home = ({ token }) => {
   //TODO: add sign in
   //!FIX SUGGESTION FILTER
-  
+
   //For Search window drop function
   const [Show, FetchShow] = useState(null);
-
   const Close = () => FetchShow(false);
-
   //Search and reset Function
   const [Name, setName] = useState("");
   const [spSelect, setSpSelect] = useState();
@@ -23,25 +22,51 @@ const Home = ({token}) => {
   const [Doctors, setDoctors] = useState(null);
   const [noResult, setNoResult] = useState(false);
   const [Hmo, setHmo] = useState();
-  const [Res, setRes] = useState();
+  const [Filter, setFilter] = useState([]);
 
-    //select option value
-    if(spSelect === '---'){
-      setSpSelect("");
-    }
-    if(subSelect === '---'){
-      setSubSelect("");
-    }
-  //TODO: continue the filteration
-  const Suggest = async () => {
-    const { data, error } = await supabase.from("Dr information").select("*");
-    if (error) {
-      console.error("Failed to fetch", error.message);
-    }
-    else{
-      setRes(data);
-    }
+  //select option value
+  if (spSelect === "---") {
+    setSpSelect("");
   }
+  if (subSelect === "---") {
+    setSubSelect("");
+  }
+  //TODO: continue the filteration
+  const [showFill, setShowFill] = useState(true);
+  useEffect(() => {
+    const fetchFilter = async () => {
+      const { data, error } = await supabase.from("Dr information").select("*");
+      if (error) {
+        console.error("Failed to fetch", error.message);
+      } else {
+        const nameSuggest = data.filter((doctor) =>
+          doctor.Name.toLowerCase().includes(Name.toLowerCase())
+        );
+        setFilter(nameSuggest);
+        if (Name === "") {
+          setFilter("");
+        }
+      }
+    };
+    fetchFilter();
+  }, [Name]);
+  const handleNameFilterClick = (clickedName) => {
+
+    setName(clickedName);
+    setShowFill(false);
+  };
+  useEffect(() => {
+    setShowFill(true);
+  }, [Name]);
+
+  // useEffect(() => {
+  //   if (Name) {
+  //     setShowFill(true); // Show suggestions when the user types
+  //   }
+  //   else {
+  //     setShowFill(false); // Hide suggestions when the input is empty
+  //   }
+  // }, [Name]);
 
   const handleReset = async () => {
     setName("");
@@ -86,14 +111,12 @@ const Home = ({token}) => {
           ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
           : true;
         return nameMatch && specMatch && subSpecMatch && HmoMatch;
-      }
-      );
+      });
       setDoctors(filteredData);
-      if (filteredData.length === 0){
+      if (filteredData.length === 0) {
         setNoResult(true);
         setDoctors("");
-      }
-      else{
+      } else {
         setNoResult(false);
       }
     }
@@ -102,10 +125,10 @@ const Home = ({token}) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
-  console.log(Name, spSelect, SubSpecial, Hmo);
 
   return (
     <div>
+      <ToastContainer />
       <div
         className="hero1 p-28 py-28 flex flex-col items-center text-white space-y-14"
         data-aos="fade-up"
@@ -137,16 +160,21 @@ const Home = ({token}) => {
         <div
           className="find bg-white flex flex-col p-8 pb-8"
           data-aos="zoom-in-up"
-        >{token?"":<div className="flex z-30  fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
-        <div className=" absolute abs px-10 py-8 mt-20 bg-white">You need to Sign in first</div>
-      </div>}
+        >
+          {token ? (
+            ""
+          ) : (
+            <div className="flex z-30  fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
+              <div className=" absolute abs px-10 py-8 mt-20 bg-white">
+                You need to Sign in first
+              </div>
+            </div>
+          )}
           <div className="flex flex-col items-center space-y-4">
             <table>
               <thead data-aos="fade-up" data-aos-anchor-placement="top-bottom">
                 <tr>
-                  <td className="text-xl text-[#315E30] pb-3">
-                    Doctor's Name
-                  </td>
+                  <td className="text-xl text-[#315E30] pb-3">Doctor's Name</td>
                   <td className="text-xl text-[#315E30] pb-3">
                     Specialization
                   </td>
@@ -263,13 +291,21 @@ const Home = ({token}) => {
             </button>
           </div>
         </div>
-       {/* // TODO: ADD FILTER */}
-        {/* <div className="absolute abs p-2 w-44 text-sm bg-white z-50 mr-[645px] mt-[195px]">
-          {Doctors.map(Doctors => (
-            <td>{Doctors.Name}</td>
-          ))}
-          
-        </div> */}
+        {/* // TODO: ADD FILTER */}
+        {showFill && Filter.length > 0 && (
+          <div className="absolute abs w-48 flex flex-wrap text-sm bg-white z-50 mr-[652px] mt-[195px]">
+            {Filter.map((Filter) => (
+              <li
+                onClick={() => handleNameFilterClick(Filter.Name)}
+                className="list-none px-2 my-1 cursor-pointer w-full hover:bg-primary hover:text-white"
+                key={Filter.id}
+              >
+                {Filter.Name}
+              </li>
+            ))}
+          </div>
+        )}
+
         <section id="Contact-num">
           <div className="mt-[40px] mb-[33px] flex flex-col space-y-2 items-center">
             <p

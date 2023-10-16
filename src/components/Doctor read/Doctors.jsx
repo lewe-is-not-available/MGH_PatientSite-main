@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import doc from "./images/doc.jpg";
+import doc from "../images/doc.jpg";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import { Link } from "react-router-dom";
@@ -38,7 +38,7 @@ const DocUniq = ({ Doctors }) => {
           <p className="text-base mb-2">{Doctors.Schedule}</p>
         </div>
         <Link
-          to="/ChooseType"
+          to={'/ChooseType/' + Doctors.id}
           data-aos="fade-up"
           className="text-base bg-[#418D3F] p-2 rounded-md text-white font-bold ring-[#418D3F] ring-2 transition duration-75 ease-in hover:bg-[#A5DD9D] hover:text-[#267124]"
         >

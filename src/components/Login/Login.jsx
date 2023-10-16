@@ -5,15 +5,19 @@ import LoginButton from "./LoginButton";
 import supabase from "../config/Supabase";
 
 const Login = ({ close, openReg, setToken }) => {
-  
   //TODO: Make registration
   //!Fix login
-   // const navigate = useNavigate()
+  // const navigate = useNavigate()
+  //*open registration while preventing form to submit
+  function handleRegistration(e){
+    e.preventDefault();
+    openReg();
+  }
 
   //*get input
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   //console.log(formData);
@@ -32,24 +36,24 @@ const Login = ({ close, openReg, setToken }) => {
   const [success, setSuccess] = useState(false);
 
   //*Login button funtion
-    async function handleSubmit(e){
+  async function handleSubmit(e) {
     e.preventDefault();
-    
+
     try {
       //*supabase user authentication
       const { data, error } = await supabase.auth.signInWithPassword({
-        
+        username: formData.email,
         email: formData.email,
         password: formData.password,
       });
 
-      if (error) throw error
+      if (error) throw error;
 
       //*successful sign-in
-      setToken(data)
+      setToken(data);
       setSuccess(true);
 
-      //*Navigating back to 
+      //*Navigating back to
       //navigate('/')
 
       //* error handling
@@ -57,7 +61,7 @@ const Login = ({ close, openReg, setToken }) => {
       setErr(error + "");
       console.log(error);
     }
-  };
+  }
   //*show/hide password function
   const [visible, setVisible] = useState(false);
   const isOpen = visible ? "text" : "password";
@@ -124,13 +128,16 @@ const Login = ({ close, openReg, setToken }) => {
                   </div>
                 </div>
                 <div className="flex justify-center">
-                 <button type="submit" className="bg-[#418D3F] w-2/5 py-1 font-semibold text-lg text-white rounded-md transition duration-100 ease-in-out hover:bg-[#A5DD9D] hover:text-[#267124] hover:ring-[#418D3F] hover:ring-[3px]">
-                 Sign in
-                 </button>
+                  <button
+                    type="submit"
+                    className="bg-[#418D3F] w-2/5 py-1 font-semibold text-lg text-white rounded-md transition duration-100 ease-in-out hover:bg-[#A5DD9D] hover:text-[#267124] hover:ring-[#418D3F] hover:ring-[3px]"
+                  >
+                    Sign in
+                  </button>
                 </div>
                 <div className="text-center">
                   <p className="pt-4">No account?</p>
-                  <button className="text-blue-600" onClick={openReg}>
+                  <button className="text-blue-600" onClick={handleRegistration}>
                     {" "}
                     create one
                   </button>

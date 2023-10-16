@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import doc from "./images/doc.jpg";
-import supabase from "./config/Supabase";
+import doc from "../images/doc.jpg";
+import supabase from "../config/Supabase";
 import Aos from "aos";
-import 'aos/dist/aos.css';
+import "aos/dist/aos.css";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { MdSchedule } from "react-icons/md";
 import DoctorScheds from "./DoctorScheds";
 
 const DoctorInfo = () => {
   useEffect(() => {
-    Aos.init({duration: 1000});
-  }, [])
-  
+    Aos.init({ duration: 1000 });
+  }, []);
+
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -22,7 +22,6 @@ const DoctorInfo = () => {
   const [Honor, setHonor] = useState("");
 
   useEffect(() => {
-    
     const fetchDoctor = async () => {
       const { data, error } = await supabase
         .from("Dr information")
@@ -83,7 +82,8 @@ const DoctorInfo = () => {
           <p className="px-4">PM</p>
         </div>
         <div className="grid-cols-3 mb-14">
-        <DoctorScheds/></div>
+          <DoctorScheds />
+        </div>
         <div className="flex justify-end">
           <Link
             to="/ChooseType"

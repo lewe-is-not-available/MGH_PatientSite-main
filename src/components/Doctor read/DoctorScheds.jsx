@@ -1,4 +1,4 @@
-import supabase from "./config/Supabase";
+import supabase from "../config/Supabase";
 import "aos/dist/aos.css";
 import Aos from "aos";
 import { useParams, useNavigate } from "react-router-dom";
