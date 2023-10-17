@@ -4,7 +4,7 @@ import "aos/dist/aos.css";
 import { Link } from "react-router-dom";
 import { HiOutlineStatusOnline } from "react-icons/hi";
 import { MdOutlineMeetingRoom } from "react-icons/md";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import supabase from "../config/Supabase";
 import { useParams } from "react-router-dom";
@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 const OnlineOrF2f = () => {
   const { id } = useParams();
   const [getId, setId] = useState("");
+
   useEffect(() => {
     const fetchDoctor = async () => {
       const { data, error } = await supabase
@@ -33,7 +34,7 @@ const OnlineOrF2f = () => {
       }
     };
     fetchDoctor();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
@@ -41,7 +42,6 @@ const OnlineOrF2f = () => {
 
   return (
     <div>
-      <ToastContainer />
       <div
         className="hero2 p-28 py-28 flex flex-col items-center text-white space-y-14 w-full"
         data-aos="fade-up"

@@ -87,6 +87,7 @@ const Contacts = () => {
             RXC7+C65, A Morales St, Santa Maria, Bulacan
           </p>
           <iframe
+            title="MGH map"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241.06727265407326!2d120.9630312506357!3d14.820971765282387!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397ac4ac9aa4e77%3A0xeb03c4b33a362a49!2sMendoza%20General%20Hospital!5e0!3m2!1sen!2sph!4v1696662564819!5m2!1sen!2sph"
             width="740"
             height="400"

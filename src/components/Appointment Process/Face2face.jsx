@@ -55,6 +55,7 @@ const Face2face = ({ token }) => {
     const { error } = await supabase.from("F2f Appointments").insert([
       {
         user_id: userID,
+        docname: Name,
         fname: formData.Fname,
         lname: formData.Lname,
         mname: formData.Mname,
@@ -63,7 +64,6 @@ const Face2face = ({ token }) => {
         date: formData.Date,
         time: formData.Time,
         reason: formData.Reason,
-        existing: formData.Existing,
       },
     ]);
     if (error) {
@@ -226,14 +226,14 @@ const Face2face = ({ token }) => {
                       checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s]
                    "
                     type="radio"
-                    name="Existing"
+                    name="Time"
                 autoComplete="off"
                     onChange={handleChange}
-                    value="Yes"
+                    value="Morning"
                     required
                   />
                   <label className="mt-px inline-block pl-[0.15rem] hover:cursor-pointer">
-                    Yes
+                    Morning
                   </label>
                 </div>
                 <div className="font-thin mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
@@ -252,14 +252,14 @@ const Face2face = ({ token }) => {
                      checked:focus:border-primary checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]
                      checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s]"
                     type="radio"
-                    name="Existing"
+                    name="Time"
                 autoComplete="off"
                     onChange={handleChange}
-                    value="No"
+                    value="Afternoon"
                     required
                   />
                   <label className="mt-px inline-block pl-[0.15rem] hover:cursor-pointer">
-                    No
+                    Afternoon
                   </label>
                 </div>
               </div>
@@ -282,18 +282,10 @@ const Face2face = ({ token }) => {
                 name="Date"
                 autoComplete="on"
                 onChange={handleChange}
-                className="outline-none border-2 font-thin px-2 h-9 rounded-l-lg border-slate-300 focus:border-[#71b967d3]"
+                className="outline-none border-2 w-44 font-thin px-2 h-9 rounded-l-lg border-slate-300 focus:border-[#71b967d3]"
                 type="date"
                 required
                 min={disablePastDate()}
-              />
-              <input
-                name="Time"
-                autoComplete="on"
-                onChange={handleChange}
-                type="time"
-                required
-                className="outline-none border-2 font-thin px-2 h-9 rounded-r-lg border-l-0 border-slate-300 focus:border-[#71b967d3]"
               />
             </div>
             <p className="col-span-3">
@@ -315,7 +307,7 @@ const Face2face = ({ token }) => {
                 required
               />
 
-              <label className="ml-2 text-sm font-">
+              <label className="ml-2 text-sm">
                 Do you accept giving us your detail?
               </label>
             </div>

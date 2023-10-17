@@ -15,7 +15,6 @@ const OnlineConsult = ({ token }) => {
     Lname: "",
     Mname: "",
     Address: "",
-    Existing: "",
     Date: "",
     Time: "",
     Reason: "",
@@ -58,6 +57,7 @@ const OnlineConsult = ({ token }) => {
       {
         user_id: userID,
         fname: formData.Fname,
+        docname:Name,
         lname: formData.Lname,
         mname: formData.Mname,
         email: formData.Gmail,
@@ -207,7 +207,7 @@ const OnlineConsult = ({ token }) => {
               />
             </p>
             <div>
-              <p>Are you an existing patient?</p>
+              <p>Select time of appointment</p>
               <div className="flex space-x-5">
                 <div className="font-thin mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
                   <input
@@ -223,13 +223,13 @@ const OnlineConsult = ({ token }) => {
                       checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s]
                    "
                     type="radio"
-                    name="Existing"
+                    name="Time"
                     onChange={handleChange}
-                    value="Yes"
+                    value="Morning"
                     required
                   />
                   <label className="mt-px inline-block pl-[0.15rem] hover:cursor-pointer">
-                    Yes
+                    Morning
                   </label>
                 </div>
                 <div className="font-thin mb-[0.125rem] block min-h-[1.5rem] pl-[1.5rem]">
@@ -248,13 +248,13 @@ const OnlineConsult = ({ token }) => {
                      checked:focus:border-primary checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]
                      checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s]"
                     type="radio"
-                    name="Existing"
+                    name="Time"
                     onChange={handleChange}
-                    value="No"
+                    value="Afternoon"
                     required
                   />
                   <label className="mt-px inline-block pl-[0.15rem] hover:cursor-pointer">
-                    No
+                    Afternoon
                   </label>
                 </div>
               </div>
@@ -270,22 +270,15 @@ const OnlineConsult = ({ token }) => {
             </p>
             <div>
               <p className="whitespace-normal ">
-                Select Date and time of appointment:
+                Select Date of appointment:
               </p>
               <input
                 name="Date"
                 onChange={handleChange}
-                className="outline-none border-2 font-thin px-2 h-9 rounded-l-lg border-slate-300 focus:border-[#71b967d3]"
+                className="outline-none border-2 w-44 font-thin px-2 h-9 rounded-l-lg border-slate-300 focus:border-[#71b967d3]"
                 type="date"
                 required
                 min={disablePastDate()}
-              />
-              <input
-                name="Time"
-                onChange={handleChange}
-                type="time"
-                required
-                className="outline-none border-2 font-thin px-2 h-9 rounded-r-lg border-l-0 border-slate-300 focus:border-[#71b967d3]"
               />
             </div>
             <p className="col-span-3">
@@ -306,7 +299,7 @@ const OnlineConsult = ({ token }) => {
                 required
               />
 
-              <label className="ml-2 text-sm font-">
+              <label className="ml-2 text-sm">
                 Do you accept giving us your detail?
               </label>
             </div>

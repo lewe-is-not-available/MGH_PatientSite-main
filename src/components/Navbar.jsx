@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "./images/MGHlogo.png";
 import { AiFillCaretDown } from "react-icons/ai";
 import { Link } from "react-router-dom";
@@ -12,17 +12,26 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
-  //*Page protections based on role
-  const fetchAdmin = async () => {
-    if (token) {
-      const { data } = await supabase.from("profile").select("*").single();
-    }
-  };
-  fetchAdmin();
-
   //*Function to show/hide registration and login
   const [Show, FetchShow] = useState(null);
   const [regOpen, setRegOpen] = useState(false);
+  const [patient, setPatient] = useState(false);
+  const [doctor, setDoctor] = useState(false);
+  const [admin, setAdmin] = useState(false);
+
+  useEffect(() => {
+    if (token) {
+      if (isPatient) {
+        setPatient(true);
+      }
+      if (isDoctor) {
+        setDoctor(true);
+      }
+      if (isAdmin) {
+        setAdmin(true);
+      }
+    }
+  }, [token, isPatient, isAdmin, isDoctor]);
 
   const Close = () => FetchShow(false);
   const Open = () => {
@@ -55,24 +64,34 @@ const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
       <ToastContainer />
       <div className="z-50 flex justify-between top-0 w-full bg-[#315E30] px-3 pl-5">
         <div className="">
-          <Link to="/" className="hover:cursor-pointer flex p-3 ml-5">
-            <div className="w-[65px]">
-              <img src={logo} alt="/" />
-            </div>
-            <h1 className="font-bold text-6xl text-white pl-2 flex">
-              MGH
-              {isAdmin ? (
-                <p className="ml-3 font-thin text-4xl mt-4">Admin's page</p>
-              ) : (
-                ""
-              )}
-              {isDoctor ? (
-                <p className="ml-3 font-thin text-4xl mt-4">Doctor's page</p>
-              ) : (
-                ""
-              )}
-            </h1>
-          </Link>
+          {doctor ? (
+            <Link to="/Doctor" className="hover:cursor-pointer flex p-3 ml-5">
+              <div className="w-[65px]">
+                <img src={logo} alt="/" />
+              </div>
+              <h1 className="font-bold text-6xl text-white pl-2 flex">
+                MGH
+                {doctor && (
+                  <p className="ml-3 font-thin text-4xl mt-4">Doctor's page</p>
+                )}
+              </h1>
+            </Link>
+          ) : (
+            <Link to="/" className="hover:cursor-pointer flex p-3 ml-5">
+              <div className="w-[65px]">
+                <img src={logo} alt="/" />
+              </div>
+              <h1 className="font-bold text-6xl text-white pl-2 flex">
+                MGH
+                {admin && (
+                  <p className="ml-3 font-thin text-4xl mt-4">Admin's page</p>
+                )}
+                {doctor && (
+                  <p className="ml-3 font-thin text-4xl mt-4">Doctor's page</p>
+                )}
+              </h1>
+            </Link>
+          )}
         </div>
         <div className="  mt-7 mr-12 text-lg font-semibold">
           {token ? (
@@ -93,13 +112,20 @@ const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
 
       <div className="w-full bg-[#A5DD9D]">
         <div className="flex pl-3">
-          <Link
-            to="/"
-            className="px-4 py-1 font-bold peer/ic relative nav mt-1 hover:mt-1"
-          >
-            <AiFillHome className="peer-hover/ic:shadow-md shadow-sm" />
-          </Link>
-          {isAdmin || isDoctor ? (
+          {doctor ? (
+            ""
+          ) : (
+            <>
+              <Link
+                to="/"
+                className="px-4 py-1 font-bold peer/ic relative nav mt-1 hover:mt-1"
+              >
+                <AiFillHome className="peer-hover/ic:shadow-md shadow-sm" />
+              </Link>
+            </>
+          )}
+
+          {admin || doctor ? (
             ""
           ) : (
             <>
@@ -116,11 +142,8 @@ const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
               </Link>
             </>
           )}
-          {isAdmin ? (
+          {admin && (
             <>
-              <Link to="/Admin" className="px-4 py-1 font-bold relative nav">
-                Admin
-              </Link>
               <Link
                 to="/Confirm_Appointments"
                 className="px-4 py-1 font-bold relative nav"
@@ -140,10 +163,8 @@ const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
                 Feedbacks
               </Link>
             </>
-          ) : (
-            ""
           )}
-          {isDoctor ? (
+          {doctor ? (
             <Link to="/Doctor" className="px-4 py-1 font-bold relative nav">
               Doctor
             </Link>
@@ -151,7 +172,9 @@ const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
             ""
           )}
           {/* Online Services Dropdown */}
-          <div className="absolute opacity-0 max-h-0 flex transition-all duration-300 ease-in-out peer/osDp peer-hover/os:opacity-100 peer-hover/os:max-h-40 hover:max-h-40 hover:opacity-100 flex-col py-3 mt-8 ml-[60px] bg-[#A5DD9D] shadow-[0_10px_30px_-6px_rgba(0,0,0,0.5)] rounded-b-lg">
+          <div className="absolute opacity-0 max-h-0 hidden transition-all duration-300 ease-in-out peer-hover/os:opacity-100
+           peer-hover/os:max-h-40 hover:max-h-40 hover:flex peer-hover/os:flex peer-hover/os:hover:visible hover:opacity-100 flex-col py-3 mt-8 ml-[60px] bg-[#A5DD9D] 
+           shadow-[0_10px_30px_-6px_rgba(0,0,0,0.5)] rounded-b-lg">
             <Link
               to="/Appointment"
               className="transition duration-300 ease-in-out hover:bg-[#4B974A] hover:cursor-pointer mb-2 px-2 w-full"
@@ -165,11 +188,12 @@ const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
               Patient's Feedback Form
             </Link>
           </div>
+
           {/* About Us Dropdown */}
           <div
-            className="absolute opacity-0 max-h-0 flex transition-all duration-300 ease-in-out peer-hover/about:opacity-100 
-                            peer-hover/about:overflow-y-visible peer-hover/about:max-h-40 hover:opacity-100 hover:max-h-40 flex-col py-3 mt-8 ml-[215px]
-                             bg-[#A5DD9D] shadow-[0_10px_30px_-6px_rgba(0,0,0,0.5)] rounded-b-lg"
+            className="absolute opacity-0 max-h-0 hidden transition-all duration-300 ease-in-out peer-hover/about:opacity-100 
+            peer-hover/about:visible hover:flex peer-hover/about:flex peer-hover/about:max-h-40 hover:opacity-100 hover:max-h-40 flex-col py-3 mt-8 ml-[215px]
+          bg-[#A5DD9D] shadow-[0_10px_30px_-6px_rgba(0,0,0,0.5)] rounded-b-lg"
           >
             <Link
               to="/Mission-and-Vision"
@@ -184,6 +208,12 @@ const Navbar = ({ token, setToken, isAdmin, isDoctor, isPatient }) => {
               Hospital Profile
             </Link>
           </div>
+            <Link
+              to="/OnlineConsultationHistory"
+              className="px-4 py-1 font-bold relative nav"
+            >
+              Online Consultation history
+            </Link>
         </div>
       </div>
 

@@ -20,6 +20,7 @@ import AdminFeedback from "./components/Higher user level/Admin/feedback_Admin";
 import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import supabase from "./components/config/Supabase";
+import OnlineConsultationHistory from "./components/Appointment Process/OnlineConsultationHistory";
 
 //import { AuthContext } from "./components/context/AuthContext";
 
@@ -31,24 +32,27 @@ function App() {
   const [isPatient, setIsPatient] = useState(false);
   // const [isPatient, setIsPatient] = useState(false);
   //*initiates after login
-  if (token) {
-    sessionStorage.setItem("token", JSON.stringify(token));
+  useEffect(() => {
+    if (token) {
+      sessionStorage.setItem("token", JSON.stringify(token));
 
-    const fetchAdmin = async () => {
-      const { data } = await supabase.from("profile").select("*").single();
-      //*compare roles if matched
-      if (data.role === "admin") {
-        setIsAdmin(true);
-      }
-      if (data.role === "doctor") {
-        setIsDoctor(true);
-      }
-      if (data.role === "patient") {
-        setIsPatient(true);
-      }
-    };
-    fetchAdmin();
-  }
+      const fetchAdmin = async () => {
+        const { data } = await supabase.from("profile").select("*").single();
+        //*compare roles if matched
+        if (data.role === "admin") {
+          setIsAdmin(true);
+        }
+        if (data.role === "doctor") {
+          setIsDoctor(true);
+        }
+        if (data.role === "patient") {
+          setIsPatient(true);
+        }
+      };
+      fetchAdmin();
+    }
+  }, [token]);
+
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
       let data = JSON.parse(sessionStorage.getItem("token"));
@@ -64,12 +68,16 @@ function App() {
           setToken={setToken}
           isAdmin={isAdmin}
           isDoctor={isDoctor}
+          isPatient={{isPatient}}
         />
       </header>
       <main className="flex-grow">
         <Routes>
           {/* Homepage */}
-          <Route path="/" element={<Home token={token} />} />
+          <Route
+            path="/"
+            element={<Home token={token} isDoctor={isDoctor} />}
+          />
 
           {/* Doctor's side */}
           <Route path="/Doctor" element={<Doctor />} />
@@ -79,7 +87,7 @@ function App() {
           <Route path="/Edit_doctors" element={<EditDoctors />} />
           <Route
             path="/Confirm_Appointments"
-            element={<AppointConfirmation />}
+            element={<AppointConfirmation token={token} />}
           />
           <Route path="/Admin" element={<Admin />} />
 
@@ -98,6 +106,7 @@ function App() {
           <Route path="/Face-to-face/:id" element={<F2f token={token} />} />
           <Route path="/Online/:id" element={<Online token={token} />} />
           <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
+          <Route path="/OnlineConsultationHistory" element={<OnlineConsultationHistory />} />
           {/* </Route> */}
         </Routes>
       </main>

@@ -6,14 +6,16 @@ import "aos/dist/aos.css";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { MdSchedule } from "react-icons/md";
 import DoctorScheds from "./DoctorScheds";
+import { toast } from "react-toastify";
 
-const DoctorInfo = () => {
+const DoctorInfo = ({Doctors}) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
 
   const { id } = useParams();
   const navigate = useNavigate();
+  const [getId, setId] = useState("");
 
   const [Name, setName] = useState("");
   const [Special, setSpecial] = useState("");
@@ -30,6 +32,9 @@ const DoctorInfo = () => {
         .single();
 
       if (error) {
+        toast.error("error", {
+          toastId: "error",
+        });
         navigate("/", { replace: true });
       }
       if (data) {
@@ -38,6 +43,7 @@ const DoctorInfo = () => {
         setSub(data.SubSpecial);
         setHmo(data.Hmo);
         setHonor(data.Honorific);
+        setId(data.id);
       }
     };
     fetchDoctor();
@@ -86,7 +92,7 @@ const DoctorInfo = () => {
         </div>
         <div className="flex justify-end">
           <Link
-            to="/ChooseType"
+            to={`/ChooseType/` + getId}
             className="justify-center align-middle flex w-[40%] text-3xl bg-[#418D3F] rounded-md px-3 py-1 text-white
            font-semibold ring-[#418D3F] ring-[3px] transition duration-75 ease-in hover:bg-[#A5DD9D]
             hover:text-[#267124]"

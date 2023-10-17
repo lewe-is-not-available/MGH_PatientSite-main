@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import { AiOutlineEyeInvisible, AiFillEye } from "react-icons/ai";
 //import useAuth from "../Hooks/useAuth";
-import LoginButton from "./LoginButton";
 import supabase from "../config/Supabase";
 
 const Login = ({ close, openReg, setToken }) => {
