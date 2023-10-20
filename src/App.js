@@ -16,42 +16,76 @@ import AppointConfirmation from "./components/Higher user level/Admin/Appointmen
 import EditDoctors from "./components/Higher user level/Admin/EditDoctors";
 import Doctor from "./components/Higher user level/DoctorPage";
 import AdminFeedback from "./components/Higher user level/Admin/feedback_Admin";
-//import RequireAuth from "./components/RequireAuth";
 import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import supabase from "./components/config/Supabase";
 import OnlineConsultationHistory from "./components/Appointment Process/OnlineConsultationHistory";
-
-//import { AuthContext } from "./components/context/AuthContext";
+import DoctorConsultHistory from "./components/Higher user level/DoctorConsulHistory";
+import PatientDashboard from "./components/patient/Dashboard";
+import Sidebar from "./components/Sidebar";
 
 function App() {
+  //*For passing image data
+  const [imgName, setimgName] = useState([]);
+  const CDNURL =
+    "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
+  //*to show login modal
+  const [Show, FetchShow] = useState(null);
+  const [regOpen, setRegOpen] = useState(false);
+  const Close = () => FetchShow(false);
+  const Open = () => {
+    FetchShow(true);
+    setRegOpen(false);
+  };
+
+  const Openreg = () => {
+    setRegOpen(true);
+    FetchShow(false);
+  };
+  const Closereg = () => setRegOpen(false);
+
   //*For getting token of user
   const [token, setToken] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isDoctor, setIsDoctor] = useState(false);
   const [isPatient, setIsPatient] = useState(false);
-  // const [isPatient, setIsPatient] = useState(false);
+  const [user, setUser] = useState([]);
   //*initiates after login
   useEffect(() => {
     if (token) {
       sessionStorage.setItem("token", JSON.stringify(token));
-
       const fetchAdmin = async () => {
-        const { data } = await supabase.from("profile").select("*").single();
+        const { data, error } = await supabase
+          .from("profile")
+          .select("*")
+          .single();
         //*compare roles if matched
-        if (data.role === "admin") {
-          setIsAdmin(true);
+        if (error) {
+          console.log(error);
         }
-        if (data.role === "doctor") {
-          setIsDoctor(true);
+        if (data && data.role) {
+          if (data.role === "admin") {
+            setIsAdmin(true);
+          }
+          if (data.role === "doctor") {
+            setIsDoctor(true);
+          }
+          if (data.role === "patient") {
+            setIsPatient(true);
+          }
         }
-        if (data.role === "patient") {
-          setIsPatient(true);
+        if (data) {
+          return setUser(data);
         }
       };
       fetchAdmin();
     }
   }, [token]);
+
+  //*Open and closing sidebar
+  const [open, setOpen] = useState(true);
+  const openSide = () => setOpen(true);
+  const closeSide = () => setOpen(false);
 
   useEffect(() => {
     if (sessionStorage.getItem("token")) {
@@ -64,14 +98,53 @@ function App() {
     <div className="min-h-screen w-screen flex flex-col ">
       <header className="sticky w-screen top-0 z-50">
         <Navbar
+          user={user}
+          CDNURL={CDNURL}
+          imgName={imgName}
+          Open={Open}
+          Show={Show}
+          regOpen={regOpen}
+          Close={Close}
+          Openreg={Openreg}
+          Closereg={Closereg}
+          open={open}
+          openSide={openSide}
+          closeSide={closeSide}
           token={token}
           setToken={setToken}
           isAdmin={isAdmin}
           isDoctor={isDoctor}
-          isPatient={{isPatient}}
+          isPatient={isPatient}
         />
+        <div
+          className={`${
+            open
+              ? "transition-transform duration-200 ease-in translate-x-0"
+              : "transition-transform duration-200 ease-out -translate-x-80"
+          }`}
+        >
+          <Sidebar
+            CDNURL={CDNURL}
+            setimgName={setimgName}
+            imgName={imgName}
+            Open={Open}
+            user={user}
+            closeSide={closeSide}
+            className="h-screen left-0 "
+            token={token}
+            isAdmin={isAdmin}
+            isDoctor={isDoctor}
+            isPatient={isPatient}
+          />
+        </div>
       </header>
-      <main className="flex-grow">
+      <main
+        className={`${
+          open
+            ? "flex-grow h-full transition ease-in duration-200 translate-x-[18.7rem] w-[86%]"
+            : "flex-grow h-full transition ease-out duration-200  translate-x-0 w-screen"
+        }`}
+      >
         <Routes>
           {/* Homepage */}
           <Route
@@ -81,6 +154,10 @@ function App() {
 
           {/* Doctor's side */}
           <Route path="/Doctor" element={<Doctor />} />
+          <Route
+            path="/DoctorConsultHistory"
+            element={<DoctorConsultHistory />}
+          />
 
           {/* Admin's side */}
           <Route path="/User_feedbacks" element={<AdminFeedback />} />
@@ -89,10 +166,11 @@ function App() {
             path="/Confirm_Appointments"
             element={<AppointConfirmation token={token} />}
           />
-          <Route path="/Admin" element={<Admin />} />
+          <Route path="/Admin/Dashboard" element={<Admin />} />
 
           {/*patient's side */}
           <Route path="/Mission-and-Vision" element={<MissonVision />} />
+          <Route path="/Patient/Dashboard" element={<PatientDashboard />} />
           <Route path="/Feedback-Form" element={<Feedback token={token} />} />
           <Route path="/Contacts" element={<Contacts token={token} />} />
           <Route path="/Hospital-Profile" element={<Profile />} />
@@ -106,7 +184,10 @@ function App() {
           <Route path="/Face-to-face/:id" element={<F2f token={token} />} />
           <Route path="/Online/:id" element={<Online token={token} />} />
           <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
-          <Route path="/OnlineConsultationHistory" element={<OnlineConsultationHistory />} />
+          <Route
+            path="/OnlineConsultationHistory"
+            element={<OnlineConsultationHistory />}
+          />
           {/* </Route> */}
         </Routes>
       </main>

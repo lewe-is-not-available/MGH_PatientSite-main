@@ -17,9 +17,8 @@ const Admin = () => {
       }
     };
     fetchAdmin();
-      
   return (
-    <div>
+    <div className="h-screen">
       Admin
     </div>
   );

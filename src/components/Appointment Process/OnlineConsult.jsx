@@ -65,7 +65,6 @@ const OnlineConsult = ({ token }) => {
         date: formData.Date,
         time: formData.Time,
         reason: formData.Reason,
-        existing: formData.Existing,
       },
     ]);
     if (error) {

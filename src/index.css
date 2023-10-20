@@ -87,8 +87,8 @@
  box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.3);
 }
 .show {
-  @apply transition-all duration-500 ease-in-out overflow-y-visible max-h-[45rem]
+  @apply transition-all duration-500 ease-in overflow-y-visible max-h-[45rem]
 }
 .hide{
-  @apply transition-all opacity-0 duration-500 ease-in-out overflow-y-hidden max-h-0
+  @apply transition-all opacity-0 duration-500 ease-out overflow-y-hidden max-h-0
 }

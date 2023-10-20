@@ -55,7 +55,8 @@ const Appointment = ({ token, isPatient }) => {
 
   //DEFAULT DATA
   useEffect(() => {
-    const fetchDoc = async () => {
+    if(token){
+      const fetchDoc = async () => {
       const { data, error } = await supabase.from("Dr information").select("*");
 
       if (error) {
@@ -67,7 +68,9 @@ const Appointment = ({ token, isPatient }) => {
       }
     };
     fetchDoc();
-  }, []);
+    }
+    
+  }, [token]);
 
   // RESET FUNCTION
   const handleReset = async () => {
@@ -128,7 +131,7 @@ const Appointment = ({ token, isPatient }) => {
   }, []);
 
   return (
-    <div className="back items-center flex flex-col">
+    <div className={`${token ? "back items-center flex flex-col":"back items-center flex flex-col h-screen"}`}>
       <div
         className="hero2 p-28 py-28 flex flex-col items-center text-white space-y-14 w-full"
         data-aos="fade-up"
@@ -151,8 +154,8 @@ const Appointment = ({ token, isPatient }) => {
         {isPatient ? (
           ""
         ) : (
-          <div className="flex z-30 w-screen h-screen fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
-            <div className=" absolute abs px-10 py-8 mt-56 bg-white">
+          <div className="flex z-50 w-screen h-screen fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
+            <div className="absolute abs px-10 py-8 mt-56 bg-white">
               You need to Sign in first
             </div>
           </div>

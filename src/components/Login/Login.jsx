@@ -52,9 +52,6 @@ const Login = ({ close, openReg, setToken }) => {
       setToken(data);
       setSuccess(true);
 
-      //*Navigating back to
-      //navigate('/')
-
       //* error handling
     } catch (error) {
       setErr(error + "");
@@ -66,7 +63,7 @@ const Login = ({ close, openReg, setToken }) => {
   const isOpen = visible ? "text" : "password";
 
   return (
-    <div className="flex justify-center backdrop-blur-sm bg-slate-700 fixed inset-0 bg-opacity-30">
+    <div className="flex justify-center backdrop-blur-sm bg-slate-700 fixed z-50 inset-0 bg-opacity-30">
       <>
         <div className="absolute abs bg-white mt-40">
           <div className="mb-8 mt-4 mr-4 flex justify-end">

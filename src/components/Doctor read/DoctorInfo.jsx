@@ -8,7 +8,7 @@ import { MdSchedule } from "react-icons/md";
 import DoctorScheds from "./DoctorScheds";
 import { toast } from "react-toastify";
 
-const DoctorInfo = ({Doctors}) => {
+const DoctorInfo = ({ Doctors }) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);

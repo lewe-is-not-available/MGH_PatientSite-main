@@ -1,13 +1,13 @@
 import React from "react";
 
 const Online = ({ ol }) => {
+  //console.log(ol.online_id);
   return (
     <tr
-      key={ol.id}
+      key={ol.online_id}
       className="text-base bg-white border-b dark:bg-gray-800 dark:border-gray-700"
     >
       <th
-        key={ol.id}
         scope="row"
         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
       >

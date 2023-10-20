@@ -18,7 +18,9 @@ const AppointmentConfirmation = () => {
         });
         console.error("Failed to fetch", error.message);
       } else {
-        setOnline(data);
+        if (JSON.stringify(data) !== JSON.stringify(online)) {
+          setOnline(data);
+        }
       }
     };
 
@@ -34,7 +36,7 @@ const AppointmentConfirmation = () => {
       )
       .subscribe();
     fetchOnline();
-  }, []);
+  }, [online]);
 
   //*For Face to face lists
   const [F2F, setF2f] = useState("");
@@ -84,12 +86,12 @@ const AppointmentConfirmation = () => {
               <th scope="col" className="px-6 py-3">
                 Existing
               </th>
-              <th scope="col" className="px-6 py-3"></th>
+              <th scope="col" className="px-6 py-3">
+                Confirm
+              </th>
             </tr>
           </thead>
-          <tbody>
-            {online && online.map((ol) => <Online key={ol.id} ol={ol} />)}
-          </tbody>
+          <tbody>{online && online.map((ol) => ol.online_id ? <Online key={ol.online_id} ol={ol} /> : null )}</tbody>
         </table>
       </div>
       <div className="overflow-x-auto flex flex-col content-center">
@@ -123,8 +125,7 @@ const AppointmentConfirmation = () => {
               <th scope="col" className="px-6 py-3"></th>
             </tr>
           </thead>
-          <tbody>{F2F && F2F.map((f2) => <F2f key={f2.id} f2={f2}/>)}
-          </tbody>
+          <tbody>{F2F && F2F.map((f2) => (f2.f2f_id ? <F2f key={f2.id} f2={f2} /> : null))}</tbody>
         </table>
       </div>
     </div>
