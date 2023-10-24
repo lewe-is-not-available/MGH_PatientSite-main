@@ -2,7 +2,7 @@ import React from 'react'
 
 const OnlineConsultationHistory = () => {
   return (
-    <div>OnlineConsultationHistory</div>
+    <div className='h-screen'>OnlineConsultationHistory</div>
   )
 }
 

@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import supabase from "./config/Supabase";
 import copy from "copy-to-clipboard";
-import doc from "./images/doc.jpg"
-import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
 import { IoClose } from "react-icons/io5";
 import { Link } from "react-router-dom";
@@ -10,6 +8,7 @@ import { AiOutlineHome, AiFillHome } from "react-icons/ai";
 import { FiChevronDown } from "react-icons/fi";
 import { FaUserDoctor } from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
+import { v4 as uuidv4 } from "uuid";
 import {
   BsInfoCircle,
   BsInfoCircleFill,
@@ -31,9 +30,22 @@ import {
   MdOutlineMailOutline,
 } from "react-icons/md";
 
-
-
-const Sidebar = ({ token, isAdmin, isDoctor, isPatient, closeSide, user, imgName, setimgName, CDNURL }) => {
+const Sidebar = ({
+  token,
+  isAdmin,
+  isDoctor,
+  isPatient,
+  closeSide,
+  user,
+  imgName,
+  CDNURL,
+  isImgEmpty,
+  setImgEmpty,
+  openProfileUpload,
+  setimgName,
+  getImages,
+  isUploaded
+}) => {
   //*Authentication by roles
   const [doctor, setDoctor] = useState(false);
   const [admin, setAdmin] = useState(false);
@@ -74,85 +86,64 @@ const Sidebar = ({ token, isAdmin, isDoctor, isPatient, closeSide, user, imgName
   };
 
   //*Getting image from storage
-  
-  async function getImages() {
-    const { data, error } = await supabase.storage
-      .from("images")
-      .list(user.id + "/", {
-        limit: 1,
-        offset: 0,
-        sortBy: { column: "name", order: "asc" },
-      });
-    if (data[0]) {
-      setimgName(data[0].name);
-    } else {
-      toast.error(error, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-    }
-  }
+  // eslint-disable-next-line
   useEffect(() => {
     if (user) {
+      async function getImages() {
+        try {
+          const { data, error } = await supabase.storage
+            .from("images")
+            .list(user.id + "/", {
+              limit: 1,
+              offset: 0,
+              sortBy: { column: "created_at", order: "asc" },
+            });
+          if (data[0]) {
+            setImgEmpty(true)
+            setimgName(data[0].name);
+          } else {
+            setImgEmpty(false)
+            toast.error(error, {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
       getImages();
     }
-  }, [user, getImages]);
+  }, [user, getImages, isImgEmpty, imgName, isUploaded]);
 
-  //*Updating image
-  async function updateImage(e) {
-    const File = e.target.files[0];
-    if (!File) {
-      return;
-    }
-    console.log(File);
-    const imageName = user.id + "/" + imgName;
-    const { data, error } = await supabase.storage
-      .from("images")
-      .update(imageName, File, {
-        cacheControl: "3600",
-        upsert: true,
-      });
-    if (error) {
-      console.log(error);
-    }
-    if (data[0]) {
-      setimgName(data[0].name);
-    }
-  }
-  //*Image uploading
-  async function uploadImage(e) {
-    let file = e.target.files[0];
-
-    const { data, error } = await supabase.storage
-      .from("images")
-      .upload(user.id + "/" + uuidv4(), file);
-
-    if (data) {
-      getImages();
-    } else {
-      console.log(error);
-    }
-  }
-  //* deleting image
+  //*deleting image
   async function deleteImage(imageName) {
     const { error } = await supabase.storage
       .from("images")
       .remove([user.id + "/" + imageName]);
-
-    if (error) {
-      alert(error);
-    } else {
-      getImages();
-    }
+    // if (error) {
+    //   alert(error);
+    // } else {
+    //   getImages();
+    // }
   }
+  // useEffect(() => {
+  //   if (imageData) {
+  //     setImgEmpty(true);
+  //   } 
+  //   if(!imageData) {
+  //     setImgEmpty(false);
+  //   }
+  // }, [imageData, isImgEmpty]);
+
   return (
-    <div className=" w-[15.5%] fixed">
+    <div className="w-[18.8rem] fixed">
       <div className="bg-[#f2fff0ee] pt-1 h-screen shadow-2xl">
         {/* close button */}
         <div className="flex justify-end mx-4 mt-4 mb-0">
@@ -165,17 +156,24 @@ const Sidebar = ({ token, isAdmin, isDoctor, isPatient, closeSide, user, imgName
         {token ? (
           <>
             <div className="px-10 mx-5 rounded-lg flex flex-col items-center space-y-1">
+              <div 
+              onClick={openProfileUpload}
+              className="group/pic cursor-pointer transition duration-100 hover:bg-slate-950 p-[5.1rem] mt-1 hover:bg-opacity-60 rounded-full fixed">
+                <p
+                  className="absolute group-hover/pic:visible transition duration-100 invisible -ml-14 -mt-1 text-white text-lg text-center"
+                >
+                  Upload Image
+                </p>
+              </div>
               <img
-                className="object-cover rounded-full w-[10rem] h-[10rem] "
-                src={CDNURL + user.id + "/" + imgName}
-                alt="No image"
+                className="object-cover rounded-full w-[10rem] h-[10rem]"
+                src={`${
+                  isImgEmpty
+                    ? CDNURL + user.id + "/" + imgName
+                    : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
+                }`}
+                alt="/"
               />
-              <input
-                type="file"
-                accept="image/png, image/jpeg"
-                onChange={(e) => updateImage(e)}
-              />
-
               {/* truncate w-full text-sm */}
               <p className="uppercase text-lg">
                 {user.last_name} {user.first_name}
@@ -353,10 +351,13 @@ const Sidebar = ({ token, isAdmin, isDoctor, isPatient, closeSide, user, imgName
 
           {/* Patient */}
           {patient && (
-            <li className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex">
+            <Link
+              to="/Online_Consultation_History"
+              className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+            >
               <GoHistory className="text-2xl mr-2" />
               <p>Online Consultation history</p>
-            </li>
+            </Link>
           )}
 
           {/* Doctor */}

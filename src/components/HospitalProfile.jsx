@@ -2,7 +2,7 @@ import React from 'react'
 
 const HospitalProfile = () => {
   return (
-    <div>HospitalProfile</div>
+    <div className='h-screen'>HospitalProfile</div>
   )
 }
 

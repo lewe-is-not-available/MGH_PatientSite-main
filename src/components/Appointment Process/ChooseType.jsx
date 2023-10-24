@@ -41,7 +41,7 @@ const OnlineOrF2f = () => {
   }, []);
 
   return (
-    <div>
+    <div className="h-screen">
       <div
         className="hero2 p-28 py-28 flex flex-col items-center text-white space-y-14 w-full"
         data-aos="fade-up"
@@ -53,7 +53,7 @@ const OnlineOrF2f = () => {
           Let us assist your appointment either online or onsite.
         </p>
       </div>
-      <div className="back text-center py-5">
+      <div className="back text-center py-5 h-[62%]">
         <p className="text-5xl font-semibold text-[#315E30] mt-10 mb-24">
           Choose an appintment type
         </p>

@@ -23,27 +23,9 @@ import OnlineConsultationHistory from "./components/Appointment Process/OnlineCo
 import DoctorConsultHistory from "./components/Higher user level/DoctorConsulHistory";
 import PatientDashboard from "./components/patient/Dashboard";
 import Sidebar from "./components/Sidebar";
+import { toast } from "react-toastify";
 
 function App() {
-  //*For passing image data
-  const [imgName, setimgName] = useState([]);
-  const CDNURL =
-    "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
-  //*to show login modal
-  const [Show, FetchShow] = useState(null);
-  const [regOpen, setRegOpen] = useState(false);
-  const Close = () => FetchShow(false);
-  const Open = () => {
-    FetchShow(true);
-    setRegOpen(false);
-  };
-
-  const Openreg = () => {
-    setRegOpen(true);
-    FetchShow(false);
-  };
-  const Closereg = () => setRegOpen(false);
-
   //*For getting token of user
   const [token, setToken] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -82,6 +64,35 @@ function App() {
     }
   }, [token]);
 
+  //*For passing image data
+  const [imgName, setimgName] = useState([]);
+  const [isImgEmpty, setImgEmpty] = useState(null);
+  const [isUploaded, setUploaded] = useState(false);
+  const CDNURL =
+    "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
+  const ALTIMG =
+    "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png";
+
+  //*to show login modal
+  const [Show, FetchShow] = useState(null);
+  const [regOpen, setRegOpen] = useState(false);
+  const Close = () => FetchShow(false);
+  const Open = () => {
+    FetchShow(true);
+    setRegOpen(false);
+  };
+
+  const Openreg = () => {
+    setRegOpen(true);
+    FetchShow(false);
+  };
+  const Closereg = () => setRegOpen(false);
+
+  //*To show modal for updating profile picture
+  const [isProfileOpen, setIsProfile] = useState(false);
+  const openProfileUpload = () => setIsProfile(true);
+  const closeProfileUpload = () => setIsProfile(false);
+
   //*Open and closing sidebar
   const [open, setOpen] = useState(true);
   const openSide = () => setOpen(true);
@@ -98,6 +109,11 @@ function App() {
     <div className="min-h-screen w-screen flex flex-col ">
       <header className="sticky w-screen top-0 z-50">
         <Navbar
+          setUploaded={setUploaded}
+          closeProfileUpload={closeProfileUpload}
+          isProfileOpen={isProfileOpen}
+          isImgEmpty={isImgEmpty}
+          setimgName={setimgName}
           user={user}
           CDNURL={CDNURL}
           imgName={imgName}
@@ -124,6 +140,11 @@ function App() {
           }`}
         >
           <Sidebar
+            isUploaded={isUploaded}
+            openProfileUpload={openProfileUpload}
+            isImgEmpty={isImgEmpty}
+            setImgEmpty={setImgEmpty}
+            ALTIMG={ALTIMG}
             CDNURL={CDNURL}
             setimgName={setimgName}
             imgName={imgName}
@@ -185,7 +206,7 @@ function App() {
           <Route path="/Online/:id" element={<Online token={token} />} />
           <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
           <Route
-            path="/OnlineConsultationHistory"
+            path="/Online_Consultation_History"
             element={<OnlineConsultationHistory />}
           />
           {/* </Route> */}

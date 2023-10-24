@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import logo from "./images/MGHlogo.png";
-import { AiFillCaretDown } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { AiFillHome } from "react-icons/ai";
 import Login from "./Login/Login";
 import SignIn from "./Login/SigninButton";
 import Reg from "./Login/Signup";
@@ -11,6 +9,7 @@ import supabase from "./config/Supabase";
 import { ToastContainer } from "react-toastify";
 import { BiMenu } from "react-icons/bi";
 import "react-toastify/dist/ReactToastify.css";
+import DragandDrop from "./Drag_and_Drop";
 
 const Navbar = ({
   token,
@@ -29,18 +28,18 @@ const Navbar = ({
   FetchShow,
   imgName,
   CDNURL,
-  user
+  user,
+  isImgEmpty,
+  closeProfileUpload,
+  isProfileOpen,
+  setUploaded
 }) => {
   //*Function to show/hide registration and login
   const [doctor, setDoctor] = useState(false);
   const [admin, setAdmin] = useState(false);
-  const [patient, setPatient] = useState(false);
 
   useEffect(() => {
     if (token) {
-      if (isPatient) {
-        setPatient(true);
-      }
       if (isDoctor) {
         setDoctor(true);
       }
@@ -120,11 +119,20 @@ const Navbar = ({
           {token ? (
             <div className="flex space-x-4 -mt-2 items-center">
               <p className="text-white text-right font-medium uppercase">
-                {token.user.user_metadata.username}<br/><span className="text-sm font-light lowercase">{user.email}</span></p>
-                <img
+                {token.user.user_metadata.username}
+                <br />
+                <span className="text-sm font-light lowercase">
+                  {user.email}
+                </span>
+              </p>
+              <img
                 className="object-cover rounded-full w-[3rem] h-[3rem] "
-                src={CDNURL + user.id + "/" + imgName}
-                alt="No image"
+                src={`${
+                  isImgEmpty
+                    ? CDNURL + user.id + "/" + imgName
+                    : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
+                }`}
+                alt="https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
               />
               <button
                 onClick={handleLogout}
@@ -149,6 +157,15 @@ const Navbar = ({
           token={token}
           setToken={setToken}
         />
+      </div>
+      <div className={`${isProfileOpen ? "visible":"hidden"}`}>
+        <DragandDrop
+        isImgEmpty={isImgEmpty}
+        setUploaded={setUploaded}
+        user={user}
+        imgName={imgName}
+        isProfileOpen={isProfileOpen}
+        closeProfileUpload={closeProfileUpload} />
       </div>
     </div>
   );

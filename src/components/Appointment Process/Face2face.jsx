@@ -122,7 +122,7 @@ const Face2face = ({ token }) => {
     Aos.init({ duration: 1000 });
   }, []);
   return (
-    <div className="back p-8 flex justify-between">
+    <div className="back p-8 flex justify-between h-screen">
       <>
         <div
           data-aos="fade-up"

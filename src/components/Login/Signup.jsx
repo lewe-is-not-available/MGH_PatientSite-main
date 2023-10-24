@@ -5,7 +5,6 @@ import { ToastContainer, toast } from "react-toastify";
 
 const Signup = ({ Closereg, open }) => {
   //TODO: make an OTP vrification for email
-
   //*Open sign in modal and prevent form submit
   function handleSignIn(e) {
     e.preventDefault();
