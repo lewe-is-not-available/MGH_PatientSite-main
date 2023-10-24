@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/MGHsite/static/css/main.5f46d167.css",
-    "main.js": "/MGHsite/static/js/main.fa06ff19.js",
+    "main.js": "/MGHsite/static/js/main.e261c896.js",
     "static/js/200.e5b37ea2.chunk.js": "/MGHsite/static/js/200.e5b37ea2.chunk.js",
     "static/js/539.490cffac.chunk.js": "/MGHsite/static/js/539.490cffac.chunk.js",
     "static/media/hero4.png": "/MGHsite/static/media/hero4.fc0bd88174d93bfe02dd.png",
@@ -15,12 +15,12 @@
     "static/media/MGHlogo.png": "/MGHsite/static/media/MGHlogo.2214a25b1841baf7e49d.png",
     "index.html": "/MGHsite/index.html",
     "main.5f46d167.css.map": "/MGHsite/static/css/main.5f46d167.css.map",
-    "main.fa06ff19.js.map": "/MGHsite/static/js/main.fa06ff19.js.map",
+    "main.e261c896.js.map": "/MGHsite/static/js/main.e261c896.js.map",
     "200.e5b37ea2.chunk.js.map": "/MGHsite/static/js/200.e5b37ea2.chunk.js.map",
     "539.490cffac.chunk.js.map": "/MGHsite/static/js/539.490cffac.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.5f46d167.css",
-    "static/js/main.fa06ff19.js"
+    "static/js/main.e261c896.js"
   ]
 }
