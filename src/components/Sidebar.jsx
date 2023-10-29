@@ -356,7 +356,7 @@ const Sidebar = ({
               className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
             >
               <GoHistory className="text-2xl mr-2" />
-              <p>Online Consultation history</p>
+              <p>Online Consultations</p>
             </Link>
           )}
 
