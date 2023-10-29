@@ -23,6 +23,9 @@ import OnlineConsultationHistory from "./components/Appointment Process/OnlineCo
 import DoctorConsultHistory from "./components/Higher user level/DoctorConsulHistory";
 import PatientDashboard from "./components/patient/Dashboard";
 import Sidebar from "./components/Sidebar";
+import OnlineDash from "./components/patient/OnlineDash";
+import F2fDash from "./components/patient/F2fDash";
+import Status from "./components/patient/Appointment Process/Status";
 import { toast } from "react-toastify";
 
 function App() {
@@ -195,6 +198,9 @@ function App() {
           <Route path="/Feedback-Form" element={<Feedback token={token} />} />
           <Route path="/Contacts" element={<Contacts token={token} />} />
           <Route path="/Hospital-Profile" element={<Profile />} />
+          <Route path="/Appointment/Online" element={<OnlineDash />} />
+          <Route path="/Appointment/F2f" element={<F2fDash />} />
+          <Route path="/Appointment/Status" element={<Status />} />
           <Route path="/:id" element={<DocInfo />} />
 
           {/* Appointment procedures */}

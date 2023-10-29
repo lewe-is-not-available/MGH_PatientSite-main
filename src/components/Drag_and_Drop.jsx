@@ -35,29 +35,6 @@ const Drag_and_Drop = ({ closeProfileUpload, user, imgName, setimgName,isProfile
     setImage(null);
     setFile(null);
   };
-  //*Updating image
-  async function updateImage() {
-    if (!File) {
-      return;
-    }
-    const imageName = user.id + "/" + imgName;
-    console.log(imageName);
-    const { data, error } = await supabase.storage
-      .from("images")
-      .update(imageName, File[0], {
-        cacheControl: "3600",
-        upsert: true,
-      });
-    if (error) {
-      console.log(error);
-    }
-    if (data[0]) {
-      setUploaded(true)
-      setImage(null);
-      setFile(null);
-      setimgName(data[0].name);
-    }
-  }
   //*Image uploading
   async function uploadImage() {
     closeProfileUpload()

@@ -8,7 +8,7 @@ import { AiOutlineHome, AiFillHome } from "react-icons/ai";
 import { FiChevronDown } from "react-icons/fi";
 import { FaUserDoctor } from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
-import { v4 as uuidv4 } from "uuid";
+import { GrStatusGood, GrStatusGoodSmall } from "react-icons/gr";
 import {
   BsInfoCircle,
   BsInfoCircleFill,
@@ -44,7 +44,7 @@ const Sidebar = ({
   openProfileUpload,
   setimgName,
   getImages,
-  isUploaded
+  isUploaded,
 }) => {
   //*Authentication by roles
   const [doctor, setDoctor] = useState(false);
@@ -99,10 +99,10 @@ const Sidebar = ({
               sortBy: { column: "created_at", order: "asc" },
             });
           if (data[0]) {
-            setImgEmpty(true)
+            setImgEmpty(true);
             setimgName(data[0].name);
           } else {
-            setImgEmpty(false)
+            setImgEmpty(false);
             toast.error(error, {
               position: "top-right",
               autoClose: 5000,
@@ -136,7 +136,7 @@ const Sidebar = ({
   // useEffect(() => {
   //   if (imageData) {
   //     setImgEmpty(true);
-  //   } 
+  //   }
   //   if(!imageData) {
   //     setImgEmpty(false);
   //   }
@@ -156,12 +156,11 @@ const Sidebar = ({
         {token ? (
           <>
             <div className="px-10 mx-5 rounded-lg flex flex-col items-center space-y-1">
-              <div 
-              onClick={openProfileUpload}
-              className="group/pic cursor-pointer transition duration-100 hover:bg-slate-950 p-[5.1rem] mt-1 hover:bg-opacity-60 rounded-full fixed">
-                <p
-                  className="absolute group-hover/pic:visible transition duration-100 invisible -ml-14 -mt-1 text-white text-lg text-center"
-                >
+              <div
+                onClick={openProfileUpload}
+                className="group/pic cursor-pointer transition duration-100 hover:bg-slate-950 p-[5.1rem] mt-1 hover:bg-opacity-60 rounded-full fixed"
+              >
+                <p className="absolute group-hover/pic:visible transition duration-100 invisible -ml-14 -mt-1 text-white text-lg text-center">
                   Upload Image
                 </p>
               </div>
@@ -351,13 +350,23 @@ const Sidebar = ({
 
           {/* Patient */}
           {patient && (
-            <Link
-              to="/Online_Consultation_History"
-              className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
-            >
-              <GoHistory className="text-2xl mr-2" />
-              <p>Online Consultations</p>
-            </Link>
+            <>
+              <Link
+                to="/Online_Consultation_History"
+                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+              >
+                <GoHistory className="text-2xl mr-2" />
+                <p>Online Consultations</p>
+              </Link>
+              <Link
+                to="/Appointment/Status"
+                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+              >
+                <GrStatusGood className="text-2xl mr-2 group-hover/os:invisible" />
+                <GrStatusGoodSmall className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
+                <p className="-translate-x-8">Appointment Status</p>
+              </Link>
+            </>
           )}
 
           {/* Doctor */}

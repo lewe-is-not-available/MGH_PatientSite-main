@@ -53,6 +53,11 @@
   background-size: cover;
   background-repeat: no-repeat;
 }
+.hero5 {
+  background-image: url('./components/images/hero5.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
 /* .os1 {
     scale: 0;
 } */
@@ -91,4 +96,13 @@
 }
 .hide{
   @apply transition-all opacity-0 duration-500 ease-out overflow-y-hidden max-h-0
+}
+.boxes{
+  @apply abs py-9 px-6 w-[17rem] cursor-default border-[1px] border-green-300 text-sm text-center flex flex-col items-center bg-white rounded-xl transition duration-200 hover:shadow-none
+}
+.imgDash{
+  @apply  mb-7 w-[13rem] h-[13rem] bg-[#a7eb9c85] rounded-2xl
+}
+.titleText{
+  @apply text-white hover:bg-opacity-80 hover:border-green-100 border-2 border-green-600 transition duration-100 font-semibold text-lg mb-3 text-center w-[110%] bg-green-600
 }
