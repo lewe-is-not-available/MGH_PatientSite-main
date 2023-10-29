@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import doc from "../images/doc.jpg";
+import doc from "../../images/doc.jpg";
 import Aos from "aos";
 import "aos/dist/aos.css";
-import supabase from "../config/Supabase";
+import supabase from "../../config/Supabase";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";

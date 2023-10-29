@@ -9,8 +9,8 @@ import Profile from "./components/HospitalProfile";
 import Feedback from "./components/Feedback";
 import DocInfo from "./components/Doctor read/DoctorInfo";
 import OnlineOrF2f from "./components/Appointment Process/ChooseType";
-import F2f from "./components/Appointment Process/Face2face";
-import Online from "./components/Appointment Process/OnlineConsult";
+import F2f from "./components/patient/Appointment Process/Face2face";
+import Online from "./components/patient/Appointment Process/OnlineConsult";
 import Admin from "./components/Higher user level/Admin/AdminDashboard";
 import AppointConfirmation from "./components/Higher user level/Admin/AppointmentConfirmation";
 import EditDoctors from "./components/Higher user level/Admin/EditDoctors";
@@ -186,11 +186,6 @@ function App() {
           {/* Admin's side */}
           <Route path="/User_feedbacks" element={<AdminFeedback />} />
           <Route path="/Edit_doctors" element={<EditDoctors />} />
-          <Route
-            path="/Confirm_Appointments"
-            element={<AppointConfirmation token={token} />}
-          />
-          <Route path="/Admin/Dashboard" element={<Admin />} />
 
           {/*patient's side */}
           <Route path="/Mission-and-Vision" element={<MissonVision />} />
@@ -198,23 +193,39 @@ function App() {
           <Route path="/Feedback-Form" element={<Feedback token={token} />} />
           <Route path="/Contacts" element={<Contacts token={token} />} />
           <Route path="/Hospital-Profile" element={<Profile />} />
-          <Route path="/Appointment/Online" element={<OnlineDash />} />
-          <Route path="/Appointment/F2f" element={<F2fDash />} />
-          <Route path="/Appointment/Status" element={<Status />} />
-          <Route path="/:id" element={<DocInfo />} />
 
           {/* Appointment procedures */}
           <Route
             path={"/Appointment"}
             element={<Appointment token={token} isPatient={isPatient} />}
           />
-          <Route path="/Face-to-face/:id" element={<F2f token={token} />} />
-          <Route path="/Online/:id" element={<Online token={token} />} />
-          <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
-          <Route
-            path="/Online_Consultation_History"
-            element={<OnlineConsultationHistory />}
-          />
+          {token && (
+            <>
+              <Route path="/Face-to-face/:id" element={<F2f token={token} />} />
+              <Route path="/Online/:id" element={<Online token={token} />} />
+              <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
+              <Route
+                path="/Online_Consultation_History"
+                element={<OnlineConsultationHistory />}
+              />
+              <Route
+                path="/Appointment/Online"
+                element={<OnlineDash token={token} isPatient={isPatient} />}
+              />
+              <Route
+                path="/Appointment/F2f"
+                element={<F2fDash token={token} isPatient={isPatient} />}
+              />
+              <Route path="/Appointment/Status" element={<Status />} />
+              <Route path="/:id" element={<DocInfo />} />
+              <Route
+                path="/Confirm_Appointments"
+                element={<AppointConfirmation token={token} />}
+              />
+              <Route path="/Admin/Dashboard" element={<Admin />} />
+            </>
+          )}
+
           {/* </Route> */}
         </Routes>
       </main>
