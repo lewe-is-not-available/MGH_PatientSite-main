@@ -1,0 +1,44 @@
+import React, { useEffect, useRef } from "react";
+
+const Consent = ({ setRead }) => {
+  let TermsRef = useRef();
+  useEffect(() => {
+    let handler = (e) => {
+      if (!TermsRef.current.contains(e.target)) {
+        setRead(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  }, []);
+  return (
+    <div className="absolute w-[70%] bg-white abs p-4 font-thin mt-[36.6rem] ml-5 rounded-lg">
+      <div ref={TermsRef} className="overflow-y-scroll h-72">
+        "I, [Your Name], hereby confirm that I am booking this appointment on
+        behalf of [Patient's Full Name] and have obtained their express consent
+        to do so. I understand and agree to the following: I have the full
+        authority and permission from the patient to schedule, manage, and
+        receive information about their medical appointment. I am responsible
+        for providing accurate information regarding the patient's personal
+        details, medical history (if applicable), and contact information. I
+        understand that all information provided will be used for the sole
+        purpose of scheduling and managing the appointment, as well as for
+        communication related to this appointment. Any changes to this
+        appointment, including rescheduling or cancellation, will be
+        communicated to the patient and require their approval. I acknowledge
+        that the patient's medical information, including any records related to
+        this appointment, will be handled in accordance with applicable
+        healthcare data privacy regulations. I am aware that I may be contacted
+        using the contact information I provide for appointment-related
+        notifications, confirmations, reminders, or changes. By checking this
+        box and completing the appointment booking process, I confirm my
+        understanding and agreement to the terms outlined above and the receipt
+        of proper consent from the patient, [Patient's Full Name]."
+      </div>
+    </div>
+  );
+};
+
+export default Consent;

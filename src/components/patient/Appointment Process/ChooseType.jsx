@@ -6,7 +6,7 @@ import { HiOutlineStatusOnline } from "react-icons/hi";
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import supabase from "../config/Supabase";
+import supabase from "../../config/Supabase";
 import { useParams } from "react-router-dom";
 
 const OnlineOrF2f = () => {

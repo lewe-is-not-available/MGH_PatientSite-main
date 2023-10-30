@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import supabase from "../config/Supabase";
-import DocUniq from "../Doctor read/Doctors";
-import Specials from "../Specials.json";
-import SubSpecial from "../SubSpecial.json";
+import supabase from "../../config/Supabase";
+import DocUniq from "../../Doctor read/Doctors";
+import Specials from "../../Specials.json";
+import SubSpecial from "../../SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
