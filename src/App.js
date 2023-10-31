@@ -97,7 +97,7 @@ function App() {
   const closeProfileUpload = () => setIsProfile(false);
 
   //*Open and closing sidebar
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const openSide = () => setOpen(true);
   const closeSide = () => setOpen(false);
 

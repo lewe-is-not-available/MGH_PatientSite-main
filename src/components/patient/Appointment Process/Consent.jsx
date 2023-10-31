@@ -1,6 +1,10 @@
 import React, { useEffect, useRef } from "react";
 
 const Consent = ({ setRead }) => {
+  
+
+
+  //*Closes modal when clicked outside
   let TermsRef = useRef();
   useEffect(() => {
     let handler = (e) => {
@@ -8,6 +12,7 @@ const Consent = ({ setRead }) => {
         setRead(false);
       }
     };
+
     document.addEventListener("mousedown", handler);
     return () => {
       document.removeEventListener("mousedown", handler);

@@ -114,33 +114,15 @@ const Sidebar = ({
               theme: "colored",
             });
           }
-        } catch (error) {
+        } 
+          catch (error) {
+          setImgEmpty(false);
           console.log(error);
         }
       }
       getImages();
     }
   }, [user, getImages, isImgEmpty, imgName, isUploaded]);
-
-  //*deleting image
-  async function deleteImage(imageName) {
-    const { error } = await supabase.storage
-      .from("images")
-      .remove([user.id + "/" + imageName]);
-    // if (error) {
-    //   alert(error);
-    // } else {
-    //   getImages();
-    // }
-  }
-  // useEffect(() => {
-  //   if (imageData) {
-  //     setImgEmpty(true);
-  //   }
-  //   if(!imageData) {
-  //     setImgEmpty(false);
-  //   }
-  // }, [imageData, isImgEmpty]);
 
   return (
     <div className="w-[18.8rem] fixed">

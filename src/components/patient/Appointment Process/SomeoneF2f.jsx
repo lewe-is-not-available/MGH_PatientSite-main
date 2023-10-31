@@ -13,8 +13,39 @@ const SomeoneF2f = ({
   setCondition,
   handleOther,
   newItems,
-  handleRemoveOther
+  handleRemoveOther,
+  token,
+  setFormData
 }) => {
+  //*If Relation is Other
+  const [isOtherRelation, setOtherRelation] = useState(false);
+  const [otherSelect, setOtherSelect] = useState("")
+  
+  const handleOtherInput = (e) => {
+    setFormData((prevFormData) => {
+      return {
+        ...prevFormData,
+        Relation: e.target.value,
+      };
+    });
+  }
+  const handleOtherSelect = (e) => {
+    setOtherSelect(e.target.value)
+    setFormData((prevFormData) => {
+      return {
+        ...prevFormData,
+        Relation: e.target.value,
+      };
+    });
+  }
+  useEffect(() => {
+    if (otherSelect === "Other:") {
+      setOtherRelation(true);
+    } else {
+      setOtherRelation(false);
+    }
+  }, [formData, otherSelect]);
+
   //*Show terms and condition
   const [isRead, setRead] = useState(false);
 
@@ -53,6 +84,7 @@ const SomeoneF2f = ({
         <input
           name="Lname"
           autoComplete="on"
+          onChange={handleChange}
           required
           className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full"
         />
@@ -62,7 +94,7 @@ const SomeoneF2f = ({
         <input
           name="Mname"
           autoComplete="on"
-          value={formData.Mname}
+          onChange={handleChange}
           className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full"
         />
       </p>
@@ -75,7 +107,7 @@ const SomeoneF2f = ({
         <input
           name="Number"
           autoComplete="on"
-          value={formData.Number}
+          defaultValue={formData.Number}
           type="number"
           onChange={handleChange}
           required
@@ -89,7 +121,7 @@ const SomeoneF2f = ({
         <input
           name="Gmail"
           autoComplete="on"
-          value={formData.Gmail}
+          defaultValue={formData.Gmail}
           type="text"
           onChange={handleChange}
           required
@@ -98,13 +130,34 @@ const SomeoneF2f = ({
       </p>
       <p>
         Relation with patient: <br />
-        <input
-          name="Gmail"
+        <select
+          name="Relation"
           autoComplete="on"
-          value={formData.Gmail}
+          onChange={handleOtherSelect}
+          placeholder="Type your relation if other"
           required
           className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full"
-        />
+        >
+          <option></option>
+          <option>Parent</option>
+          <option>Guardian</option>
+          <option>Sibling</option>
+          <option>Caretaker</option>
+          <option>Friend</option>
+          <option>Partner</option>
+          <option>Hudband/Wife</option>
+          <option>Other:</option>
+        </select>
+        {isOtherRelation && 
+          <input
+          autoComplete="on"
+          type="text"
+          onChange={handleOtherInput}
+          placeholder="type your relation"
+          required
+          className="outline-none rounded-md font-thin border-2 px-2 grid- border-slate-300 focus:border-[#71b967d3] w-full"
+        />}
+     
       </p>
       <div className="flex w-1/2 col-span-2">
         <p>
@@ -120,10 +173,12 @@ const SomeoneF2f = ({
         </p>
         <div className="ml-3 whitespace-nowrap">
           <p className="-ml-1">
-            Patient's Age: <br />
+            Patient's Age:
+            <br />
           </p>
           <input
-            name="Gmail"
+            name="PatientAge"
+            type="number"
             autoComplete="on"
             required
             className="outline-none rounded-md font-thin w-20 border-2 px-2 border-slate-300 focus:border-[#71b967d3]"
@@ -174,7 +229,6 @@ const SomeoneF2f = ({
             autoComplete="on"
             value={Condition}
             onChange={(e) => setCondition(e.target.value)}
-            required
             className="outline-none rounded-md font-thin border-2 px-2 mt-2 border-slate-300 focus:border-[#71b967d3] w-1/3"
           />
           <button
@@ -186,6 +240,7 @@ const SomeoneF2f = ({
           </button>
           {newItems.map((Item) => (
             <button
+              key={Item}
               onClick={(e) => handleRemoveOther(e, Item)}
               className="font-thin text-sm mx-2 mt-2 px-3 border- rounded-full text-white bg-green-700 bg-opacity-80"
             >
@@ -286,7 +341,7 @@ const SomeoneF2f = ({
           className="outline-none border-2 font-thin px-3 py-2 h-56 rounded-md border-slate-300 focus:border-[#71b967d3] w-full"
         />
       </p>
-      <div className="flex items-center mb-6 font-thin whitespace-nowrap">
+      <div className="flex items-center mb-6 font-extralight whitespace-nowrap">
         <input
           id="default-checkbox"
           type="checkbox"
@@ -300,7 +355,7 @@ const SomeoneF2f = ({
           </button>
         </label>
       </div>
-      {isRead && <Consent setRead={setRead} />}
+      {isRead && <Consent setRead={setRead} token={token} />}
     </div>
   );
 };

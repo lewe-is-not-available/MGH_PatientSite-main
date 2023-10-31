@@ -55,32 +55,38 @@ const Face2face = ({ token }) => {
 
   //*Reading checkbox values from medical history
   const [checkedBoxes, setCheckedBoxes] = useState([]);
-
   function handleChecked(e) {
     const { value, checked } = e.target;
 
     if (checked) {
-      setChecked((pre) => [...pre, value]);
+      if(!checkedBoxes.includes(newItems))
+      setCheckedBoxes((pre) => [...pre, value]);
     } else {
-      setChecked((pre) => {
+      setCheckedBoxes((pre) => {
         return [...pre.filter((history) => history !== value)];
       });
     }
   }
-  console.log(checkedBoxes);
-
   //*Other Medical Condition Function
   const [Condition, setCondition] = useState("");
   const [newItems, setNewItem] = useState([]);
-
   function handleOther(e) {
     e.preventDefault();
-    if (Condition.trim() !== "") {
-      setCheckedBoxes((prev) => [...prev, Condition]);
-      setNewItem((prev) => [...prev, Condition]);
-      setCondition("");
+    //*if condition is empty
+    if (Condition.trim()) {
+      if (!newItems.includes(Condition)) {
+        setCheckedBoxes((prev) => [...prev, Condition]);
+        setNewItem((prev) => [...prev, Condition]);
+        setCondition("");
+
+      } else {
+        toast.warning("Condition already exists.", {
+          toastId: "duplicateCondition",
+        });
+      }
     }
   }
+  
   //Removing the added item
   function handleRemoveOther(e, item) {
     e.preventDefault();
@@ -93,20 +99,20 @@ const Face2face = ({ token }) => {
   }
   //*If booking for someone
   const [isSomeone, setSomeone] = useState(null);
-  const [checked, setChecked] = useState("No");
-  const isChecked = (value) => value === checked;
+  const [checkedSomeone, setChecked] = useState("No");
+  const isChecked = (value) => value === checkedSomeone;
 
   const onSelect = ({ target: { value } }) => {
     setChecked(value);
   };
   useEffect(() => {
-    if (checked === "Yes") {
+    if (checkedSomeone === "Yes") {
       setSomeone(true);
     }
-    if (checked === "No") {
+    if (checkedSomeone === "No") {
       setSomeone(false);
     }
-  }, [isSomeone, checked]);
+  }, [isSomeone, checkedSomeone]);
   //*For reading patient's form data
   const [formData, setFormData] = useState({
     Gmail: "",
@@ -114,17 +120,18 @@ const Face2face = ({ token }) => {
     Lname: "",
     Mname: "",
     Address: "",
-    Existing: "",
     Date: "",
     Time: "",
     Reason: "",
     Number: "",
+    Relation: "",
+    PatientBday: "",
+    PatientAge: "",
   });
   //*Getting user's data
 
   useEffect(() => {
-    {
-      if (!isSomeone) {
+      if (isSomeone === false) {
         if (token) {
           setID(token.user.id);
           //to wait loading of token and avoid error
@@ -139,9 +146,7 @@ const Face2face = ({ token }) => {
           }));
         }
       }
-    }
   }, [token, isSomeone]);
-
   const [userID, setID] = useState("");
 
   //*function to read user inputs
@@ -170,8 +175,11 @@ const Face2face = ({ token }) => {
         date: formData.Date,
         time: formData.Time,
         reason: formData.Reason,
-        someone: checked,
-        // medicalhistory: {}
+        relation: formData.Relation,
+        age: formData.PatientAge,
+        bday: formData.PatientBday,
+        someone: checkedSomeone,
+        medicalhistory: checkedBoxes
       },
     ]);
     if (error) {
@@ -319,6 +327,8 @@ const Face2face = ({ token }) => {
           <div>
             {isSomeone ? (
               <SomeoneF2f
+                setFormData={setFormData}
+                token={token}
                 MedHistory={MedHistory}
                 handleChecked={handleChecked}
                 Condition={Condition}
@@ -441,7 +451,6 @@ const Face2face = ({ token }) => {
                       autoComplete="on"
                       value={Condition}
                       onChange={(e) => setCondition(e.target.value)}
-                      required
                       className="outline-none rounded-md font-thin border-2 px-2 mt-2 border-slate-300 focus:border-[#71b967d3] w-1/3"
                     />
                     <button
@@ -453,6 +462,7 @@ const Face2face = ({ token }) => {
                     </button>
                     {newItems.map((Item) => (
                       <button
+                        key={Item}
                         onClick={(e) => handleRemoveOther(e, Item)}
                         className="font-thin text-sm mx-2 mt-2 px-3 border- rounded-full text-white bg-green-700 bg-opacity-80"
                       >
