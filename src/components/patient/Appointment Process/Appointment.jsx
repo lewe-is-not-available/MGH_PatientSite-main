@@ -56,21 +56,22 @@ const Appointment = ({ token, isPatient }) => {
 
   //DEFAULT DATA
   useEffect(() => {
-    if(token){
+    if (token) {
       const fetchDoc = async () => {
-      const { data, error } = await supabase.from("Dr information").select("*");
+        const { data, error } = await supabase
+          .from("Dr information")
+          .select("*");
 
-      if (error) {
-        setDoctors(null);
-        console.log(error);
-      }
-      if (data) {
-        return setDoctors(data);
-      }
-    };
-    fetchDoc();
+        if (error) {
+          setDoctors(null);
+          console.log(error);
+        }
+        if (data) {
+          return setDoctors(data);
+        }
+      };
+      fetchDoc();
     }
-    
   }, [token]);
 
   // RESET FUNCTION
@@ -132,7 +133,13 @@ const Appointment = ({ token, isPatient }) => {
   }, []);
 
   return (
-    <div className={`${token ? "back items-center flex flex-col":"back items-center flex flex-col h-screen"}`}>
+    <div
+      className={`${
+        token
+          ? "back items-center flex flex-col"
+          : "back items-center flex flex-col h-screen"
+      }`}
+    >
       <div
         className="hero2 p-28 py-28 flex flex-col items-center text-white space-y-14 w-full"
         data-aos="fade-up"

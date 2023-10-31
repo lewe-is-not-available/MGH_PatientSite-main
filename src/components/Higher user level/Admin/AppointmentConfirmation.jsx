@@ -3,58 +3,81 @@ import supabase from "../../config/Supabase";
 import { toast } from "react-toastify";
 import Online from "./Online";
 import F2f from "./F2f";
+import { useNavigate } from "react-router-dom";
 
-const AppointmentConfirmation = () => {
-  //*For Online Consult lists
-  const [online, setOnline] = useState("");
-  useEffect(() => {
-    const fetchOnline = async () => {
-      const { data, error } = await supabase
-        .from("Online Appointments")
-        .select("*");
-      if (error) {
-        toast.error(error, {
-          toastId: "dataError",
-        });
-        console.error("Failed to fetch", error.message);
-      } else {
-        if (JSON.stringify(data) !== JSON.stringify(online)) {
-          setOnline(data);
-        }
+const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
+  //TODO: add draggable function for table head
+  const navigate = useNavigate();
+    
+  //*prevent access from non-admin users
+  const fetchAdmin = async () => {
+      const { data } = await supabase
+        .from("profile")
+        .select("*")
+        .single();
+
+        if(data.role !== "admin"){
+        navigate('/Patient/Dashboard');
       }
     };
+    fetchAdmin();
 
+  //*For Online Consult lists
+  const [online, setOnline] = useState("");
+  const fetchOnline = async () => {
+    const { data, error } = await supabase
+      .from("Online_Appointments")
+      .select("*");
+    if (error) {
+      toast.error(error, {
+        toastId: "dataError",
+      });
+      console.error("Failed to fetch", error.message);
+    } else {
+      if (JSON.stringify(data) !== JSON.stringify(online)) {
+        setOnline(data);
+      }
+    }
+  };
+  useEffect(() => {
+    fetchOnline()
+    supabase
+    .channel("custom-all-channel")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "Online_Appointments" },
+      () => {
+        fetchOnline()
+      }
+    )
+    .subscribe();
+  }, []);
+
+  //*For Face to face lists
+  const [F2F, setF2f] = useState("");
+  const fetchF2f = async () => {
+    const { data, error } = await supabase.from("F2f_Appointments").select("*");
+    if (error) {
+      toast.error(error, {
+        toastId: "dataError",
+      });
+      console.error("Failed to fetch", error.message);
+    } else {
+      setF2f(data);
+    }
+  };
+  useEffect(() => {
+    fetchF2f();
     supabase
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "Online Appointments" },
-        (payload) => {
-          console.log("Change received!", payload);
-          fetchOnline();
+        { event: "*", schema: "public", table: "F2f_Appointments" },
+        () => {
+          fetchF2f()
         }
       )
       .subscribe();
-    fetchOnline();
-  }, [online]);
-
-  //*For Face to face lists
-  const [F2F, setF2f] = useState("");
-  useEffect(() => {
-    const fetchF2f = async () => {
-      const { data, error } = await supabase
-        .from("F2f Appointments")
-        .select("*");
-      if (error) {
-        toast.error(error, {
-          toastId: "dataError",
-        });
-        console.error("Failed to fetch", error.message);
-      } else {
-        setF2f(data);
-      }
-    };
-    fetchF2f();
   }, []);
   return (
     <div className="back">
@@ -84,14 +107,19 @@ const AppointmentConfirmation = () => {
                 Reason
               </th>
               <th scope="col" className="px-6 py-3">
-                Existing
+                Medical History
               </th>
               <th scope="col" className="px-6 py-3">
                 Confirm
               </th>
             </tr>
           </thead>
-          <tbody>{online && online.map((ol) => ol.online_id ? <Online key={ol.online_id} ol={ol} /> : null )}</tbody>
+          <tbody>
+            {online &&
+              online.map((ol) =>
+                ol.online_id ? <Online key={ol.online_id} ol={ol} /> : null
+              )}
+          </tbody>
         </table>
       </div>
       <div className="overflow-x-auto flex flex-col content-center">
@@ -99,7 +127,7 @@ const AppointmentConfirmation = () => {
           Face to face Consults
         </p>
         <table className="w-full text-sm text-left bg-opacity-60 text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs text-center text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr className="text-base text-[#315E30]">
               <th scope="col" className="px-6 py-3">
                 Patient's Name
@@ -111,6 +139,9 @@ const AppointmentConfirmation = () => {
                 Patient's email
               </th>
               <th scope="col" className="px-6 py-3">
+                Patient's Contact
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Appointment date
               </th>
               <th scope="col" className="px-6 py-3">
@@ -120,12 +151,24 @@ const AppointmentConfirmation = () => {
                 Reason
               </th>
               <th scope="col" className="px-6 py-3">
-                Existing
+                Medical History
               </th>
-              <th scope="col" className="px-6 py-3"></th>
+              <th scope="col" className="px-6 py-3">Confirm</th>
             </tr>
           </thead>
-          <tbody>{F2F && F2F.map((f2) => (f2.f2f_id ? <F2f key={f2.id} f2={f2} /> : null))}</tbody>
+          <tbody>
+            {F2F &&
+              F2F.map((f2) =>
+                f2.f2f_id ? (
+                  <F2f
+                    key={f2.f2f_id}
+                    f2={f2}
+                    setMedModal={setMedModal}
+                    MedModal={MedModal}
+                  />
+                ) : null
+              )}
+          </tbody>
         </table>
       </div>
     </div>

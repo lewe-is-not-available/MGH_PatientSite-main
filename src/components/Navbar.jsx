@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import { BiMenu } from "react-icons/bi";
 import "react-toastify/dist/ReactToastify.css";
 import DragandDrop from "./Drag_and_Drop";
+import Medical from "./Higher user level/Admin/Medical";
 
 const Navbar = ({
   token,
@@ -32,7 +33,7 @@ const Navbar = ({
   isImgEmpty,
   closeProfileUpload,
   isProfileOpen,
-  setUploaded
+  setUploaded,
 }) => {
   //*Function to show/hide registration and login
   const [doctor, setDoctor] = useState(false);
@@ -167,6 +168,7 @@ const Navbar = ({
         isProfileOpen={isProfileOpen}
         closeProfileUpload={closeProfileUpload} />
       </div>
+    
     </div>
   );
 };

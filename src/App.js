@@ -26,7 +26,6 @@ import Sidebar from "./components/Sidebar";
 import OnlineDash from "./components/patient/OnlineDash";
 import F2fDash from "./components/patient/F2fDash";
 import Status from "./components/patient/Appointment Process/Status";
-import { toast } from "react-toastify";
 
 function App() {
   //*For getting token of user
@@ -183,13 +182,8 @@ function App() {
             element={<DoctorConsultHistory />}
           />
 
-          {/* Admin's side */}
-          <Route path="/User_feedbacks" element={<AdminFeedback />} />
-          <Route path="/Edit_doctors" element={<EditDoctors />} />
-
           {/*patient's side */}
           <Route path="/Mission-and-Vision" element={<MissonVision />} />
-          <Route path="/Patient/Dashboard" element={<PatientDashboard />} />
           <Route path="/Feedback-Form" element={<Feedback token={token} />} />
           <Route path="/Contacts" element={<Contacts token={token} />} />
           <Route path="/Hospital-Profile" element={<Profile />} />
@@ -201,6 +195,7 @@ function App() {
           />
           {token && (
             <>
+              {/*patient's side */}
               <Route path="/Face-to-face/:id" element={<F2f token={token} />} />
               <Route path="/Online/:id" element={<Online token={token} />} />
               <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
@@ -208,6 +203,7 @@ function App() {
                 path="/Online_Consultation_History"
                 element={<OnlineConsultationHistory />}
               />
+              <Route path="/Patient/Dashboard" element={<PatientDashboard />} />
               <Route
                 path="/Appointment/Online"
                 element={<OnlineDash token={token} isPatient={isPatient} />}
@@ -218,9 +214,17 @@ function App() {
               />
               <Route path="/Appointment/Status" element={<Status />} />
               <Route path="/:id" element={<DocInfo />} />
+
+              {/* Admin's side */}
+              <Route path="/User_feedbacks" element={<AdminFeedback />} />
+              <Route path="/Edit_doctors" element={<EditDoctors />} />
               <Route
                 path="/Confirm_Appointments"
-                element={<AppointConfirmation token={token} />}
+                element={
+                  <AppointConfirmation
+                    token={token}
+                  />
+                }
               />
               <Route path="/Admin/Dashboard" element={<Admin />} />
             </>

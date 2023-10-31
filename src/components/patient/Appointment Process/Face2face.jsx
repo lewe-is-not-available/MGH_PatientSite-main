@@ -163,7 +163,7 @@ const Face2face = ({ token }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { error } = await supabase.from("F2f Appointments").insert([
+    const { error } = await supabase.from("F2f_Appointments").insert([
       {
         user_id: userID,
         docname: Name,
