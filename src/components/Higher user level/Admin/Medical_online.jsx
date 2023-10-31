@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import supabase from "../../config/Supabase";
-import { Oval } from "react-loader-spinner";
+import { CircleLoader } from "react-spinners";
 
-const Medical = ({ setMedModal, id, MedModal }) => {
+const Medical_online = ({ setMedModal, id, MedModal }) => {
   const [medical, setMedical] = useState([]);
   const [loading, setLoading] = useState(true);
   //*To read med history data based on user ID
@@ -10,9 +10,9 @@ const Medical = ({ setMedModal, id, MedModal }) => {
     if (MedModal && id) {
       const fetchData = async () => {
         const { data, error } = await supabase
-          .from("F2f_Appointments")
+          .from("Online_Appointments")
           .select("*")
-          .eq("f2f_id", id)
+          .eq("online_id", id)
           .single();
 
         if (error) {
@@ -48,19 +48,7 @@ const Medical = ({ setMedModal, id, MedModal }) => {
         className="abs absolute overflow-y-auto mt-40 p-8 bg-white"
       >
         {loading ? (
-          <Oval
-          height={80}
-          width={80}
-          color="#4fa94d"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel='oval-loading'
-          secondaryColor="#4fa94d"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        
-        />
+          <CircleLoader color="#36d7b7" size={45} />
         ) : (
           <>
             {" "}
@@ -76,4 +64,4 @@ const Medical = ({ setMedModal, id, MedModal }) => {
   );
 };
 
-export default Medical;
+export default Medical_online;

@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import supabase from "../../config/Supabase";
-import { Oval } from "react-loader-spinner";
+import { CircleLoader } from "react-spinners";
 
-const Medical = ({ setMedModal, id, MedModal }) => {
-  const [medical, setMedical] = useState([]);
+const SomeonDetails = ({ id, setSomeone, isSomeone }) => {
+  const [user, setMedical] = useState();
   const [loading, setLoading] = useState(true);
+  console.log(id)
   //*To read med history data based on user ID
   useEffect(() => {
-    if (MedModal && id) {
+    if (isSomeone && id) {
       const fetchData = async () => {
         const { data, error } = await supabase
           .from("F2f_Appointments")
@@ -18,20 +19,20 @@ const Medical = ({ setMedModal, id, MedModal }) => {
         if (error) {
           console.error("Error fetching data:", error);
         } else {
-          setMedical(data.medicalhistory);
+          setMedical(data);
           setLoading(false);
         }
       };
       fetchData();
     }
-  }, [MedModal, id]);
+  }, [isSomeone, id]);
 
   //*Closes modal when clicked outside
   let medRef = useRef();
   useEffect(() => {
     let handler = (e) => {
       if (!medRef.current.contains(e.target)) {
-        setMedModal(false);
+        setSomeone(false);
       }
     };
 
@@ -39,7 +40,7 @@ const Medical = ({ setMedModal, id, MedModal }) => {
     return () => {
       document.removeEventListener("mousedown", handler);
     };
-  }, [setMedModal]);
+  }, [setSomeone]);
   return (
     <div className="flex justify-center backdrop-blur-sm bg-slate-700 fixed z-50 inset-0 bg-opacity-30">
       <div
@@ -48,27 +49,10 @@ const Medical = ({ setMedModal, id, MedModal }) => {
         className="abs absolute overflow-y-auto mt-40 p-8 bg-white"
       >
         {loading ? (
-          <Oval
-          height={80}
-          width={80}
-          color="#4fa94d"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel='oval-loading'
-          secondaryColor="#4fa94d"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        
-        />
+          <CircleLoader color="#36d7b7" size={45} />
         ) : (
           <>
-            {" "}
-            {medical.map((item) => (
-              <div key={item} className="flex flex-col">
-                <p>{item}</p>
-              </div>
-            ))}
+            {user.email}
           </>
         )}
       </div>
@@ -76,4 +60,4 @@ const Medical = ({ setMedModal, id, MedModal }) => {
   );
 };
 
-export default Medical;
+export default SomeonDetails;

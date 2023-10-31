@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import supabase from "./config/Supabase";
 import copy from "copy-to-clipboard";
 import { toast } from "react-toastify";
@@ -122,11 +122,11 @@ const Sidebar = ({
       }
       getImages();
     }
-  }, [user, getImages, isImgEmpty, imgName, isUploaded]);
+  }, [user, getImages, isImgEmpty, imgName, setimgName, setImgEmpty]);
 
   return (
     <div className="w-[18.8rem] fixed">
-      <div className="bg-[#f2fff0ee] pt-1 h-screen shadow-2xl">
+      <div className="bg-[#dcf7dc8f] pt-1 h-screen shadow-2xl">
         {/* close button */}
         <div className="flex justify-end mx-4 mt-4 mb-0">
           <IoClose

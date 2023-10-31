@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
 const Consent = ({ setRead }) => {
-  
-
 
   //*Closes modal when clicked outside
   let TermsRef = useRef();
@@ -17,7 +15,7 @@ const Consent = ({ setRead }) => {
     return () => {
       document.removeEventListener("mousedown", handler);
     };
-  }, []);
+  }, [setRead]);
   return (
     <div className="absolute w-[70%] bg-white abs p-4 font-thin mt-[36.6rem] ml-5 rounded-lg">
       <div ref={TermsRef} className="overflow-y-scroll h-72">

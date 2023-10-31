@@ -10,7 +10,6 @@ import { ToastContainer } from "react-toastify";
 import { BiMenu } from "react-icons/bi";
 import "react-toastify/dist/ReactToastify.css";
 import DragandDrop from "./Drag_and_Drop";
-import Medical from "./Higher user level/Admin/Medical";
 
 const Navbar = ({
   token,

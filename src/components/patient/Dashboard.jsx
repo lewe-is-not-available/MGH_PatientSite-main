@@ -60,15 +60,6 @@ const Dashboard = () => {
     setShowFill(true);
   }, [Name]);
 
-  // useEffect(() => {
-  //   if (Name) {
-  //     setShowFill(true); // Show suggestions when the user types
-  //   }
-  //   else {
-  //     setShowFill(false); // Hide suggestions when the input is empty
-  //   }
-  // }, [Name]);
-
   const handleReset = async () => {
     setName("");
     setSpSelect("---");

@@ -8,19 +8,16 @@ import { useNavigate } from "react-router-dom";
 const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
   //TODO: add draggable function for table head
   const navigate = useNavigate();
-    
+
   //*prevent access from non-admin users
   const fetchAdmin = async () => {
-      const { data } = await supabase
-        .from("profile")
-        .select("*")
-        .single();
+    const { data } = await supabase.from("profile").select("*").single();
 
-        if(data.role !== "admin"){
-        navigate('/Patient/Dashboard');
-      }
-    };
-    fetchAdmin();
+    if (data.role !== "admin") {
+      navigate("/Patient/Dashboard");
+    }
+  };
+  fetchAdmin();
 
   //*For Online Consult lists
   const [online, setOnline] = useState("");
@@ -40,17 +37,17 @@ const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
     }
   };
   useEffect(() => {
-    fetchOnline()
+    fetchOnline();
     supabase
-    .channel("custom-all-channel")
-    .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "Online_Appointments" },
-      () => {
-        fetchOnline()
-      }
-    )
-    .subscribe();
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Online_Appointments" },
+        () => {
+          fetchOnline();
+        }
+      )
+      .subscribe();
   }, []);
 
   //*For Face to face lists
@@ -74,30 +71,30 @@ const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
         "postgres_changes",
         { event: "*", schema: "public", table: "F2f_Appointments" },
         () => {
-          fetchF2f()
+          fetchF2f();
         }
       )
       .subscribe();
   }, []);
   return (
-    <div className="back">
+    <div className="back h-screen">
       <div className="overflow-x-auto flex flex-col content-center">
-        <p className="text-4xl font-semibold text-[#315E30] pl-10 py-6 bg-slate-200 w-full">
+        <p className="text-4xl font-semibold text-[#315E30] pl-10 py-6 w-full">
           Online Consults
         </p>
         <table className="w-full text-sm text-left bg-opacity-60 text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr className="text-base text-[#315E30]">
-              <th scope="col" className="px-6 py-3">
+          <thead className="text-xs text-gray-700 bg-slate-100 uppercase bg-gray-50">
+            <tr className="text-base text-center text-[#315E30]">
+              <th scope="col" className="px-6 py-6">
                 Patient's Name
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 ">
                 Doctor's Name
               </th>
               <th scope="col" className="px-6 py-3">
-                Patient's email
+                Booked at
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 ">
                 Appointment date
               </th>
               <th scope="col" className="px-6 py-3">
@@ -107,10 +104,13 @@ const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
                 Reason
               </th>
               <th scope="col" className="px-6 py-3">
+                Booked by someone
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Medical History
               </th>
               <th scope="col" className="px-6 py-3">
-                Confirm
+                view and confirm
               </th>
             </tr>
           </thead>
@@ -123,37 +123,39 @@ const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
         </table>
       </div>
       <div className="overflow-x-auto flex flex-col content-center">
-        <p className="text-4xl font-semibold text-[#315E30] pl-10 py-6 bg-slate-200 w-full">
+        <p className="text-4xl font-semibold text-[#315E30] pl-10 py-6 bg- w-full">
           Face to face Consults
         </p>
-        <table className="w-full text-sm text-left bg-opacity-60 text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-center text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <table className="w-full text-sm text-left bg-opacity-60 table-auto text-gray-500">
+          <thead className="text-xs text-center text-gray-700 uppercase bg-slate-100">
             <tr className="text-base text-[#315E30]">
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-6">
                 Patient's Name
               </th>
               <th scope="col" className="px-6 py-3">
                 Doctor's Name
               </th>
               <th scope="col" className="px-6 py-3">
-                Patient's email
+                Booked at
               </th>
-              <th scope="col" className="px-6 py-3">
-                Patient's Contact
-              </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 ">
                 Appointment date
               </th>
               <th scope="col" className="px-6 py-3">
                 Appointment Time
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 ">
                 Reason
               </th>
               <th scope="col" className="px-6 py-3">
+                Booked by someone
+              </th>
+              <th scope="col" className="px-6 py-3 ]">
                 Medical History
               </th>
-              <th scope="col" className="px-6 py-3">Confirm</th>
+              <th scope="col" className="px-6 py-3">
+                View and Confirm
+              </th>
             </tr>
           </thead>
           <tbody>

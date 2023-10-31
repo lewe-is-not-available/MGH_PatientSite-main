@@ -6,8 +6,6 @@ import Specials from "./Specials.json";
 import SubSpecial from "./SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
-import Emergency from "./images/slides/emergency.jpg";
-import lab from "./images/slides/laboratory-design.jpg";
 import { Carousel, initTE } from "tw-elements";
 
 initTE({ Carousel });

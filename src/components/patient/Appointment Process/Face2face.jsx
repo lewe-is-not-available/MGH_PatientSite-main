@@ -59,8 +59,8 @@ const Face2face = ({ token }) => {
     const { value, checked } = e.target;
 
     if (checked) {
-      if(!checkedBoxes.includes(newItems))
-      setCheckedBoxes((pre) => [...pre, value]);
+      if (!checkedBoxes.includes(newItems))
+        setCheckedBoxes((pre) => [...pre, value]);
     } else {
       setCheckedBoxes((pre) => {
         return [...pre.filter((history) => history !== value)];
@@ -78,7 +78,6 @@ const Face2face = ({ token }) => {
         setCheckedBoxes((prev) => [...prev, Condition]);
         setNewItem((prev) => [...prev, Condition]);
         setCondition("");
-
       } else {
         toast.warning("Condition already exists.", {
           toastId: "duplicateCondition",
@@ -86,7 +85,7 @@ const Face2face = ({ token }) => {
       }
     }
   }
-  
+
   //Removing the added item
   function handleRemoveOther(e, item) {
     e.preventDefault();
@@ -131,21 +130,21 @@ const Face2face = ({ token }) => {
   //*Getting user's data
 
   useEffect(() => {
-      if (isSomeone === false) {
-        if (token) {
-          setID(token.user.id);
-          //to wait loading of token and avoid error
-          setFormData((prevFormData) => ({
-            //*automatically set the input values with user data
-            ...prevFormData,
-            Gmail: token.user.email,
-            Fname: token.user.user_metadata.first_name,
-            Lname: token.user.user_metadata.last_name,
-            Mname: token.user.user_metadata.middle_name,
-            Number: token.user.user_metadata.phone,
-          }));
-        }
+    if (isSomeone === false) {
+      if (token) {
+        setID(token.user.id);
+        //to wait loading of token and avoid error
+        setFormData((prevFormData) => ({
+          //*automatically set the input values with user data
+          ...prevFormData,
+          Gmail: token.user.email,
+          Fname: token.user.user_metadata.first_name,
+          Lname: token.user.user_metadata.last_name,
+          Mname: token.user.user_metadata.middle_name,
+          Number: token.user.user_metadata.phone,
+        }));
       }
+    }
   }, [token, isSomeone]);
   const [userID, setID] = useState("");
 
@@ -179,7 +178,8 @@ const Face2face = ({ token }) => {
         age: formData.PatientAge,
         bday: formData.PatientBday,
         someone: checkedSomeone,
-        medicalhistory: checkedBoxes
+        medicalhistory: checkedBoxes,
+        honorific: Honor
       },
     ]);
     if (error) {
