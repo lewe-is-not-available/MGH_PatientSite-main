@@ -179,8 +179,13 @@ const Face2face = ({ token }) => {
         bday: formData.PatientBday,
         someone: checkedSomeone,
         medicalhistory: checkedBoxes,
-        honorific: Honor
+        honorific: Honor,
       },
+    ]);
+    await supabase.from("Patient_Appointments").insert([
+      {
+        status: "Waiting for confirmation",
+      }
     ]);
     if (error) {
       console.log(error);
@@ -193,7 +198,7 @@ const Face2face = ({ token }) => {
     toast.success("Succesfully appointed", {
       toastId: "success",
     });
-    toast.info("Please wait for booking confirmation in your email.");
+    toast.info("Your booking is waiting for confirmation.");
   };
 
   //*Doctor's Data
