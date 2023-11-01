@@ -17,10 +17,19 @@ const F2f = ({ f2 }) => {
     return `${year}/${month}/${day} ${hours}:${minutes}${ampm}`;
   }
   //*if booked by someone set viewable
-  const [isSomeone, setSomeone] = useState(false);
+  const [isSomeone, setSomeone] = useState(null);
+  const [SomeoneModal, setSomeoneModal] = useState(false);
   const handleSomeoneData = () => {
-    setSomeone(true);
+    setSomeoneModal(true);
   };
+
+  useEffect(() => {
+    if (f2.someone === "No") {
+      setSomeone(false);
+    } else {
+      setSomeone(true);
+    }
+  }, [f2, setSomeone, isSomeone]);
   //*To open and pass medical history modal
   const [MedModal, setMedModal] = useState(false);
 
@@ -32,7 +41,6 @@ const F2f = ({ f2 }) => {
     setMedModal(true);
   };
   let med = f2.medicalhistory;
-
   useEffect(() => {
     if (med.length === 0) {
       setMedical(false);
@@ -62,12 +70,12 @@ const F2f = ({ f2 }) => {
       </td>
       <td className="px-6 py-4">
         {" "}
-        {isMedical ? (
+        {isSomeone ? (
           <>
-            {isSomeone && (
+            {SomeoneModal && (
               <SomeonDetails
                 isSomeone={isSomeone}
-                setSomeone={setSomeone}
+                setSomeone={setSomeoneModal}
                 id={f2.f2f_id}
               />
             )}
@@ -111,7 +119,7 @@ const F2f = ({ f2 }) => {
       </td>
       <td className="px-6 py-4 w-[15%] text-white ">
         <Link
-          to={"/Appointment_Details/" + f2.f2f_id}
+          to={"/Appointment_Details/f2f/" + f2.f2f_id}
           className="bg-[#54a350] hover:bg-[#476545] py-1 transition duration-100
           text-white px-3 rounded-full"
         >

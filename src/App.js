@@ -26,7 +26,8 @@ import Sidebar from "./components/Sidebar";
 import OnlineDash from "./components/patient/OnlineDash";
 import F2fDash from "./components/patient/F2fDash";
 import Status from "./components/patient/Appointment Process/Status";
-import AppointmentDetails from "./components/Higher user level/Admin/AppointmentDetails";
+import AppointmentDetails_f2f from "./components/Higher user level/Admin/AppointmentDetails_f2f";
+import AppointmentDetails_ol from "./components/Higher user level/Admin/AppointmentDetails_ol";
 
 function App() {
   //*For getting token of user
@@ -213,11 +214,12 @@ function App() {
                 path="/Appointment/F2f"
                 element={<F2fDash token={token} isPatient={isPatient} />}
               />
-              <Route path="/Appointment/Status" element={<Status />} />
+              <Route path="/Appointment/Status" element={<Status token={token} />} />
               <Route path="/:id" element={<DocInfo />} />
 
               {/* Admin's side */}
-              <Route path="/Appointment_Details/:id" element={<AppointmentDetails />} />
+              <Route path={"/Appointment_Details/ol/:id"} element={<AppointmentDetails_ol />} />
+              <Route path="/Appointment_Details/f2f/:id" element={<AppointmentDetails_f2f />} />
               <Route path="/User_feedbacks" element={<AdminFeedback />} />
               <Route path="/Edit_doctors" element={<EditDoctors />} />
               <Route

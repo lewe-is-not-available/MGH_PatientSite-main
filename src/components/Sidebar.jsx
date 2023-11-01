@@ -44,7 +44,6 @@ const Sidebar = ({
   openProfileUpload,
   setimgName,
   getImages,
-  isUploaded,
 }) => {
   //*Authentication by roles
   const [doctor, setDoctor] = useState(false);

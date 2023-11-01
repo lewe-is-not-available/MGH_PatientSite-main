@@ -13,7 +13,7 @@ import history from "../images/dashboard_icons/history.png";
 import status from "../images/dashboard_icons/status.svg";
 import { Link } from "react-router-dom";
 
-const Dashboard = () => {
+const Dashboard = ({ token }) => {
   //For Search window drop function
   const [Show, FetchShow] = useState(null);
   const Close = () => FetchShow(false);
@@ -145,13 +145,17 @@ const Dashboard = () => {
           {/* Online consult */}
           <div className="boxes" data-aos="fade-up">
             <img src={online} alt="/" className="imgDash p-5" />
-            <Link to="/Appointment/Online" className="titleText">Online Consult</Link>
+            <Link to="/Appointment/Online" className="titleText">
+              Online Consult
+            </Link>
             <p className="text-sm">Book an appointment for online consult</p>
           </div>
           {/* Face to face consult */}
           <div className="boxes" data-aos="fade-up">
             <img src={f2f} alt="/" className="imgDash object-left p-3" />
-            <Link to="/Appointment/F2f" className="titleText">Face to face Consult</Link>
+            <Link to="/Appointment/F2f" className="titleText">
+              Face to face Consult
+            </Link>
             <p className="text-sm">
               Book an appointment for Face to face consult
             </p>
@@ -159,19 +163,25 @@ const Dashboard = () => {
           {/* Contact us */}
           <div className="boxes" data-aos="fade-up">
             <img src={contact} alt="/" className=" imgDash p-5 py-8" />
-            <Link to="/Contacts" className="titleText">Contact Us!</Link>
+            <Link to="/Contacts" className="titleText">
+              Contact Us!
+            </Link>
             <p className="text-sm">Book an for online appointment</p>
           </div>
           {/* Feedback form */}
           <div className="boxes" data-aos="fade-up">
             <img src={feedback} alt="/" className="imgDash p-5" />
-            <Link to="/Feedback-Form" className="titleText">Feedback form</Link>
+            <Link to="/Feedback-Form" className="titleText">
+              Feedback form
+            </Link>
             <p className="text-sm">Let us know what you think of our website</p>
           </div>
           {/* Consult history */}
           <div className="boxes" data-aos="fade-up">
             <img src={history} alt="/" className="imgDash p-7" />
-            <Link to="/Online_Consultation_History" className="titleText">Consultation History</Link>
+            <Link to="/Online_Consultation_History" className="titleText">
+              Consultation History
+            </Link>
             <p className="text-sm">
               Have a look at your recent online consultations
             </p>
@@ -179,7 +189,9 @@ const Dashboard = () => {
           {/* Appointment status */}
           <div className="boxes" data-aos="fade-up">
             <img src={status} alt="/" className="imgDash p-4" />
-            <Link to="/Appointment/Status" className="titleText">Appointment status</Link>
+            <Link to="/Appointment/Status" className="titleText">
+              Appointment status
+            </Link>
             <p className="text-sm">Keep track of your appointment status</p>
           </div>
         </div>

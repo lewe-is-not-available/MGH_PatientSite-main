@@ -182,6 +182,16 @@ const OnlineConsult = ({ token }) => {
         medicalhistory: checkedBoxes
       },
     ]);
+    await supabase.from("Patient_Appointments").insert([
+      {
+        patient_id: token.user.id,
+        type:"online",
+        patient_fname: formData.Fname,
+        patient_lname: formData.Lname,
+        patient_mname: formData.Mname,
+        status: "Waiting for confirmation",
+      }
+    ]);
     if (error) {
       console.log(error);
       toast.error(error, {
@@ -195,7 +205,7 @@ const OnlineConsult = ({ token }) => {
     });
     toast.info("Please wait for booking confirmation.");
   };
-
+  console.log(token.user.id)
   //*Doctor's Data
   const [Honor, setHonor] = useState("");
   const [Name, setName] = useState("");

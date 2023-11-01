@@ -23,7 +23,7 @@ const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
   const [online, setOnline] = useState("");
   const fetchOnline = async () => {
     const { data, error } = await supabase
-      .from("Online_Appointments")
+      .from("Patient_Appointments")
       .select("*");
     if (error) {
       toast.error(error, {
@@ -42,7 +42,7 @@ const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "Online_Appointments" },
+        { event: "*", schema: "public", table: "Patient_Appointments" },
         () => {
           fetchOnline();
         }
@@ -53,7 +53,10 @@ const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
   //*For Face to face lists
   const [F2F, setF2f] = useState("");
   const fetchF2f = async () => {
-    const { data, error } = await supabase.from("F2f_Appointments").select("*");
+    const { data, error } = await supabase
+      .from("F2f_Appointments")
+      .select("*")
+      .eq("type");
     if (error) {
       toast.error(error, {
         toastId: "dataError",
