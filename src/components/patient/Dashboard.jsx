@@ -34,7 +34,7 @@ const Dashboard = ({ isAdmin, isDoctor, isPatient, token }) => {
       } else if (data.role === "doctor") {
         setDoctor(true);
       } else {
-        navigate("/Dashboard");
+        navigate("/");
       }
     };
     fetchAdmin();
