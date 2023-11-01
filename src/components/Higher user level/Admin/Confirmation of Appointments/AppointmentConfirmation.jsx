@@ -1,27 +1,29 @@
 import React, { useState, useEffect } from "react";
-import supabase from "../../config/Supabase";
+import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
 import Online from "./Online";
 import F2f from "./F2f";
 import { useNavigate } from "react-router-dom";
 
-const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
+const AppointmentConfirmation = () => {
   //TODO: add draggable function for table head
   const navigate = useNavigate();
 
   //*prevent access from non-admin users
-  const fetchAdmin = async () => {
-    const { data } = await supabase.from("profile").select("*").single();
+  useEffect(() => {
+    const fetchAdmin = async () => {
+      const { data } = await supabase.from("profile").select("*").single();
 
-    if (data.role !== "admin") {
-      navigate("/Patient/Dashboard");
-    }
-  };
-  fetchAdmin();
+      if (data.role !== "admin") {
+        navigate("/Dashboard");
+      }
+    };
+    fetchAdmin();
+  }, []);
 
   //*For Online Consult lists
-  const [online, setOnline] = useState("");
-  const fetchOnline = async () => {
+  const [books, setBook] = useState([]);
+  const fetchBooks = async () => {
     const { data, error } = await supabase
       .from("Patient_Appointments")
       .select("*");
@@ -31,54 +33,23 @@ const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
       });
       console.error("Failed to fetch", error.message);
     } else {
-      if (JSON.stringify(data) !== JSON.stringify(online)) {
-        setOnline(data);
-      }
+      setBook(data);
     }
   };
   useEffect(() => {
-    fetchOnline();
+    fetchBooks();
     supabase
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "Patient_Appointments" },
         () => {
-          fetchOnline();
+          fetchBooks();
         }
       )
       .subscribe();
   }, []);
 
-  //*For Face to face lists
-  const [F2F, setF2f] = useState("");
-  const fetchF2f = async () => {
-    const { data, error } = await supabase
-      .from("F2f_Appointments")
-      .select("*")
-      .eq("type");
-    if (error) {
-      toast.error(error, {
-        toastId: "dataError",
-      });
-      console.error("Failed to fetch", error.message);
-    } else {
-      setF2f(data);
-    }
-  };
-  useEffect(() => {
-    fetchF2f();
-    supabase
-      .channel("custom-all-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "F2f_Appointments" },
-        () => {
-          fetchF2f();
-        }
-      )
-      .subscribe();
-  }, []);
   return (
     <div className="back h-screen">
       <div className="overflow-x-auto flex flex-col content-center">
@@ -86,7 +57,7 @@ const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
           Online Consults
         </p>
         <table className="w-full text-sm text-left bg-opacity-60 text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 bg-slate-100 uppercase bg-gray-50">
+          <thead className="text-xs text-gray-700 bg-slate-100 uppercase">
             <tr className="text-base text-center text-[#315E30]">
               <th scope="col" className="px-6 py-6">
                 Patient's Name
@@ -118,10 +89,10 @@ const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
             </tr>
           </thead>
           <tbody>
-            {online &&
-              online.map((ol) =>
-                ol.online_id ? <Online key={ol.online_id} ol={ol} /> : null
-              )}
+            {books &&
+              books
+                .filter((data) => data.type && data.type.includes("ol"))
+                .map((ol) => <Online key={ol.online_id} ol={ol} />)}
           </tbody>
         </table>
       </div>
@@ -162,17 +133,15 @@ const AppointmentConfirmation = ({ setMedModal, MedModal }) => {
             </tr>
           </thead>
           <tbody>
-            {F2F &&
-              F2F.map((f2) =>
-                f2.f2f_id ? (
-                  <F2f
-                    key={f2.f2f_id}
-                    f2={f2}
-                    setMedModal={setMedModal}
-                    MedModal={MedModal}
-                  />
-                ) : null
-              )}
+            {books &&
+              books
+                .filter(
+                  (data) =>
+                    data.type &&
+                    data.type.includes("f2f") &&
+                    data.status.includes("pending")
+                )
+                .map((ol) => <F2f key={ol.online_id} f2={ol} />)}
           </tbody>
         </table>
       </div>

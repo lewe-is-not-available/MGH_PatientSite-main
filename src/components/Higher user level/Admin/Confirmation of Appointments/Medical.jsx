@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import supabase from "../../config/Supabase";
+import supabase from "../../../config/Supabase";
 import { Oval } from "react-loader-spinner";
 
 const Medical = ({ setMedModal, id, MedModal }) => {
@@ -10,9 +10,9 @@ const Medical = ({ setMedModal, id, MedModal }) => {
     if (MedModal && id) {
       const fetchData = async () => {
         const { data, error } = await supabase
-          .from("F2f_Appointments")
+          .from("Patient_Appointments")
           .select("*")
-          .eq("f2f_id", id)
+          .eq("book_id", id)
           .single();
 
         if (error) {

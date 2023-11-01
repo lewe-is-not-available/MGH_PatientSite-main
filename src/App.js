@@ -1,33 +1,37 @@
-import React from "react";
+import supabase from "./components/config/Supabase";
+import { Routes, Route } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
 import Contacts from "./components/Contacts";
-import Appointment from "./components/patient/Appointment Process/Appointment";
 import MissonVision from "./components/MissonVision";
 import Profile from "./components/HospitalProfile";
 import Feedback from "./components/Feedback";
+import Sidebar from "./components/Sidebar";
+import Status from "./components/patient/Appointment Process/Status";
+
+//patient
+import Online from "./components/patient/Appointment Process/OnlineConsult";
+import Appointment from "./components/patient/Appointment Process/Appointment";
 import DocInfo from "./components/Doctor read/DoctorInfo";
 import OnlineOrF2f from "./components/patient/Appointment Process/ChooseType";
 import F2f from "./components/patient/Appointment Process/Face2face";
-import Online from "./components/patient/Appointment Process/OnlineConsult";
-import Admin from "./components/Higher user level/Admin/AdminDashboard";
-import AppointConfirmation from "./components/Higher user level/Admin/AppointmentConfirmation";
-import EditDoctors from "./components/Higher user level/Admin/EditDoctors";
-import Doctor from "./components/Higher user level/DoctorPage";
-import AdminFeedback from "./components/Higher user level/Admin/feedback_Admin";
-import { Routes, Route } from "react-router-dom";
-import { useEffect, useState } from "react";
-import supabase from "./components/config/Supabase";
 import OnlineConsultationHistory from "./components/patient/Appointment Process/OnlineConsultationHistory";
-import DoctorConsultHistory from "./components/Higher user level/DoctorConsulHistory";
 import PatientDashboard from "./components/patient/Dashboard";
-import Sidebar from "./components/Sidebar";
 import OnlineDash from "./components/patient/OnlineDash";
 import F2fDash from "./components/patient/F2fDash";
-import Status from "./components/patient/Appointment Process/Status";
-import AppointmentDetails_f2f from "./components/Higher user level/Admin/AppointmentDetails_f2f";
-import AppointmentDetails_ol from "./components/Higher user level/Admin/AppointmentDetails_ol";
+
+//Doctor
+import DoctorConsultHistory from "./components/Higher user level/Doctor/DoctorConsulHistory";
+import DocAppointments from "./components/Higher user level/Doctor/Doc_Appointments";
+
+//admin
+import EditDoctors from "./components/Higher user level/Admin/EditDoctors";
+import AdminFeedback from "./components/Higher user level/Admin/feedback_Admin";
+import AppointmentDetails from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentDetails";
+import AppointConfirmation from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentConfirmation";
 
 function App() {
   //*For getting token of user
@@ -39,7 +43,7 @@ function App() {
   //*initiates after login
   useEffect(() => {
     if (token) {
-      sessionStorage.setItem("token", JSON.stringify(token));
+      localStorage.setItem("token", JSON.stringify(token));
       const fetchAdmin = async () => {
         const { data, error } = await supabase
           .from("profile")
@@ -77,21 +81,6 @@ function App() {
   const ALTIMG =
     "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png";
 
-  //*to show login modal
-  const [Show, FetchShow] = useState(null);
-  const [regOpen, setRegOpen] = useState(false);
-  const Close = () => FetchShow(false);
-  const Open = () => {
-    FetchShow(true);
-    setRegOpen(false);
-  };
-
-  const Openreg = () => {
-    setRegOpen(true);
-    FetchShow(false);
-  };
-  const Closereg = () => setRegOpen(false);
-
   //*To show modal for updating profile picture
   const [isProfileOpen, setIsProfile] = useState(false);
   const openProfileUpload = () => setIsProfile(true);
@@ -103,8 +92,8 @@ function App() {
   const closeSide = () => setOpen(false);
 
   useEffect(() => {
-    if (sessionStorage.getItem("token")) {
-      let data = JSON.parse(sessionStorage.getItem("token"));
+    if (localStorage.getItem("token")) {
+      let data = JSON.parse(localStorage.getItem("token"));
       setToken(data);
     }
   }, []);
@@ -121,12 +110,6 @@ function App() {
           user={user}
           CDNURL={CDNURL}
           imgName={imgName}
-          Open={Open}
-          Show={Show}
-          regOpen={regOpen}
-          Close={Close}
-          Openreg={Openreg}
-          Closereg={Closereg}
           open={open}
           openSide={openSide}
           closeSide={closeSide}
@@ -152,7 +135,6 @@ function App() {
             CDNURL={CDNURL}
             setimgName={setimgName}
             imgName={imgName}
-            Open={Open}
             user={user}
             closeSide={closeSide}
             className="h-screen left-0 "
@@ -177,13 +159,6 @@ function App() {
             element={<Home token={token} isDoctor={isDoctor} />}
           />
 
-          {/* Doctor's side */}
-          <Route path="/Doctor" element={<Doctor />} />
-          <Route
-            path="/DoctorConsultHistory"
-            element={<DoctorConsultHistory />}
-          />
-
           {/*patient's side */}
           <Route path="/Mission-and-Vision" element={<MissonVision />} />
           <Route path="/Feedback-Form" element={<Feedback token={token} />} />
@@ -197,6 +172,19 @@ function App() {
           />
           {token && (
             <>
+              <Route
+                path="/Dashboard"
+                element={<PatientDashboard token={token} isAdmin={isAdmin} isDoctor={isDoctor} isPatient={isPatient} />}
+              />
+              {/* Doctor's side */}
+              <Route
+                path="/DoctorConsultHistory"
+                element={<DoctorConsultHistory />}
+              />
+              <Route
+                path="/Doctor/Appointments"
+                element={<DocAppointments />}
+              />
               {/*patient's side */}
               <Route path="/Face-to-face/:id" element={<F2f token={token} />} />
               <Route path="/Online/:id" element={<Online token={token} />} />
@@ -205,7 +193,7 @@ function App() {
                 path="/Online_Consultation_History"
                 element={<OnlineConsultationHistory />}
               />
-              <Route path="/Patient/Dashboard" element={<PatientDashboard />} />
+
               <Route
                 path="/Appointment/Online"
                 element={<OnlineDash token={token} isPatient={isPatient} />}
@@ -214,23 +202,23 @@ function App() {
                 path="/Appointment/F2f"
                 element={<F2fDash token={token} isPatient={isPatient} />}
               />
-              <Route path="/Appointment/Status" element={<Status token={token} />} />
+              <Route
+                path="/Appointment/Status"
+                element={<Status token={token} />}
+              />
               <Route path="/:id" element={<DocInfo />} />
 
               {/* Admin's side */}
-              <Route path={"/Appointment_Details/ol/:id"} element={<AppointmentDetails_ol />} />
-              <Route path="/Appointment_Details/f2f/:id" element={<AppointmentDetails_f2f />} />
+              <Route
+                path="/Appointment_Details/:id"
+                element={<AppointmentDetails />}
+              />
               <Route path="/User_feedbacks" element={<AdminFeedback />} />
               <Route path="/Edit_doctors" element={<EditDoctors />} />
               <Route
                 path="/Confirm_Appointments"
-                element={
-                  <AppointConfirmation
-                    token={token}
-                  />
-                }
+                element={<AppointConfirmation token={token} />}
               />
-              <Route path="/Admin/Dashboard" element={<Admin />} />
             </>
           )}
 

@@ -113,8 +113,7 @@ const Sidebar = ({
               theme: "colored",
             });
           }
-        } 
-          catch (error) {
+        } catch (error) {
           setImgEmpty(false);
           console.log(error);
         }
@@ -201,9 +200,9 @@ const Sidebar = ({
                 <AiFillHome className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
                 <p className="-translate-x-8">Home</p>
               </Link>
-              {patient && (
+              {token && (
                 <Link
-                  to="/Patient/Dashboard"
+                  to="/Dashboard"
                   className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
                 >
                   <RiDashboardLine className="text-2xl mr-2 group-hover/os:invisible" />
@@ -211,7 +210,6 @@ const Sidebar = ({
                   <p className="-translate-x-8">Dashboard</p>
                 </Link>
               )}
-
               <li
                 onClick={openService}
                 className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
@@ -293,8 +291,9 @@ const Sidebar = ({
                 <AiFillHome className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
                 <p className="-translate-x-8">Home</p>
               </Link>
+
               <Link
-                to="/Admin/Dashboard"
+                to="/Dashboard"
                 className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
               >
                 <RiDashboardLine className="text-2xl mr-2 group-hover/os:invisible" />
@@ -353,15 +352,29 @@ const Sidebar = ({
           {/* Doctor */}
           {doctor && (
             <>
-              <li className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex">
+              <Link
+                to="/Dashboard"
+                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+              >
+                <RiDashboardLine className="text-2xl mr-2 group-hover/os:invisible" />
+                <RiDashboardFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
+                <p className="-translate-x-8">Dashboard</p>
+              </Link>
+              <Link
+                to="/Doctor/Appointments"
+                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+              >
                 <BsCalendarCheck className="text-2xl mr-2 group-hover/os:invisible" />
                 <BsCalendarCheckFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
                 <p className="-translate-x-8">Appointments</p>
-              </li>
-              <li className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex">
+              </Link>
+              <Link
+                to="/DoctorConsultHistory"
+                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+              >
                 <GoHistory className="text-2xl mr-2" />
                 <p>Doctor's Consultation history</p>
-              </li>
+              </Link>
             </>
           )}
         </div>

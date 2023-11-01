@@ -7,7 +7,6 @@ import supabase from "../../config/Supabase";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
 
 const Face2face = ({ token }) => {
   //*Medical history checkboxes
@@ -148,7 +147,6 @@ const Face2face = ({ token }) => {
     }
   }, [token, isSomeone]);
   const [userID, setID] = useState("");
-  const uuid = useState(uuidv4());
 
   //*function to read user inputs
   function handleChange(event) {
@@ -182,8 +180,8 @@ const Face2face = ({ token }) => {
         someone: checkedSomeone,
         medicalhistory: checkedBoxes,
         honorific: Honor,
-        type:"f2f",
-        status: "Waiting for confirmation",
+        type: "f2f",
+        status: "pending",
       },
     ]);
     if (error) {
@@ -197,7 +195,7 @@ const Face2face = ({ token }) => {
     toast.success("Succesfully appointed", {
       toastId: "success",
     });
-    toast.info("Your booking is waiting for confirmation.");
+    toast.info("Please wait for booking and scheduling confirmation.");
   };
 
   //*Doctor's Data

@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import supabase from "../../config/Supabase";
-import { CircleLoader } from "react-spinners";
+import supabase from "../../../config/Supabase";
+import { Oval } from "react-loader-spinner";
 
 const SomeonDetails = ({ id, setSomeone, isSomeone }) => {
   const [user, setMedical] = useState();
   const [loading, setLoading] = useState(true);
-  console.log(id)
+  console.log(id);
   //*To read med history data based on user ID
   useEffect(() => {
     if (isSomeone && id) {
       const fetchData = async () => {
         const { data, error } = await supabase
-          .from("F2f_Appointments")
+          .from("Patient_Appointments")
           .select("*")
-          .eq("f2f_id", id)
+          .eq("book_id", id)
           .single();
 
         if (error) {
@@ -49,11 +49,20 @@ const SomeonDetails = ({ id, setSomeone, isSomeone }) => {
         className="abs absolute overflow-y-auto mt-40 p-8 bg-white"
       >
         {loading ? (
-          <CircleLoader color="#36d7b7" size={45} />
+          <Oval
+            height={80}
+            width={80}
+            color="#4fa94d"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+            ariaLabel="oval-loading"
+            secondaryColor="#4fa94d"
+            strokeWidth={2}
+            strokeWidthSecondary={2}
+          />
         ) : (
-          <>
-            {user.email}
-          </>
+          <>{user.email}</>
         )}
       </div>
     </div>

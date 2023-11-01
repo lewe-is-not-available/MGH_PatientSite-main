@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Medical from "./Medical_online";
+import Medical from "./Medical";
 import { Link } from "react-router-dom";
-import SomeonDetails from "./SomeoneDetails_ol";
+import SomeonDetails from "./SomeoneDetails";
 
-const Online = ({ ol }) => {
-  const date = new Date(ol.created_at);
+const F2f = ({ f2 }) => {
+  const date = new Date(f2.created_at);
+
   function formateDateTime(date) {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -15,57 +16,58 @@ const Online = ({ ol }) => {
 
     return `${year}/${month}/${day} ${hours}:${minutes}${ampm}`;
   }
-  const CreatedAt = formateDateTime(date);
   //*if booked by someone set viewable
-  const [isSomeone, setSomeone] = useState(false);
-  const [SomeoneModal, setSomeoneModal] = useState(null);
-  const handleSomeoneData = () => {
+  const [isSomeone, setSomeone] = useState(null);
+  const [SomeoneModal, setSomeoneModal] = useState(false);
+  const handleSomeoneData = (e) => {
+    e.preventDefault();
     setSomeoneModal(true);
   };
+
   useEffect(() => {
-    if (ol.someone === "No") {
+    if (f2.someone === "No") {
       setSomeone(false);
     } else {
       setSomeone(true);
     }
-  }, [ol, setSomeone, isSomeone]);
+  }, [f2, setSomeone, isSomeone]);
   //*To open and pass medical history modal
   const [MedModal, setMedModal] = useState(false);
 
   const [isMedical, setMedical] = useState(null);
-  const [medData, setMedData] = useState(null);
+  //const [medData, setMedData] = useState(null);
 
-  const handleMedData = (ItemData) => {
-    setMedData(ItemData);
+  const handleMedData = (e) => {
+    e.preventDefault();
     setMedModal(true);
   };
-  let med = ol.medicalhistory;
-
+  let med = f2.medicalhistory;
   useEffect(() => {
     if (med.length === 0) {
       setMedical(false);
     } else {
       setMedical(true);
     }
-  }, [ol, setMedical, isMedical, med.length]);
+  }, [f2, setMedical, isMedical, med.length]);
   return (
+    //TODO: OVERFLOW
     <tr
-      key={ol.online_id}
-      className="text-base group/tr text-gray-900 bg-white transition duration-75 ease-in text-center hover:bg-slate-200"
+      key={f2.f2f_id}
+      className="text-base group/tr text-gray-900 bg-white transition duration-75 ease-in text-center hover:bg-slate-200 "
     >
-      <th scope="row" className="px-6 py-4 font-medium  whitespace-nowrap">
-        {ol.fname} {ol.lname}
+      <th className="px-6 py-4 font-medium hover:  whitespace-nowrap">
+        {f2.fname} {f2.lname}
       </th>
       <td className="px-6 py-4 bg-slate-100 group-hover/tr:bg-slate-300 transition duration-75 ease-in">
-        {ol.docname}
+        {f2.docname}
       </td>
-      <td className="px-6 py-4">{CreatedAt}</td>
+      <td className="px-6 py-4">{formateDateTime(date)}</td>
       <td className="px-6 py-4 bg-slate-100 group-hover/tr:bg-slate-300 transition duration-75 ease-in">
-        {ol.date}
+        {f2.date}
       </td>
-      <td className="px-6 py-4">{ol.time}</td>
+      <td className="px-6 py-4">{f2.time}</td>
       <td className="px-6 py-4 bg-slate-100 group-hover/tr:bg-slate-300 transition duration-75 ease-in">
-        {ol.reason}
+        {f2.reason}
       </td>
       <td className="px-6 py-4">
         {" "}
@@ -75,14 +77,14 @@ const Online = ({ ol }) => {
               <SomeonDetails
                 isSomeone={isSomeone}
                 setSomeone={setSomeoneModal}
-                id={ol.online_id}
+                id={f2.f2f_id}
               />
             )}
             <button
-              onClick={() => {
-                handleSomeoneData(ol.online_id);
+              onClick={(e) => {
+                handleSomeoneData(e);
               }}
-              className="bg-[#66b966] hover:bg-[#0b580b] transition duration-100
+              className="bg-[#54a350] hover:bg-[#0b580b] transition duration-100
                text-white px-3 rounded-full"
             >
               check details
@@ -98,15 +100,13 @@ const Online = ({ ol }) => {
             {MedModal && (
               <Medical
                 MedModal={MedModal}
-                id={medData}
+                id={f2.book_id}
                 setMedModal={setMedModal}
               />
             )}
             <button
-              onClick={() => {
-                handleMedData(ol.online_id);
-              }}
-              className="bg-[#50924c] hover:bg-[#0b580b] transition duration-100
+              onClick={(e) => handleMedData(e)}
+              className="bg-[#66b966] hover:bg-[#0b580b] transition duration-100
                text-white px-3 rounded-full"
             >
               check details
@@ -116,10 +116,10 @@ const Online = ({ ol }) => {
           <p className="text-[#198119]">None</p>
         )}
       </td>
-      <td className="px-6 py-4 w-[15%] text-white">
+      <td className="px-6 py-4 w-[15%] text-white ">
         <Link
-          to={"/Appointment_Details/ol/" + ol.user_id}
-          className="bg-[#66b966] hover:bg-[#476545] py-1 transition duration-100
+          to={"/Appointment_Details/" + f2.book_id}
+          className="bg-[#54a350] hover:bg-[#476545] py-1 transition duration-100
           text-white px-3 rounded-full"
         >
           view appointment details
@@ -129,4 +129,4 @@ const Online = ({ ol }) => {
   );
 };
 
-export default Online;
+export default F2f;

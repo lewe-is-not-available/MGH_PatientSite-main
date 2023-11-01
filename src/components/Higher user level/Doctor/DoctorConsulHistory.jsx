@@ -2,7 +2,9 @@ import React from 'react'
 
 const DoctorConsulHistory = () => {
   return (
-    <div>DoctorConsulHistory</div>
+    <div className="back h-screen text-center place-content-center">
+    History
+</div>
   )
 }
 

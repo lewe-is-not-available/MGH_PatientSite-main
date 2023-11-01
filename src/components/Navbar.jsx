@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import logo from "./images/MGHlogo.png";
 import { Link } from "react-router-dom";
 import Login from "./Login/Login";
-import SignIn from "./Login/SigninButton";
 import Reg from "./Login/Signup";
 import { useNavigate } from "react-router-dom";
 import supabase from "./config/Supabase";
@@ -19,13 +18,6 @@ const Navbar = ({
   isPatient,
   open,
   openSide,
-  Open,
-  Show,
-  regOpen,
-  Openreg,
-  Closereg,
-  Close,
-  FetchShow,
   imgName,
   CDNURL,
   user,
@@ -37,6 +29,23 @@ const Navbar = ({
   //*Function to show/hide registration and login
   const [doctor, setDoctor] = useState(false);
   const [admin, setAdmin] = useState(false);
+  const [patient, setPatient] = useState(false);
+
+  //*to show login modal
+  const [Show, FetchShow] = useState(null);
+  const [regOpen, setRegOpen] = useState(false);
+  const Close = () => FetchShow(false);
+  const Open = (e) => {
+    e.preventDefault();
+    FetchShow(true);
+    setRegOpen(false);
+  };
+
+  const Openreg = () => {
+    setRegOpen(true);
+    FetchShow(false);
+  };
+  const Closereg = () => setRegOpen(false);
 
   useEffect(() => {
     if (token) {
@@ -45,6 +54,9 @@ const Navbar = ({
       }
       if (isAdmin) {
         setAdmin(true);
+      }
+      if (isPatient) {
+        setPatient(true);
       }
     }
   }, [token, isAdmin, isDoctor, isPatient]);
@@ -57,7 +69,7 @@ const Navbar = ({
       alert(error);
     } else {
       setToken(false);
-      sessionStorage.removeItem("token");
+      localStorage.removeItem("token");
       navigate("/");
       window.location.reload();
     }
@@ -81,38 +93,26 @@ const Navbar = ({
               className="text-[40px] ml-4 cursor-pointer text-white transition duration-100 hover:text-white hover:bg-slate-400 rounded-md p-1"
             />
 
-            {doctor ? (
-              <Link to="/Doctor" className="hover:cursor-pointer flex p-3 ml-5">
-                <div className="w-[65px]">
-                  <img src={logo} alt="/" />
-                </div>
-                <h1 className="font-bold text-6xl text-white pl-2 flex">
-                  MGH
-                  {doctor && (
-                    <p className="ml-3 font-thin text-4xl mt-4">
-                      Doctor's page
-                    </p>
-                  )}
-                </h1>
-              </Link>
-            ) : (
-              <Link to="/" className="hover:cursor-pointer flex p-3 ml-5">
-                <div className="w-[65px]">
-                  <img src={logo} alt="/" />
-                </div>
-                <h1 className="font-bold text-6xl text-white pl-2 flex">
-                  MGH
-                  {admin && (
-                    <p className="ml-3 font-thin text-4xl mt-4">Admin's page</p>
-                  )}
-                  {doctor && (
-                    <p className="ml-3 font-thin text-4xl mt-4">
-                      Doctor's page
-                    </p>
-                  )}
-                </h1>
-              </Link>
-            )}
+            <Link
+              to="/Dashboard"
+              className="hover:cursor-pointer flex p-3 ml-5"
+            >
+              <div className="w-[65px]">
+                <img src={logo} alt="/" />
+              </div>
+              <h1 className="font-bold text-6xl text-white pl-2 flex">
+                MGH
+                {patient && (
+                  <p className="ml-3 font-thin text-4xl mt-4">Patient's page</p>
+                )}
+                {doctor && (
+                  <p className="ml-3 font-thin text-4xl mt-4">Doctor's page</p>
+                )}
+                {admin && (
+                  <p className="ml-3 font-thin text-4xl mt-4">Admin's page</p>
+                )}
+              </h1>
+            </Link>
           </div>
         </div>
         <div className=" mt-7 mr-12 text-lg ">
@@ -142,7 +142,13 @@ const Navbar = ({
               </button>
             </div>
           ) : (
-            <SignIn open={Open} />
+            <button
+              type="submit"
+              onClick={Open}
+              className="ring-2 text-white ring-white hover:ring-[#5f915a] hover:text-[#315E30] hover:bg-[#A5DD9D] transition duration-100 px-2 rounded-full self-center"
+            >
+              Sign In
+            </button>
           )}
         </div>
       </div>
@@ -151,6 +157,9 @@ const Navbar = ({
       </div>
       <div className={`${Show ? "visible" : "hidden"}`}>
         <Login
+          doctor={doctor}
+          admin={admin}
+          patient={patient}
           close={Close}
           openReg={Openreg}
           setshow={FetchShow}
@@ -158,16 +167,16 @@ const Navbar = ({
           setToken={setToken}
         />
       </div>
-      <div className={`${isProfileOpen ? "visible":"hidden"}`}>
+      <div className={`${isProfileOpen ? "visible" : "hidden"}`}>
         <DragandDrop
-        isImgEmpty={isImgEmpty}
-        setUploaded={setUploaded}
-        user={user}
-        imgName={imgName}
-        isProfileOpen={isProfileOpen}
-        closeProfileUpload={closeProfileUpload} />
+          isImgEmpty={isImgEmpty}
+          setUploaded={setUploaded}
+          user={user}
+          imgName={imgName}
+          isProfileOpen={isProfileOpen}
+          closeProfileUpload={closeProfileUpload}
+        />
       </div>
-    
     </div>
   );
 };

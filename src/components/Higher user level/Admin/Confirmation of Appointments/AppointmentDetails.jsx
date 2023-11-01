@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import supabase from "../../config/Supabase";
+import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
 import { Oval } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
@@ -14,9 +14,9 @@ const AppointmentDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       const { data, error } = await supabase
-        .from("F2f_Appointments")
+        .from("Patient_Appointments")
         .select()
-        .eq("f2f_id", id)
+        .eq("book_id", id)
         .single();
 
       if (error) {
@@ -40,9 +40,9 @@ const AppointmentDetails = () => {
   async function handleAccept(e) {
     e.preventDefault()
     const { error } = await supabase
-      .from("countries")
+      .from("Patient_Appointments")
       .update({ status: "pending" })
-      .eq("id", 1);
+      .eq("book_id", id);
     if (error) {
       console.log(error);
     }

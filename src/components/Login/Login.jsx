@@ -1,14 +1,15 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineEyeInvisible, AiFillEye } from "react-icons/ai";
 //import useAuth from "../Hooks/useAuth";
 import supabase from "../config/Supabase";
+import { useNavigate } from "react-router-dom";
 
-const Login = ({ close, openReg, setToken }) => {
+const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
   //TODO: Make registration
   //!Fix login
   // const navigate = useNavigate()
   //*open registration while preventing form to submit
-  function handleRegistration(e){
+  function handleRegistration(e) {
     e.preventDefault();
     openReg();
   }
@@ -18,8 +19,6 @@ const Login = ({ close, openReg, setToken }) => {
     email: "",
     password: "",
   });
-
-  //console.log(formData);
 
   function handleChange(event) {
     setFormData((prevFormData) => {
@@ -34,10 +33,40 @@ const Login = ({ close, openReg, setToken }) => {
   const [err, setErr] = useState("");
   const [success, setSuccess] = useState(false);
 
+  //*navigates the user back to dashboard based on role
+  const nav = useNavigate();
+  const [p, setP] = useState(false);
+  const [d, setd] = useState(false);
+  const [a, seta] = useState(false);
+  console.log(a)
+
+  useEffect(() => {
+    if (token) {
+      if (patient) {
+        setP(true);
+      }
+      if (admin) {
+        seta(true);
+      }
+      if (doctor) {
+        setd(true);
+      }
+    }
+  }, [token, seta, admin, doctor]);
+
   //*Login button funtion
   async function handleSubmit(e) {
+       if (p) {
+        nav("/Patient/Dashboard");
+      } else if (a) {
+        nav("/Admin/Dashboard");
+      } else if (d) {
+        nav("/Doctor/Dashboard");
+      }
     e.preventDefault();
-
+    if (token) {
+      console.log(patient);
+    }
     try {
       //*supabase user authentication
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -49,6 +78,8 @@ const Login = ({ close, openReg, setToken }) => {
       if (error) throw error;
 
       //*successful sign-in
+      nav("/Dashboard")
+
       setToken(data);
       setSuccess(true);
 
@@ -133,7 +164,10 @@ const Login = ({ close, openReg, setToken }) => {
                 </div>
                 <div className="text-center">
                   <p className="pt-4">No account?</p>
-                  <button className="text-blue-600" onClick={handleRegistration}>
+                  <button
+                    className="text-blue-600"
+                    onClick={handleRegistration}
+                  >
                     {" "}
                     create one
                   </button>
