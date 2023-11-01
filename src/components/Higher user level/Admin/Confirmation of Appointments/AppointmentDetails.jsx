@@ -41,7 +41,7 @@ const AppointmentDetails = () => {
     e.preventDefault()
     const { error } = await supabase
       .from("Patient_Appointments")
-      .update({ status: "pending" })
+      .update({ status: "Confirmed" })
       .eq("book_id", id);
     if (error) {
       console.log(error);

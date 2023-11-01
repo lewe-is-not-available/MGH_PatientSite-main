@@ -35,7 +35,6 @@ const Online = ({ ol }) => {
   const [MedModal, setMedModal] = useState(false);
 
   const [isMedical, setMedical] = useState(null);
-  const [medData, setMedData] = useState(null);
 
   const handleMedData = (e) => {
     e.preventDefault();
