@@ -15,6 +15,8 @@ import {
   BsCalendarCheck,
   BsCalendarCheckFill,
   BsPhone,
+  BsArchive,
+  BsArchiveFill
 } from "react-icons/bs";
 import {
   RiComputerLine,
@@ -200,6 +202,15 @@ const Sidebar = ({
                 <AiFillHome className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
                 <p className="-translate-x-8">Home</p>
               </Link>
+              
+              <Link
+                  to="/Dashboard"
+                  className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+                >
+                  <RiDashboardLine className="text-2xl mr-2 group-hover/os:invisible" />
+                  <RiDashboardFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
+                  <p className="-translate-x-8">Dashboard</p>
+                </Link>
               {token && (
                 <Link
                   to="/Dashboard"
@@ -308,6 +319,16 @@ const Sidebar = ({
                 <BsCalendarCheckFill className="text-2xl mr-2 -translate-x-7 invisible group-hover/os:visible" />
                 <p className="-translate-x-7 whitespace-nowrap">
                   Confirm Appointments
+                </p>
+              </Link>
+              <Link
+                to="/Archive"
+                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+              >
+                <BsArchive className="text-2xl mr-2 group-hover/os:invisible" />
+                <BsArchiveFill className="text-2xl mr-2 -translate-x-7 invisible group-hover/os:visible" />
+                <p className="-translate-x-7 whitespace-nowrap">
+                  Archives
                 </p>
               </Link>
               <Link

@@ -52,7 +52,7 @@ const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
         setd(true);
       }
     }
-  }, [token, seta, admin, doctor]);
+  }, [token, seta, admin, doctor, patient]);
 
   //*Login button funtion
   async function handleSubmit(e) {
@@ -96,7 +96,7 @@ const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
   return (
     <div className="flex justify-center backdrop-blur-sm bg-slate-700 fixed z-50 inset-0 bg-opacity-30">
       <>
-        <div className="absolute abs bg-white mt-40">
+        <div className="absolute abs rounded-md bg-white mt-40">
           <div className="mb-8 mt-4 mr-4 flex justify-end">
             <button
               onClick={close}

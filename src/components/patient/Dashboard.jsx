@@ -15,7 +15,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Admin from "../Higher user level/Admin/AdminDashboard";
 import Doc_Dash from "../Higher user level/Doctor/DoctorPage";
 
-const Dashboard = ({ isAdmin, isDoctor, isPatient, token }) => {
+const Dashboard = ({ token, showLogin }) => {
+  //TODO: Show dashboard even if logged out but link them to open modal
   //*Role Based components
   const [loading, setLoading] = useState(true);
   const [patient, setPatient] = useState(false);
@@ -27,18 +28,18 @@ const Dashboard = ({ isAdmin, isDoctor, isPatient, token }) => {
     const fetchAdmin = async () => {
       const { data } = await supabase.from("profile").select("*").single();
       setLoading(false);
-      if (data.role === "admin") {
-        setAdmin(true);
-      } else if (data.role === "patient") {
-        setPatient(true);
-      } else if (data.role === "doctor") {
-        setDoctor(true);
-      } else {
-        navigate("/");
+      if (token) {
+        if (data.role === "admin") {
+          setAdmin(true);
+        } else if (data.role === "patient") {
+          setPatient(true);
+        } else if (data.role === "doctor") {
+          setDoctor(true);
+        }
       }
     };
     fetchAdmin();
-  }, []);
+  }, [token]);
   //*For Search window drop function
   const [Show, FetchShow] = useState(null);
   const Close = () => FetchShow(false);
@@ -165,9 +166,68 @@ const Dashboard = ({ isAdmin, isDoctor, isPatient, token }) => {
       >
         Feautures
       </h1>
+      {!token && (
+        <div className="flex justify-center mb-20">
+          <div className="grid place-items-center grid-cols-3 gap-x-20 gap-y-16 w-full">
+            {/* Online consult */}
+            <div className="boxes" data-aos="fade-up">
+              <img src={online} alt="/" className="imgDash p-5" />
+              <button onClick={showLogin} className="titleText">
+                Online Consult
+              </button>
+              <p className="text-sm">Book an appointment for online consult</p>
+            </div>
+            {/* Face to face consult */}
+            <div className="boxes" data-aos="fade-up">
+              <img src={f2f} alt="/" className="imgDash object-left p-3" />
+              <button onClick={showLogin} className="titleText">
+                Face to face Consult
+              </button>
+              <p className="text-sm">
+                Book an appointment for Face to face consult
+              </p>
+            </div>
+            {/* Contact us */}
+            <div className="boxes" data-aos="fade-up">
+              <img src={contact} alt="/" className=" imgDash p-5 py-8" />
+              <Link to="/Contacts" className="titleText">
+                Contact Us!
+              </Link>
+              <p className="text-sm">Book an for online appointment</p>
+            </div>
+            {/* Feedback form */}
+            <div className="boxes" data-aos="fade-up">
+              <img src={feedback} alt="/" className="imgDash p-5" />
+              <Link to="/Feedback-Form" className="titleText">
+                Feedback form
+              </Link>
+              <p className="text-sm">
+                Let us know what you think of our website
+              </p>
+            </div>
+            {/* Consult history */}
+            <div className="boxes" data-aos="fade-up">
+              <img src={history} alt="/" className="imgDash p-7" />
+              <button onClick={showLogin} className="titleText">
+                Consultation History
+              </button>
+              <p className="text-sm">
+                Have a look at your recent online consultations
+              </p>
+            </div>
+            {/* Appointment status */}
+            <div className="boxes" data-aos="fade-up">
+              <img src={status} alt="/" className="imgDash p-4" />
+              <button onClick={showLogin} className="titleText">
+                Appointment status
+              </button>
+              <p className="text-sm">Keep track of your appointment status</p>
+            </div>
+          </div>
+        </div>
+      )}
       {patient && (
         <>
-          {" "}
           <div className="flex justify-center mb-20">
             <div className="grid place-items-center grid-cols-3 gap-x-20 gap-y-16 w-full">
               {/* Online consult */}

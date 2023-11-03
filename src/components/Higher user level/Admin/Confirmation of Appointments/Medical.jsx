@@ -45,7 +45,7 @@ const Medical = ({ setMedModal, id, MedModal }) => {
       <div
         onClick={(e) => e.stopPropagation()}
         ref={medRef}
-        className="abs absolute overflow-y-auto mt-40 p-8 bg-white"
+        className="abs absolute overflow-y-auto mt-40 p-8 rounded-lg bg-white"
       >
         {loading ? (
           <Oval

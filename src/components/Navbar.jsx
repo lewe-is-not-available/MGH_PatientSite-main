@@ -25,6 +25,8 @@ const Navbar = ({
   closeProfileUpload,
   isProfileOpen,
   setUploaded,
+  FetchShow,
+  Show
 }) => {
   //*Function to show/hide registration and login
   const [doctor, setDoctor] = useState(false);
@@ -32,7 +34,7 @@ const Navbar = ({
   const [patient, setPatient] = useState(false);
 
   //*to show login modal
-  const [Show, FetchShow] = useState(null);
+
   const [regOpen, setRegOpen] = useState(false);
   const Close = () => FetchShow(false);
   const Open = (e) => {

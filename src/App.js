@@ -29,11 +29,15 @@ import DocAppointments from "./components/Higher user level/Doctor/Doc_Appointme
 
 //admin
 import EditDoctors from "./components/Higher user level/Admin/EditDoctors";
+import Archive from "./components/Higher user level/Admin/Archive";
 import AdminFeedback from "./components/Higher user level/Admin/feedback_Admin";
 import AppointmentDetails from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentDetails";
 import AppointConfirmation from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentConfirmation";
 
 function App() {
+  //*login modal
+  const [Show, FetchShow] = useState(null);
+
   //*For getting token of user
   const [token, setToken] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -102,6 +106,8 @@ function App() {
     <div className="min-h-screen w-screen flex flex-col ">
       <header className="sticky w-screen top-0 z-50">
         <Navbar
+          FetchShow={FetchShow}
+          Show={Show}
           setUploaded={setUploaded}
           closeProfileUpload={closeProfileUpload}
           isProfileOpen={isProfileOpen}
@@ -170,12 +176,13 @@ function App() {
             path={"/Appointment"}
             element={<Appointment token={token} isPatient={isPatient} />}
           />
+           <Route
+                path="/Dashboard"
+                element={<PatientDashboard token={token} showLogin={FetchShow} />}
+              />
           {token && (
             <>
-              <Route
-                path="/Dashboard"
-                element={<PatientDashboard token={token} isAdmin={isAdmin} isDoctor={isDoctor} isPatient={isPatient} />}
-              />
+             
               {/* Doctor's side */}
               <Route
                 path="/DoctorConsultHistory"
@@ -214,6 +221,7 @@ function App() {
                 element={<AppointmentDetails />}
               />
               <Route path="/User_feedbacks" element={<AdminFeedback />} />
+              <Route path="/Archive" element={<Archive />} />
               <Route path="/Edit_doctors" element={<EditDoctors />} />
               <Route
                 path="/Confirm_Appointments"

@@ -6,6 +6,7 @@ import F2f from "./F2f";
 import { useNavigate } from "react-router-dom";
 
 const AppointmentConfirmation = () => {
+  //TODO: REDESIGN TABLE INTO BULK WITH PROFILE PIC
   //TODO: add draggable function for table head
   const navigate = useNavigate();
 
@@ -112,19 +113,19 @@ const AppointmentConfirmation = () => {
               <th scope="col" className="px-6 py-3">
                 Booked at
               </th>
-              <th scope="col" className="px-6 py-3 ">
+              <th scope="col" className="px-6 py-3">
                 Appointment date
               </th>
               <th scope="col" className="px-6 py-3">
                 Appointment Time
               </th>
-              <th scope="col" className="px-6 py-3 ">
+              <th scope="col" className="px-6 py-3">
                 Reason
               </th>
               <th scope="col" className="px-6 py-3">
                 Booked by someone
               </th>
-              <th scope="col" className="px-6 py-3 ]">
+              <th scope="col" className="px-6 py-3">
                 Medical History
               </th>
               <th scope="col" className="px-6 py-3">
