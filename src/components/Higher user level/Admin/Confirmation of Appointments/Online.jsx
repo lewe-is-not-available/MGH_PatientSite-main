@@ -55,6 +55,7 @@ const Online = ({ ol }) => {
       className="text-base group/tr text-gray-900 bg-white transition duration-75 ease-in text-center hover:bg-slate-200"
     >
       <th scope="row" className="px-6 py-4 font-medium  whitespace-nowrap">
+        
         {ol.fname} {ol.lname}
       </th>
       <td className="px-6 py-4 bg-slate-100 group-hover/tr:bg-slate-300 transition duration-75 ease-in">

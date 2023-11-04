@@ -59,7 +59,7 @@ const AppointmentConfirmation = () => {
         </p>
         <table className="w-full text-sm text-left bg-opacity-60 text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 bg-slate-100 uppercase">
-            <tr className="text-base text-center text-[#315E30]">
+            {/* <tr className="text-base text-center text-[#315E30]">
               <th scope="col" className="px-6 py-6">
                 Patient's Name
               </th>
@@ -87,6 +87,9 @@ const AppointmentConfirmation = () => {
               <th scope="col" className="px-6 py-3">
                 view and confirm
               </th>
+            </tr> */}
+            <tr>
+              
             </tr>
           </thead>
           <tbody>
