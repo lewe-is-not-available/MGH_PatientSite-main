@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import supabase from "./config/Supabase";
 import copy from "copy-to-clipboard";
 import { toast } from "react-toastify";
@@ -6,7 +6,7 @@ import { IoClose } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { AiOutlineHome, AiFillHome } from "react-icons/ai";
 import { FiChevronDown } from "react-icons/fi";
-import { FaUserDoctor } from "react-icons/fa6";
+import { FaUserDoctor, FaUserGroup } from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
 import { GrStatusGood, GrStatusGoodSmall } from "react-icons/gr";
 import {
@@ -16,7 +16,7 @@ import {
   BsCalendarCheckFill,
   BsPhone,
   BsArchive,
-  BsArchiveFill
+  BsArchiveFill,
 } from "react-icons/bs";
 import {
   RiComputerLine,
@@ -45,7 +45,7 @@ const Sidebar = ({
   setImgEmpty,
   openProfileUpload,
   setimgName,
-  getImages,
+  open
 }) => {
   //*Authentication by roles
   const [doctor, setDoctor] = useState(false);
@@ -73,6 +73,43 @@ const Sidebar = ({
   const openService = () => fetchServices(!services);
   const openAbout = () => fetchAbout(!About);
 
+  //*close dropdown when clicked outside
+
+  let serviceRef = useRef();
+  let aboutRef = useRef();
+  useEffect(() => {
+    let abouthandler = (e) => {
+  
+        if (!aboutRef.current.contains(e.target)) {
+          fetchAbout(false);
+        }
+
+    };
+    if (open) {
+      document.addEventListener("mousedown", abouthandler);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", abouthandler);
+    };
+  }, [fetchAbout]);
+  useEffect(() => {
+    let handler = (e) => {
+
+        if (!serviceRef.current.contains(e.target)) {
+          fetchServices(false);
+        }
+
+    };
+
+    if (open) {
+      document.addEventListener("mousedown", handler);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  }, [fetchServices]);
+
   //*show more text
   const [isTruncate, setTruncate] = useState(true);
   const seeMore = () => setTruncate(!isTruncate);
@@ -99,6 +136,7 @@ const Sidebar = ({
               offset: 0,
               sortBy: { column: "created_at", order: "asc" },
             });
+          //console.log(user.id)
           if (data[0]) {
             setImgEmpty(true);
             setimgName(data[0].name);
@@ -122,8 +160,8 @@ const Sidebar = ({
       }
       getImages();
     }
-  }, [user, getImages, isImgEmpty, imgName, setimgName, setImgEmpty]);
-
+  }, [user, isImgEmpty, imgName, setimgName, setImgEmpty]);
+  //console.log(imgName)
   return (
     <div className="w-[18.8rem] fixed">
       <div className="bg-[#dcf7dc8f] pt-1 h-screen shadow-2xl">
@@ -202,26 +240,17 @@ const Sidebar = ({
                 <AiFillHome className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
                 <p className="-translate-x-8">Home</p>
               </Link>
-              
+
               <Link
-                  to="/Dashboard"
-                  className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
-                >
-                  <RiDashboardLine className="text-2xl mr-2 group-hover/os:invisible" />
-                  <RiDashboardFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
-                  <p className="-translate-x-8">Dashboard</p>
-                </Link>
-              {token && (
-                <Link
-                  to="/Dashboard"
-                  className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
-                >
-                  <RiDashboardLine className="text-2xl mr-2 group-hover/os:invisible" />
-                  <RiDashboardFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
-                  <p className="-translate-x-8">Dashboard</p>
-                </Link>
-              )}
+                to="/Dashboard"
+                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+              >
+                <RiDashboardLine className="text-2xl mr-2 group-hover/os:invisible" />
+                <RiDashboardFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
+                <p className="-translate-x-8">Dashboard</p>
+              </Link>
               <li
+                ref={serviceRef}
                 onClick={openService}
                 className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
               >
@@ -237,7 +266,7 @@ const Sidebar = ({
                 />
               </li>
 
-              <div className={`${services ? "show -m-1" : "hide -m-1"}`}>
+              <div className={`${services ? "show" : "hide"}`}>
                 <Link
                   to="/Appointment"
                   className="px-4 py-1 flex flex-col group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
@@ -252,6 +281,7 @@ const Sidebar = ({
                 </Link>
               </div>
               <Link
+                ref={aboutRef}
                 onClick={openAbout}
                 className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
               >
@@ -327,9 +357,7 @@ const Sidebar = ({
               >
                 <BsArchive className="text-2xl mr-2 group-hover/os:invisible" />
                 <BsArchiveFill className="text-2xl mr-2 -translate-x-7 invisible group-hover/os:visible" />
-                <p className="-translate-x-7 whitespace-nowrap">
-                  Archives
-                </p>
+                <p className="-translate-x-7 whitespace-nowrap">Archives</p>
               </Link>
               <Link
                 to="/Edit_doctors"
@@ -337,6 +365,13 @@ const Sidebar = ({
               >
                 <FaUserDoctor className="text-2xl mr-2" />
                 <p>Edit Doctors</p>
+              </Link>
+              <Link
+                to="/Edit_Patients"
+                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+              >
+                <FaUserGroup className="text-2xl mr-2" />
+                <p>Edit Patients</p>
               </Link>
               <Link
                 to="/User_feedbacks"

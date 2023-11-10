@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import supabase from "../../config/Supabase";
 import supabaseAdmin from "../../config/supabaseAdmin";
-import UserMap from "./UserMap";
+import PatientMap from "./UserMap";
 
 const EditDoctors = () => {
   const [books, setBook] = useState([]);
@@ -87,9 +87,9 @@ const EditDoctors = () => {
       <div className="abs absolute mt-10 rounded-lg bg-white p-10">
         {books &&
           books
-            .filter((item) => item.role && item.role.includes("doctor"))
+            .filter((item) => item.role && item.role.includes("patient"))
             .map((data) => (
-              <UserMap data={data} setPatientId={setPatientId} PatientId={PatientId}/>
+              <PatientMap data={data} setPatientId={setPatientId} PatientId={PatientId}/>
             ))}
         <button onClick={fetchDocAcc}>submit</button>
       </div>

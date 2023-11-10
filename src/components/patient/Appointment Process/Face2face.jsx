@@ -86,7 +86,7 @@ const Face2face = ({ token }) => {
     }
   }
 
-  //Removing the added item
+  //*Removing the added item
   function handleRemoveOther(e, item) {
     e.preventDefault();
     setCheckedBoxes((pre) => {

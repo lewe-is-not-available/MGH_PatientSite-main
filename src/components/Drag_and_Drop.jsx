@@ -1,14 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import supabase from "./config/Supabase";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
 
-const Drag_and_Drop = ({ closeProfileUpload, user, imgName, setimgName,isProfileOpen, setUploaded, isImgEmpty }) => {
+const Drag_and_Drop = ({
+  closeProfileUpload,
+  user,
+  imgName,
+  isProfileOpen,
+  setUploaded,
+  isImgEmpty,
+}) => {
   const [File, setFile] = useState([]);
   const [isSelected, setSelected] = useState(false);
   const [image, setImage] = useState(null);
 
+  //*Drag and Drop function
   const handleDragOver = (e) => {
     e.preventDefault();
   };
@@ -19,7 +27,7 @@ const Drag_and_Drop = ({ closeProfileUpload, user, imgName, setimgName,isProfile
     setImage(URL.createObjectURL(e.dataTransfer.files[0]));
     setFile(e.dataTransfer.files);
   };
-  //Handle File Input
+  //*Handle File Input
   const handleFile = (e) => {
     e.preventDefault();
     setSelected(true);
@@ -37,28 +45,26 @@ const Drag_and_Drop = ({ closeProfileUpload, user, imgName, setimgName,isProfile
   };
   //*Image uploading
   async function uploadImage() {
-    closeProfileUpload()
-    if(imgName){
-      if(isImgEmpty){
-        supabase.storage
-        .from("images")
-        .remove([user.id + "/" + imgName]);
-        }
+    closeProfileUpload();
+    if (imgName) {
+      if (isImgEmpty) {
+        supabase.storage.from("images").remove([user.id + "/" + imgName]);
+      }
       const { data, error } = await supabase.storage
-      .from("images")
-      .upload(user.id + "/" + uuidv4(), File[0]);
-    if (error) {
-      console.log(error);
-    }
-    if (data) {
-      setUploaded(true)
-      setSelected(false);
-      setImage(null);
-      setFile(null);
-      toast.success("Succesfully uploaded", {
-        toastId: "success",
-      });
-    }
+        .from("images")
+        .upload(user.id + "/" + uuidv4(), File[0]);
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        setUploaded(true);
+        setSelected(false);
+        setImage(null);
+        setFile(null);
+        toast.success("Succesfully uploaded", {
+          toastId: "success",
+        });
+      }
     }
   }
   // <div className="uploads">
@@ -89,7 +95,7 @@ const Drag_and_Drop = ({ closeProfileUpload, user, imgName, setimgName,isProfile
         <div className="border-b-2 border-slate-300 w-full mt-3 mb-6" />
         {isSelected ? (
           <form
-            onSubmit={(e)=>uploadImage(e)}
+            onSubmit={(e) => uploadImage(e)}
             className="flex flex-col items-center"
           >
             <img
@@ -98,19 +104,21 @@ const Drag_and_Drop = ({ closeProfileUpload, user, imgName, setimgName,isProfile
               alt="/"
             />
             {isProfileOpen ? (
-               <ul className="flex w-[90%]">
-              <p className="font-semibold whitespace-nowrap mr-2">
-                File Name:{" "}
-              </p>
-              {Array.from(File).map((file, idx) => (
-                <li className="truncate" key={idx}>
-                  {file.name}
-                </li>
-              ))}
-            </ul>
-            ):("")}
+              <ul className="flex w-[90%]">
+                <p className="font-semibold whitespace-nowrap mr-2">
+                  File Name:{" "}
+                </p>
+                {Array.from(File).map((file, idx) => (
+                  <li className="truncate" key={idx}>
+                    {file.name}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              ""
+            )}
             <div className="border-b-2 border-slate-300 w-full mt-3 mb-6" />
-           
+
             <div className="flex space-x-4 mb-4 mt-4">
               <button
                 type="submit"

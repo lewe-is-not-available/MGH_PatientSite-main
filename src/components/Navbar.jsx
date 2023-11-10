@@ -37,8 +37,7 @@ const Navbar = ({
 
   const [regOpen, setRegOpen] = useState(false);
   const Close = () => FetchShow(false);
-  const Open = (e) => {
-    e.preventDefault();
+  const Open = () => {
     FetchShow(true);
     setRegOpen(false);
   };

@@ -38,7 +38,6 @@ const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
   const [p, setP] = useState(false);
   const [d, setd] = useState(false);
   const [a, seta] = useState(false);
-  console.log(a)
 
   useEffect(() => {
     if (token) {

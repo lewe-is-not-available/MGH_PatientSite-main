@@ -1,18 +1,21 @@
 import React, { useRef, useState } from "react";
 import supabase from "../config/Supabase";
-import { AiOutlineEyeInvisible, AiFillEye } from "react-icons/ai";
+import {
+  AiOutlineEyeInvisible,
+  AiFillEye,
+  AiOutlineCheckCircle,
+} from "react-icons/ai";
 import { ToastContainer, toast } from "react-toastify";
+import { RotatingLines } from "react-loader-spinner";
 
 const Signup = ({ Closereg, open }) => {
-  //TODO: make an OTP vrification for email
   //*Open sign in modal and prevent form submit
-  function handleSignIn(e) {
+  const handleSignIn = (e) => {
     e.preventDefault();
     open();
-  }
+  };
 
   //*getting inputs
-
   const [date, setDate] = useState(null);
   const [formData, setFormData] = useState({
     email: "",
@@ -22,6 +25,8 @@ const Signup = ({ Closereg, open }) => {
     Lname: "",
     Mname: "",
     Phone: "",
+    confirmEmail: "",
+    confrimPass: "",
   });
 
   //*Onchange event
@@ -36,13 +41,56 @@ const Signup = ({ Closereg, open }) => {
 
   const errRef = useRef();
   const [err, setErr] = useState("");
+
+  //*Verify Email from 6 digit code
+  const [VerifyLoad, setVerifyLoad] = useState(true);
+  const [isVerified, setisVerified] = useState(false);
+  //console.log(isVerified);
+  const email = formData.email;
+  const token = formData.confirmEmail;
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    setisVerified(true);
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: "email",
+    });
+    if (error) {
+      setErr(error);
+      setisVerified(false);
+    } else {
+      setVerifyLoad(false);
+      //setOTP(session.provider_token);
+    }
+  };
+  //*Request OTP
+  const [ReqLoaded, setReqLoaded] = useState(true);
+  const [isRequested, setisRequested] = useState(false);
+  const handleRequest = async (e) => {
+    e.preventDefault();
+    setisRequested(true);
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) {
+      console.log(error);
+      setisRequested(false);
+      setErr(error);
+    } else {
+      setReqLoaded(false);
+    }
+  };
   //*Onsubmit
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const { data, error } = await supabase.auth.signUp({
+    if (formData.password !== formData.confrimPass) {
+      e.preventDefault();
+      toast.error("Your password isn't matched");
+      return;
+    }
+    if (isVerified) {
+      const { error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
+        sendOtp: true,
         options: {
           data: {
             username: formData.username,
@@ -51,16 +99,19 @@ const Signup = ({ Closereg, open }) => {
             middle_name: formData.Mname,
             phone: formData.Phone,
             birth_date: date,
+            role: "patient",
           },
         },
       });
-      toast.info("check email for veirification");
 
-      if (error) throw error;
-      console.log(data);
-    } catch (error) {
-      setErr(error);
-      console.log(error);
+      if (error) {
+        setErr(error);
+      } else {
+        toast.info("veirification sent in your email.");
+      }
+    } else {
+      e.preventDefault();
+      toast.error("Please finish the verification first");
     }
   };
 
@@ -87,17 +138,19 @@ const Signup = ({ Closereg, open }) => {
             </button>
           </div>
           <form onSubmit={handleSubmit}>
-            <p
-              ref={errRef}
-              className={
-                err
-                  ? "err text-center py-1 mx-12 mb-3 -mt-1 bg-red-300"
-                  : "offscreen"
-              }
-              aria-live="assertive"
-            >
-              {err}
-            </p>
+            {err && (
+              <p
+                className={
+                  err
+                    ? "err text-center py-1 mx-12 mb-3 -mt-1 bg-red-300"
+                    : "offscreen"
+                }
+                aria-live="assertive"
+              >
+                {err.message}
+              </p>
+            )}
+
             <div className="px-10 pb-10">
               <div className="grid grid-cols-3 gap-x-3 gap-y-3">
                 <div className="">
@@ -129,7 +182,7 @@ const Signup = ({ Closereg, open }) => {
                     className="px-2 text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-3 col-span-3 mb-3">
+                <div className="grid grid-cols-3 gap-x-4 gap-y-3 col-span-3 mb-3">
                   <div className="">
                     <p>Username: </p>
                     <input
@@ -137,7 +190,8 @@ const Signup = ({ Closereg, open }) => {
                       onChange={handleChange}
                       autoComplete="on"
                       required
-                      className="px-2 w-full text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="px-2 w-full text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400
+                       focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                   <div className="">
@@ -147,19 +201,74 @@ const Signup = ({ Closereg, open }) => {
                       onChange={handleChange}
                       autoComplete="on"
                       required
-                      className="px-2 w-full text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="px-2 w-full text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400
+                      focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
-                  {/* <div className="">
-                    <p className="text-sm">Email Confirmation Code: </p>
-                    <input
-                      name="email"
-                      onChange={handleChange}
-                      autoComplete="on"
-                      required
-                      className="px-2 w-full text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                  </div> */}
+                  <div className="">
+                    <p>Verify Email: </p>
+                    <div className="flex item-center">
+                      <input
+                        name="confirmEmail"
+                        placeholder="OTP here"
+                        onChange={handleChange}
+                        autoComplete="on"
+                        required
+                        className="px-2 w-[6.4rem] rounded-md mr-2 h-8 text-slate-900 ring-1 ring-inset ring-gray-300
+                        placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600
+                        sm:text-sm sm:leading-6"
+                      />
+
+                      {isRequested ? (
+                        ReqLoaded ? (
+                          <div className="flex items-center">
+                            <RotatingLines
+                              strokeColor="grey"
+                              strokeWidth="3"
+                              animationDuration="0.75"
+                              width="25"
+                              visible={true}
+                            />
+                            <p className="text-xs ml-2">requesting</p>
+                          </div>
+                        ) : isVerified ? (
+                          VerifyLoad ? (
+                            <div className="flex items-center">
+                              <RotatingLines
+                                strokeColor="grey"
+                                strokeWidth="3"
+                                animationDuration="0.75"
+                                width="23"
+                                visible={true}
+                              />
+                              <p className="text-xs ml-1">verifying</p>
+                            </div>
+                          ) : (
+                            <div className="flex items-center space-x-1 text-green-600">
+                              <p>verified</p>
+                              <AiOutlineCheckCircle />
+                            </div>
+                          )
+                        ) : (
+                          <button
+                            className="text-sm px-2 h-6 mt-1 transition duration-75 rounded-md text-[#102915]
+                          hover:text-white hover:bg-[#78b673f8] bg-[#98dd93c4]"
+                            onClick={handleVerify}
+                          >
+                            Verify
+                          </button>
+                        )
+                      ) : (
+                        <button
+                          onClick={handleRequest}
+                          className="text-xs px-2 h-6 mt-1 transition duration-75 rounded-md text-[#102915]
+                           hover:text-white hover:bg-[#78b673f8] bg-[#98dd93c4]"
+                        >
+                          Send OTP
+                        </button>
+                      )}
+                    </div>
+                  </div>
                   <div className="">
                     <p>Contact Number: </p>
                     <input
@@ -211,7 +320,7 @@ const Signup = ({ Closereg, open }) => {
                   <p className="">Confirm password: </p>
                   <div className="flex">
                     <input
-                      name="password"
+                      name="confrimPass"
                       type={isOpen}
                       onChange={handleChange}
                       autoComplete="on"
@@ -221,6 +330,7 @@ const Signup = ({ Closereg, open }) => {
                   </div>
                 </div>
               </div>
+
               <div className="flex justify-center">
                 <button
                   type="submit"

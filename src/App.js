@@ -29,6 +29,7 @@ import DocAppointments from "./components/Higher user level/Doctor/Doc_Appointme
 
 //admin
 import EditDoctors from "./components/Higher user level/Admin/EditDoctors";
+import EditPatients from "./components/Higher user level/Admin/EditPatients";
 import Archive from "./components/Higher user level/Admin/Archive";
 import AdminFeedback from "./components/Higher user level/Admin/feedback_Admin";
 import AppointmentDetails from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentDetails";
@@ -133,6 +134,7 @@ function App() {
           }`}
         >
           <Sidebar
+            open={open}
             isUploaded={isUploaded}
             openProfileUpload={openProfileUpload}
             isImgEmpty={isImgEmpty}
@@ -198,7 +200,7 @@ function App() {
               <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
               <Route
                 path="/Online_Consultation_History"
-                element={<OnlineConsultationHistory />}
+                element={<OnlineConsultationHistory user={user}/>}
               />
 
               <Route
@@ -211,7 +213,7 @@ function App() {
               />
               <Route
                 path="/Appointment/Status"
-                element={<Status token={token} />}
+                element={<Status user={user} />}
               />
               <Route path="/:id" element={<DocInfo />} />
 
@@ -223,9 +225,10 @@ function App() {
               <Route path="/User_feedbacks" element={<AdminFeedback />} />
               <Route path="/Archive" element={<Archive />} />
               <Route path="/Edit_doctors" element={<EditDoctors />} />
+              <Route path="/Edit_Patients" element={<EditPatients />} />
               <Route
                 path="/Confirm_Appointments"
-                element={<AppointConfirmation token={token} />}
+                element={<AppointConfirmation token={token} user={user} imgName={imgName} CDNURL={CDNURL} isImgEmpty={isImgEmpty} />}
               />
             </>
           )}

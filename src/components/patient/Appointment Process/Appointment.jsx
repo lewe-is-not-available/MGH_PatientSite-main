@@ -7,8 +7,6 @@ import Aos from "aos";
 import "aos/dist/aos.css";
 
 const Appointment = ({ token, isPatient }) => {
-  //TODO: Fix filter and suggestion drop
-  //TODO: add sign in
   //TODO: Pagination
 
   //Search and reset Function
@@ -46,6 +44,7 @@ const Appointment = ({ token, isPatient }) => {
     };
     fetchFilter();
   }, [Name]);
+
   const handleNameFilterClick = (clickedName) => {
     setName(clickedName);
     setShowFill(false);
@@ -104,18 +103,22 @@ const Appointment = ({ token, isPatient }) => {
         return;
       }
       const filteredData = data.filter((doctor) => {
-        const nameMatch = Name
-          ? doctor.Name.toLowerCase().includes(Name.toLowerCase())
-          : true;
-        const specMatch = spSelect
-          ? doctor.specialization.toLowerCase().includes(spSelect.toLowerCase())
-          : true;
-        const subSpecMatch = subSelect
-          ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
-          : true;
-        const HmoMatch = Hmo
-          ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
-          : true;
+        const nameMatch = doctor.Name.toLowerCase().includes(
+          Name.toLowerCase()
+        );
+
+        const specMatch = doctor.specialization
+          .toLowerCase()
+          .includes(spSelect.toLowerCase());
+
+        const subSpecMatch = doctor.SubSpecial.toLowerCase().includes(
+          subSelect.toLowerCase()
+        );
+
+        const HmoMatch = doctor.SubSpecial.toLowerCase().includes(
+          subSelect.toLowerCase()
+        );
+
         return nameMatch && specMatch && subSpecMatch && HmoMatch;
       });
       setDoctors(filteredData);

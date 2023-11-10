@@ -1,117 +1,13 @@
-import React, { useEffect, useState } from "react";
-import supabase from "./config/Supabase";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import SearchRes from "./SearchResult";
-import Specials from "./Specials.json";
-import SubSpecial from "./SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import { Carousel, initTE } from "tw-elements";
 
 initTE({ Carousel });
 
-const Home = ({ token }) => {
+const Home = () => {
   //TODO: add sign in
-  //!FIX SUGGESTION FILTER
-  //For Search window drop function
-  const [Show, FetchShow] = useState(null);
-  const Close = () => FetchShow(false);
-  //Search and reset Function
-  const [Name, setName] = useState("");
-  const [spSelect, setSpSelect] = useState();
-  const [subSelect, setSubSelect] = useState();
-  const [Doctors, setDoctors] = useState(null);
-  const [noResult, setNoResult] = useState(false);
-  const [Hmo, setHmo] = useState();
-  const [Filter, setFilter] = useState([]);
-
-  //select option value
-  if (spSelect === "---") {
-    setSpSelect("");
-  }
-  if (subSelect === "---") {
-    setSubSelect("");
-  }
-  //TODO: continue the filteration
-  const [showFill, setShowFill] = useState(true);
-  useEffect(() => {
-    const fetchFilter = async () => {
-      const { data, error } = await supabase.from("Dr information").select("*");
-      if (error) {
-        console.error("Failed to fetch", error.message);
-      } else {
-        const nameSuggest = data.filter((doctor) =>
-          doctor.Name.toLowerCase().includes(Name.toLowerCase())
-        );
-        setFilter(nameSuggest);
-        if (Name === "") {
-          setFilter("");
-        }
-      }
-    };
-    fetchFilter();
-  }, [Name]);
-  const handleNameFilterClick = (clickedName) => {
-    setName(clickedName);
-    setShowFill(false);
-  };
-  useEffect(() => {
-    setShowFill(true);
-  }, [Name]);
-
-  const handleReset = async () => {
-    setName("");
-    setSpSelect("---");
-    setSubSelect("---");
-    setHmo("");
-
-    const { data, error } = await supabase.from("Dr information").select("*");
-
-    if (error) {
-      console.error("Failed to fetch", error.message);
-    }
-    setDoctors(data);
-    setNoResult(false);
-  };
-
-  const handleSearch = async () => {
-    FetchShow(true);
-    if (!Name && !spSelect && !subSelect && !Hmo) {
-      setNoResult(true);
-      setDoctors(null);
-    } else {
-      setNoResult(false);
-
-      const { data, error } = await supabase.from("Dr information").select("*");
-
-      if (error) {
-        console.error("Error searching for data:", error.message);
-        return;
-      }
-      const filteredData = data.filter((doctor) => {
-        const nameMatch = Name
-          ? doctor.Name.toLowerCase().includes(Name.toLowerCase())
-          : true;
-        const specMatch = spSelect
-          ? doctor.specialization.toLowerCase().includes(spSelect.toLowerCase())
-          : true;
-        const subSpecMatch = subSelect
-          ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
-          : true;
-        const HmoMatch = Hmo
-          ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
-          : true;
-        return nameMatch && specMatch && subSpecMatch && HmoMatch;
-      });
-      setDoctors(filteredData);
-      if (filteredData.length === 0) {
-        setNoResult(true);
-        setDoctors("");
-      } else {
-        setNoResult(false);
-      }
-    }
-  };
 
   useEffect(() => {
     Aos.init({ duration: 1000 });
@@ -140,8 +36,6 @@ const Home = ({ token }) => {
       </div>
 
       <div className="back py-[80px] flex flex-col items-center">
-        
-
         <section id="Contact-num">
           <div className="mt-[40px] mb-[33px] flex flex-col space-y-2 items-center">
             <p
@@ -244,30 +138,8 @@ const Home = ({ token }) => {
             data-carousel="slide"
           >
             {/* <!-- Carousel wrapper --> */}
-            <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
-              {/* <!-- Item 1 --> */}
-              <div
-                className="hidden duration-700 ease-in-out"
-                data-carousel-item
-              >
-                <img
-                  src="./images/slides/emergency.jpg"
-                  className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                  alt="..."
-                />
-              </div>
-              {/* <!-- Item 2 --> */}
-              <div
-                className="hidden duration-700 ease-in-out"
-                data-carousel-item
-              >
-                <img
-                  src="./images/slides/emergency.jpg"
-                  className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                  alt="..."
-                />
-              </div>
-            </div>
+
+           
             {/* <!-- Slider indicators --> */}
             <div className="absolute z-30 flex space-x-3 -translate-x-1/2 bottom-5 left-1/2">
               <button

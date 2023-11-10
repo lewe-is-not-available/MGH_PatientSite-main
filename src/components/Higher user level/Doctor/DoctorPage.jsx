@@ -22,7 +22,7 @@ const Doc_Dash = () => {
   };
   fetchDoctor();
   return (
-    <div className="back h-screen text-center place-content-center">
+    <div className="h-screen text-center place-content-center">
     {/* feautures */}
     <div className="flex justify-center mb-20">
       <div className="grid place-items-center grid-cols-3 gap-x-20 gap-y-16 w-full">
