@@ -17,6 +17,25 @@
 @tailwind components;
 @tailwind utilities;
 
+.show {
+  @apply transition-all duration-500 ease-in overflow-y-visible max-h-[45rem]
+}
+.hide{
+  @apply transition-all opacity-0 duration-500 ease-out overflow-y-hidden max-h-0
+}
+.boxes{
+  @apply abs py-9 px-6 w-[17rem] cursor-pointer border-[1px] border-green-300 text-sm text-center flex flex-col items-center bg-white rounded-xl transition duration-200 hover:shadow-none
+}
+.imgDash{
+  @apply  mb-7 w-[13rem] h-[13rem] bg-[#a7eb9c85] rounded-2xl
+}
+.titleText{
+  @apply text-white hover:bg-opacity-80 transition duration-100 font-semibold text-lg mb-3 text-center w-[110%] bg-green-600
+}
+.active_modal{
+  overflow-y: hidden;
+}
+
 .nav:hover {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.658);
   color: white;
@@ -29,6 +48,12 @@
 
 .back {
   background-image: url('./components/images/background1.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+
+}
+.company {
+  background-image: url('./components/images/mendoza.jpg');
   background-size: cover;
   background-repeat: no-repeat;
 
@@ -90,19 +115,4 @@
 .searchbg{
  background-color: rgba(255, 255, 255, 0.87);
  box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.3);
-}
-.show {
-  @apply transition-all duration-500 ease-in overflow-y-visible max-h-[45rem]
-}
-.hide{
-  @apply transition-all opacity-0 duration-500 ease-out overflow-y-hidden max-h-0
-}
-.boxes{
-  @apply abs py-9 px-6 w-[17rem] cursor-default border-[1px] border-green-300 text-sm text-center flex flex-col items-center bg-white rounded-xl transition duration-200 hover:shadow-none
-}
-.imgDash{
-  @apply  mb-7 w-[13rem] h-[13rem] bg-[#a7eb9c85] rounded-2xl
-}
-.titleText{
-  @apply text-white hover:bg-opacity-80 hover:border-green-100 border-2 border-green-600 transition duration-100 font-semibold text-lg mb-3 text-center w-[110%] bg-green-600
 }

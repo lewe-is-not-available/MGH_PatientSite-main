@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import doc from "../../images/doc.jpg";
 import Aos from "aos";
 import "aos/dist/aos.css";
-import SomeoneF2f from "./SomeoneF2f";
+import SomeoneF2f from "./SomeoneOnline";
 import supabase from "../../config/Supabase";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-const OnlineConsult = ({ token }) => {
+const OnlineConsult = ({ openTerms }) => {
   //*Medical history checkboxes
   const MedHistory = [
     {
@@ -129,24 +129,22 @@ const OnlineConsult = ({ token }) => {
   });
   //*Getting user's data
 
-  useEffect(() => {
-    if (isSomeone === false) {
-      if (token) {
-        setID(token.user.id);
-        //to wait loading of token and avoid error
-        setFormData((prevFormData) => ({
-          //*automatically set the input values with user data
-          ...prevFormData,
-          Gmail: token.user.email,
-          Fname: token.user.user_metadata.first_name,
-          Lname: token.user.user_metadata.last_name,
-          Mname: token.user.user_metadata.middle_name,
-          Number: token.user.user_metadata.phone,
-        }));
-      }
-    }
-  }, [token, isSomeone]);
-  const [userID, setID] = useState("");
+  // useEffect(() => {
+  //   if (isSomeone === false) {
+  //     setID(token.user.id);
+  //     //to wait loading of token and avoid error
+  //     setFormData((prevFormData) => ({
+  //       //*automatically set the input values with user data
+  //       ...prevFormData,
+  //       Gmail: token.user.email,
+  //       Fname: token.user.user_metadata.first_name,
+  //       Lname: token.user.user_metadata.last_name,
+  //       Mname: token.user.user_metadata.middle_name,
+  //       Number: token.user.user_metadata.phone,
+  //     }));
+  //   }
+  // }, [token, isSomeone]);
+  // const [userID, setID] = useState("");
 
   //*function to read user inputs
   function handleChange(event) {
@@ -163,7 +161,7 @@ const OnlineConsult = ({ token }) => {
     e.preventDefault();
     const { error } = await supabase.from("Patient_Appointments").insert([
       {
-        user_id: userID,
+        //user_id: userID,
         docname: Name,
         fname: formData.Fname,
         lname: formData.Lname,
@@ -196,7 +194,6 @@ const OnlineConsult = ({ token }) => {
     });
     toast.info("Please wait for booking and scheduling confirmation.");
   };
-  console.log(token.user.id);
   //*Doctor's Data
   const [Honor, setHonor] = useState("");
   const [Name, setName] = useState("");
@@ -328,8 +325,8 @@ const OnlineConsult = ({ token }) => {
           <div>
             {isSomeone ? (
               <SomeoneF2f
+                openTerms={openTerms}
                 setFormData={setFormData}
-                token={token}
                 MedHistory={MedHistory}
                 handleChecked={handleChecked}
                 Condition={Condition}

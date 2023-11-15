@@ -14,13 +14,13 @@ const SomeoneF2f = ({
   handleOther,
   newItems,
   handleRemoveOther,
-  token,
-  setFormData
+  openTerms,
+  setFormData,
 }) => {
   //*If Relation is Other
   const [isOtherRelation, setOtherRelation] = useState(false);
-  const [otherSelect, setOtherSelect] = useState("")
-  
+  const [otherSelect, setOtherSelect] = useState("");
+
   const handleOtherInput = (e) => {
     setFormData((prevFormData) => {
       return {
@@ -28,16 +28,16 @@ const SomeoneF2f = ({
         Relation: e.target.value,
       };
     });
-  }
+  };
   const handleOtherSelect = (e) => {
-    setOtherSelect(e.target.value)
+    setOtherSelect(e.target.value);
     setFormData((prevFormData) => {
       return {
         ...prevFormData,
         Relation: e.target.value,
       };
     });
-  }
+  };
   useEffect(() => {
     if (otherSelect === "Other:") {
       setOtherRelation(true);
@@ -46,23 +46,12 @@ const SomeoneF2f = ({
     }
   }, [formData, otherSelect]);
 
-  //*Show terms and condition
-  const [isRead, setRead] = useState(false);
-
-  const openTerms = (e) => {
-    if (isRead) {
-      e.preventDefault();
-      setRead(false);
-    }
-    if (!isRead) {
-      e.preventDefault();
-      setRead(true);
-    }
-  };
   //*Aos animation
   useEffect(() => {
     Aos.init({ duration: 500 });
   }, []);
+
+
   return (
     <div
       data-aos="zoom-in-left"
@@ -148,16 +137,16 @@ const SomeoneF2f = ({
           <option>Hudband/Wife</option>
           <option>Other:</option>
         </select>
-        {isOtherRelation && 
+        {isOtherRelation && (
           <input
-          autoComplete="on"
-          type="text"
-          onChange={handleOtherInput}
-          placeholder="type your relation"
-          required
-          className="outline-none rounded-md font-thin border-2 px-2 grid- border-slate-300 focus:border-[#71b967d3] w-full"
-        />}
-     
+            autoComplete="on"
+            type="text"
+            onChange={handleOtherInput}
+            placeholder="type your relation"
+            required
+            className="outline-none rounded-md font-thin border-2 px-2 grid- border-slate-300 focus:border-[#71b967d3] w-full"
+          />
+        )}
       </p>
       <div className="flex w-1/2 col-span-2">
         <p>
@@ -355,7 +344,6 @@ const SomeoneF2f = ({
           </button>
         </label>
       </div>
-      {isRead && <Consent setRead={setRead} token={token} />}
     </div>
   );
 };

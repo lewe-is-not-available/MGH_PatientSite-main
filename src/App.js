@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Home from "./components/Home";
+import Home from "./components/Homepage/Home";
 import Contacts from "./components/Contacts";
 import MissonVision from "./components/MissonVision";
 import Profile from "./components/HospitalProfile";
 import Feedback from "./components/Feedback";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/Sidebar/Sidebar";
 import Status from "./components/patient/Appointment Process/Status";
 
 //patient
@@ -37,14 +37,24 @@ import AppointConfirmation from "./components/Higher user level/Admin/Confirmati
 
 function App() {
   //*login modal
-  const [Show, FetchShow] = useState(null);
+  const [Show, FetchShow] = useState(false);
+  console.log(Show);
 
+  //*Show terms and condition
+  const [isRead, setRead] = useState(false);
+
+  const openTerms = (e) => {
+    e.preventDefault();
+    setRead(!isRead);
+  };
+  console.log(Show);
   //*For getting token of user
   const [token, setToken] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isDoctor, setIsDoctor] = useState(false);
   const [isPatient, setIsPatient] = useState(false);
   const [user, setUser] = useState([]);
+
   //*initiates after login
   useEffect(() => {
     if (token) {
@@ -107,6 +117,8 @@ function App() {
     <div className="min-h-screen w-screen flex flex-col ">
       <header className="sticky w-screen top-0 z-50">
         <Navbar
+          isRead={isRead}
+          setRead={setRead}
           FetchShow={FetchShow}
           Show={Show}
           setUploaded={setUploaded}
@@ -145,19 +157,20 @@ function App() {
             imgName={imgName}
             user={user}
             closeSide={closeSide}
-            className="h-screen left-0 "
+            className="h-screen left-0"
             token={token}
             isAdmin={isAdmin}
             isDoctor={isDoctor}
             isPatient={isPatient}
+            showLogin={FetchShow}
           />
         </div>
       </header>
       <main
         className={`${
           open
-            ? "flex-grow h-full transition ease-in duration-200 translate-x-[18.7rem] w-[86%]"
-            : "flex-grow h-full transition ease-out duration-200  translate-x-0 w-screen"
+            ? "flex-grow h-auto transition ease-in duration-200 translate-x-[18.7rem] w-[86%]"
+            : "flex-grow h-auto transition ease-out duration-200  translate-x-0 w-screen"
         }`}
       >
         <Routes>
@@ -172,19 +185,35 @@ function App() {
           <Route path="/Feedback-Form" element={<Feedback token={token} />} />
           <Route path="/Contacts" element={<Contacts token={token} />} />
           <Route path="/Hospital-Profile" element={<Profile />} />
-
+          <Route
+            path="/Appointment/Online"
+            element={<OnlineDash token={token} openTerms={openTerms} />}
+          />
+          <Route
+            path="/Appointment/F2f"
+            element={<F2fDash token={token} openTerms={openTerms} />}
+          />
+          <Route path="/:id" element={<DocInfo />} />
+          <Route
+            path="/Face-to-face/:id"
+            element={<F2f token={token} openTerms={openTerms} />}
+          />
+          <Route
+            path="/Online/:id"
+            element={<Online token={token} openTerms={openTerms} />}
+          />
+          <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
           {/* Appointment procedures */}
           <Route
             path={"/Appointment"}
             element={<Appointment token={token} isPatient={isPatient} />}
           />
-           <Route
-                path="/Dashboard"
-                element={<PatientDashboard token={token} showLogin={FetchShow} />}
-              />
+          <Route
+            path="/Dashboard"
+            element={<PatientDashboard token={token} showLogin={FetchShow} />}
+          />
           {token && (
             <>
-             
               {/* Doctor's side */}
               <Route
                 path="/DoctorConsultHistory"
@@ -195,27 +224,15 @@ function App() {
                 element={<DocAppointments />}
               />
               {/*patient's side */}
-              <Route path="/Face-to-face/:id" element={<F2f token={token} />} />
-              <Route path="/Online/:id" element={<Online token={token} />} />
-              <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
               <Route
                 path="/Online_Consultation_History"
-                element={<OnlineConsultationHistory user={user}/>}
+                element={<OnlineConsultationHistory user={user} />}
               />
 
-              <Route
-                path="/Appointment/Online"
-                element={<OnlineDash token={token} isPatient={isPatient} />}
-              />
-              <Route
-                path="/Appointment/F2f"
-                element={<F2fDash token={token} isPatient={isPatient} />}
-              />
               <Route
                 path="/Appointment/Status"
                 element={<Status user={user} />}
               />
-              <Route path="/:id" element={<DocInfo />} />
 
               {/* Admin's side */}
               <Route
@@ -228,7 +245,16 @@ function App() {
               <Route path="/Edit_Patients" element={<EditPatients />} />
               <Route
                 path="/Confirm_Appointments"
-                element={<AppointConfirmation token={token} user={user} imgName={imgName} CDNURL={CDNURL} isImgEmpty={isImgEmpty} />}
+                element={
+                  <AppointConfirmation
+                    openTerms={openTerms}
+                    token={token}
+                    user={user}
+                    imgName={imgName}
+                    CDNURL={CDNURL}
+                    isImgEmpty={isImgEmpty}
+                  />
+                }
               />
             </>
           )}

@@ -77,7 +77,7 @@ const AppointmentDetails = () => {
             </div>
             <div className="flex text-white space-x-3">
               <button 
-              onClick={(e)=>handleAccept(e)}
+              onClick={handleAccept}
               className="transition duration-100 bg-green-600 hover:bg-green-400 px-2 rounded-full ">
                 accept
               </button>

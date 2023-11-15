@@ -6,8 +6,8 @@ import SubSpecial from "../SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
-const Online = ({token, isPatient}) => {
-   //TODO: Fix filter and suggestion drop
+const Online = () => {
+  //TODO: Fix filter and suggestion drop
   //TODO: add sign in
   //TODO: Pagination
 
@@ -55,23 +55,33 @@ const Online = ({token, isPatient}) => {
   }, [Name]);
 
   //DEFAULT DATA
-  useEffect(() => {
-    if(token){
-      const fetchDoc = async () => {
-      const { data, error } = await supabase.from("Dr information").select("*");
+    const fetchDoc = async () => {
+      const { data, error } = await supabase.from("Dr_information").select("*");
 
       if (error) {
         setDoctors(null);
         console.log(error);
       }
       if (data) {
-        return setDoctors(data);
+        setDoctors(data);
       }
     };
+
+  //REAL TIME LOADING OF DATA
+  useEffect(() => {
     fetchDoc();
-    }
-    
-  }, [token]);
+    supabase
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Dr_information" },
+        () => {
+          fetchDoc();
+        }
+      )
+      .subscribe();
+  }, []);
+
 
   // RESET FUNCTION
   const handleReset = async () => {
@@ -131,7 +141,9 @@ const Online = ({token, isPatient}) => {
     Aos.init({ duration: 1000 });
   }, []);
   return (
-    <div className={`${token ? "back items-center flex flex-col":"back items-center flex flex-col h-screen"}`}>
+    <div
+      className="back items-center flex flex-col"
+    >
       <div
         className="hero2 p-28 py-28 flex flex-col items-center text-white space-y-14 w-full"
         data-aos="fade-up"
@@ -149,18 +161,10 @@ const Online = ({token, isPatient}) => {
           className="text-4xl font-semibold text-[#315E30] mb-10 text-center"
           data-aos="fade-up"
         >
-          Find a Doctor<br/>
+          Find a Doctor
+          <br />
           (Online Conultation)
         </h1>
-        {isPatient ? (
-          ""
-        ) : (
-          <div className="flex z-50 w-screen h-screen fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
-            <div className="absolute abs px-10 py-8 mt-56 bg-white">
-              You need to Sign in first
-            </div>
-          </div>
-        )}
         <div
           className="find bg-white flex flex-col p-8 pb-8"
           data-aos="zoom-in-up"
@@ -295,7 +299,7 @@ const Online = ({token, isPatient}) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Online
+export default Online;

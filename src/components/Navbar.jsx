@@ -8,7 +8,12 @@ import supabase from "./config/Supabase";
 import { ToastContainer } from "react-toastify";
 import { BiMenu } from "react-icons/bi";
 import "react-toastify/dist/ReactToastify.css";
-import DragandDrop from "./Drag_and_Drop";
+import DragandDrop from "./Sidebar/Drag_and_Drop";
+import Consent from "./patient/Appointment Process/Consent";
+
+const bodyScrollLock = require("body-scroll-lock");
+const disableBodyScroll = bodyScrollLock.disableBodyScroll;
+const enableBodyScroll = bodyScrollLock.enableBodyScroll;
 
 const Navbar = ({
   token,
@@ -26,27 +31,44 @@ const Navbar = ({
   isProfileOpen,
   setUploaded,
   FetchShow,
-  Show
+  Show,
+  openTerms,
+  isRead,
+  setRead
 }) => {
+  // if (Show) {
+  //   disableBodyScroll("root");
+  // } else {
+  //   enableBodyScroll("root");
+  // }
+ 
+
   //*Function to show/hide registration and login
   const [doctor, setDoctor] = useState(false);
   const [admin, setAdmin] = useState(false);
   const [patient, setPatient] = useState(false);
 
   //*to show login modal
-
   const [regOpen, setRegOpen] = useState(false);
-  const Close = () => FetchShow(false);
   const Open = () => {
     FetchShow(true);
     setRegOpen(false);
   };
-
+  const Close = () => {
+    FetchShow(false);
+  };
   const Openreg = () => {
     setRegOpen(true);
     FetchShow(false);
   };
-  const Closereg = () => setRegOpen(false);
+  const Closereg = () => {
+    setRegOpen(false);
+  };
+  if (Show || regOpen) {
+    document.documentElement.style.overflowY = "hidden";
+  } else {
+    document.documentElement.style.overflowY = "unset";
+  }
 
   useEffect(() => {
     if (token) {
@@ -178,6 +200,14 @@ const Navbar = ({
           closeProfileUpload={closeProfileUpload}
         />
       </div>
+      {isRead && (
+        <Consent
+          setRead={setRead}
+          openTerms={openTerms}
+          isRead={isRead}
+          token={token}
+        />
+      )}
     </div>
   );
 };

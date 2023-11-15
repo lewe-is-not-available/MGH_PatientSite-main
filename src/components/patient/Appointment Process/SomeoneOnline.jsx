@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
-import Consent from "./Consent";
 
 const SomeoneF2f = ({
   formData,
@@ -14,9 +13,10 @@ const SomeoneF2f = ({
   handleOther,
   newItems,
   handleRemoveOther,
-  token,
-  setFormData
+  setFormData,
+  openTerms
 }) => {
+
   //*If Relation is Other
   const [isOtherRelation, setOtherRelation] = useState(false);
   const [otherSelect, setOtherSelect] = useState("")
@@ -46,19 +46,7 @@ const SomeoneF2f = ({
     }
   }, [formData, otherSelect]);
 
-  //*Show terms and condition
-  const [isRead, setRead] = useState(false);
-
-  const openTerms = (e) => {
-    if (isRead) {
-      e.preventDefault();
-      setRead(false);
-    }
-    if (!isRead) {
-      e.preventDefault();
-      setRead(true);
-    }
-  };
+ 
   //*Aos animation
   useEffect(() => {
     Aos.init({ duration: 500 });
@@ -355,7 +343,6 @@ const SomeoneF2f = ({
           </button>
         </label>
       </div>
-      {isRead && <Consent setRead={setRead} token={token} />}
     </div>
   );
 };

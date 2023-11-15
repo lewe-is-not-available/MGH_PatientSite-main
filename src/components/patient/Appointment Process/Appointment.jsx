@@ -5,6 +5,7 @@ import Specials from "../../Specials.json";
 import SubSpecial from "../../SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
+import login from "../../Login/Login"
 
 const Appointment = ({ token, isPatient }) => {
   //TODO: Pagination
@@ -162,15 +163,6 @@ const Appointment = ({ token, isPatient }) => {
         >
           Find a Doctor
         </h1>
-        {isPatient ? (
-          ""
-        ) : (
-          <div className="flex z-50 w-screen h-screen fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
-            <div className="absolute abs px-10 py-8 mt-56 bg-white">
-              You need to Sign in first
-            </div>
-          </div>
-        )}
         <div
           className="find bg-white flex flex-col p-8 pb-8"
           data-aos="zoom-in-up"

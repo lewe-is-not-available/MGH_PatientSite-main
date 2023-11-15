@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
-import Online from "./Online";
 import { useNavigate } from "react-router-dom";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import { VscFilter, VscFilterFilled } from "react-icons/vsc";
 import { BsSearch } from "react-icons/bs";
 import { MagnifyingGlass } from "react-loader-spinner";
+import AppconfirmPaginated from "./AppconfirmPaginated";
 
 const AppointmentConfirmation = ({ CDNURL, user }) => {
+  //TODO fix scroll animation
   //TODO: REDESIGN TABLE INTO BULK WITH PROFILE PIC
   //*prevent access from non-admin users
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
     };
     fetchAdmin();
   }, [navigate]);
-  
+
   const [filt, setfilt] = useState([]);
 
   //*get filter inputs
@@ -71,14 +72,12 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
     setType,
   ]);
 
-  //*Loading function
-  const [searchLoad, setsearchLoad] = useState(true);
-  const [Loaded, setLoaded] = useState(true)
+  const [Loaded, setLoaded] = useState(true);
 
   //*get patient appointments
   const [books, setBook] = useState([]);
-
   const fetchBooks = async () => {
+    setLoaded(false);
     const { data, error } = await supabase
       .from("Patient_Appointments")
       .select("*");
@@ -90,31 +89,33 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
     }
 
     if (data) {
+      setLoaded(true);
       setfilt(data);
     }
   };
-  //console.log(filt);
   //*search filter
+  const [searchLoad, setsearchLoad] = useState(true);
   const handleSearch = () => {
-    setLoaded(false)
+    setsearchLoad(false);
     const search = filt.filter((items) => {
       console.log(items);
       const fname = items.fname.toLowerCase().includes(Search.toLowerCase());
       const lname = items.lname.toLowerCase().includes(Search.toLowerCase());
       const mname = items.mname.toLowerCase().includes(Search.toLowerCase());
-      const docname = items.fname.toLowerCase().includes(Search.toLowerCase());
+      const docname = items.docname
+        .toLowerCase()
+        .includes(Search.toLowerCase());
       return fname || lname || mname || docname;
     });
-      setBook(search);
-      if(filt){
-        setLoaded(true)
-      }
-   
+    setBook(search);
+    if (filt) {
+      setTimeout(() => {
+        setsearchLoad(true);
+      }, 1000);
+    }
   };
-  console.log(books);
-
+  //*Filter function
   useEffect(() => {
-    setLoaded(false)
     if (filt) {
       const filterBook = filt
         .filter((item) => {
@@ -135,11 +136,15 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
             : 1
         );
       setBook(filterBook);
-      setLoaded(true)
-   
+      if (books) {
+        setTimeout(() => {
+          setLoaded(true);
+        }, 1000);
+      }
     }
   }, [isAsc, Type, Status, time, Someone, setBook, filt]);
 
+  //*Realtime data
   useEffect(() => {
     fetchBooks();
     supabase
@@ -155,7 +160,7 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
   }, []);
 
   const [isFilterOpen, setisFilterOpen] = useState(false);
-  //*Filter function
+  //*images function
   async function getImages(id, setimgName, setImgEmpty) {
     const { data, error } = await supabase.storage
       .from("images")
@@ -181,8 +186,8 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
     Aos.init({ duration: 1000 });
   }, []);
   return (
-    <div className="back h-screen flex justify-center">
-      <div className="w-[70%]">
+    <div className="back h-full flex justify-center">
+      <div className="w-[70%] ">
         <p className="text-4xl font-semibold text-[#315E30]"></p>
 
         {/*search and filter  */}
@@ -207,13 +212,25 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
             )}
           </div>
         </div>
-        {isFilterOpen && (
-          <div className="bg-[#98dd93c4] px-5 pt-5 pb-8 rounded-lg items-center gap-x-7 gap-y-4 grid grid-cols-3">
+        <div
+          className={`${
+            isFilterOpen
+              ? "transition-all duration-300 ease-in overflow-y-visible max-h-[20rem]"
+              : "transition-all duration-300 ease-out overflow-y-hidden max-h-0"
+          }`}
+        >
+          <div className="bg-[#98dd93c4] px-5 pt-5 pb-8 mb-2 rounded-lg items-center gap-x-7 gap-y-4 grid grid-cols-3">
             <div className="flex flex-col">
               <label className="mb-1">Search by name</label>
               <div className="flex h-6 text-slate-500">
                 {!Search && (
-                  <div className="absolute flex space-x-1 items-center translate-x-4">
+                  <div
+                    className={`${
+                      isFilterOpen
+                        ? "absolute flex space-x-1 items-center translate-x-4"
+                        : "hidden"
+                    }`}
+                  >
                     <BsSearch className="w-4" />
                     <p>Type here</p>
                   </div>
@@ -222,11 +239,11 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
                   <input
                     type="text"
                     onChange={(e) => setSearch(e.target.value)}
-                    className="pl-3 rounded-md h-8 w-full text-black border-slate-400 border-2"
+                    className="pl-3 rounded-l-md h-8 w-full text-black border-slate-400 border-2"
                   />
                   <button
                     onClick={handleSearch}
-                    className="bg-[#60af5ac4] hover:bg-[#84d17fc4] hover:text-[#388332c4]
+                    className="bg-[#60af5ac4] h-8 border-l-0 hover:bg-[#84d17fc4] hover:text-[#388332c4]
                    text-white border-[#388332c4] border-2 px-2 rounded-r-md relative"
                   >
                     Search
@@ -290,39 +307,32 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
               </select>
             </div>
           </div>
-        )}
+        </div>
 
         <div className=" flex justify-center">
-          <div className="w-full text-sm flex mt-3 overflow-y-scroll max-h-[38rem] flex-wrap justify-between rounded-lg text-gray-500 dark:text-gray-400">
-           
-            {Loaded ? (
-              books &&
-              books.map((ol) => (
-                <>
-                  <Online
-                    data-aos="fade-left"
-                    key={ol.book_id}
-                    ol={ol}
-                    user={user}
-                    CDNURL={CDNURL}
-                    getImages={getImages}
-                  />
-                </>
-              ))
-            ):(
-               <div className="w-full flex justify-center items-center">
-              <MagnifyingGlass
-                visible={true}
-              
-                width="50"
-                ariaLabel="MagnifyingGlass-loading"
-                wrapperStyle={{}}
-                wrapperClass="MagnifyingGlass-wrapper"
-                glassColor="#c0efffb7"
-                color="#388332c4"
+          <div className="w-full h-auto min-h-screen text-sm flex mt-3 mb-10 flex-wrap justify-between rounded-lg text-gray-500 dark:text-gray-400">
+            {searchLoad ? (
+              <AppconfirmPaginated
+                books={books}
+                user={user}
+                CDNURL={CDNURL}
+                getImages={getImages}
+                setLoaded={setLoaded}
+                Loaded={Loaded}
               />
-              <p className="text-2xl text-slate-600">Searching</p>
-            </div>
+            ) : (
+              <div className="w-full flex justify-center mt-20">
+                <MagnifyingGlass
+                  visible={true}
+                  width="50"
+                  ariaLabel="MagnifyingGlass-loading"
+                  wrapperStyle={{}}
+                  wrapperClass="MagnifyingGlass-wrapper"
+                  glassColor="#c0efffb7"
+                  color="#388332c4"
+                />
+                <p className="text-2xl text-slate-600">Searching</p>
+              </div>
             )}
           </div>
         </div>
