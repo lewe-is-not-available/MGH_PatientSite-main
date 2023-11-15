@@ -64,7 +64,7 @@ const Navbar = ({
   const Closereg = () => {
     setRegOpen(false);
   };
-  if (Show || regOpen) {
+  if (Show || regOpen || isRead) {
     document.documentElement.style.overflowY = "hidden";
   } else {
     document.documentElement.style.overflowY = "unset";

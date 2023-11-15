@@ -6,8 +6,8 @@ import SubSpecial from "../SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
-const F2f = ({token, isPatient}) => {
-   //TODO: Fix filter and suggestion drop
+const F2f = ({ token, isPatient }) => {
+  //TODO: Fix filter and suggestion drop
   //TODO: add sign in
   //TODO: Pagination
 
@@ -31,7 +31,7 @@ const F2f = ({token, isPatient}) => {
   const [showFill, setShowFill] = useState(true);
   useEffect(() => {
     const fetchFilter = async () => {
-      const { data, error } = await supabase.from("Dr information").select("*");
+      const { data, error } = await supabase.from("Dr_information").select("*");
       if (error) {
         console.error("Failed to fetch", error.message);
       } else {
@@ -55,24 +55,32 @@ const F2f = ({token, isPatient}) => {
   }, [Name]);
 
   //DEFAULT DATA
-  useEffect(() => {
-    if(token){
-      const fetchDoc = async () => {
-      const { data, error } = await supabase.from("Dr information").select("*");
+  const fetchDoc = async () => {
+    const { data, error } = await supabase.from("Dr_information").select("*");
 
-      if (error) {
-        setDoctors(null);
-        console.log(error);
-      }
-      if (data) {
-        return setDoctors(data);
-      }
-    };
-    fetchDoc();
+    if (error) {
+      setDoctors(null);
+      console.log(error);
     }
-    
-  }, [token]);
-
+    if (data) {
+      return setDoctors(data);
+    }
+  };
+  
+  //REAL TIME DOCTOR DATA
+  useEffect(() => {
+    fetchDoc();
+    supabase
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Dr_information" },
+        () => {
+          fetchDoc();
+        }
+      )
+      .subscribe();
+  }, []);
   // RESET FUNCTION
   const handleReset = async () => {
     setName("");
@@ -80,7 +88,7 @@ const F2f = ({token, isPatient}) => {
     setSubSelect("---");
     setHmo("");
 
-    const { data, error } = await supabase.from("Dr information").select("*");
+    const { data, error } = await supabase.from("Dr_information").select("*");
 
     if (error) {
       console.error("Failed to fetch", error.message);
@@ -96,7 +104,7 @@ const F2f = ({token, isPatient}) => {
     } else {
       setNoResult(false);
 
-      const { data, error } = await supabase.from("Dr information").select("*");
+      const { data, error } = await supabase.from("Dr_information").select("*");
 
       if (error) {
         console.error("Error searching for data:", error.message);
@@ -131,7 +139,7 @@ const F2f = ({token, isPatient}) => {
     Aos.init({ duration: 1000 });
   }, []);
   return (
-    <div className={`${token ? "back items-center flex flex-col":"back items-center flex flex-col h-screen"}`}>
+    <div className="back items-center flex flex-col">
       <div
         className="hero2 p-28 py-28 flex flex-col items-center text-white space-y-14 w-full"
         data-aos="fade-up"
@@ -149,18 +157,10 @@ const F2f = ({token, isPatient}) => {
           className="text-4xl font-semibold text-[#315E30] mb-10 text-center"
           data-aos="fade-up"
         >
-          Find a Doctor<br/>
+          Find a Doctor
+          <br />
           (Face-to-face Conultation)
         </h1>
-        {isPatient ? (
-          ""
-        ) : (
-          <div className="flex z-50 w-screen h-screen fixed justify-center backdrop-blur-lg bg-slate-700 inset-0 bg-opacity-30">
-            <div className="absolute abs px-10 py-8 mt-56 bg-white">
-              You need to Sign in first
-            </div>
-          </div>
-        )}
         <div
           className="find bg-white flex flex-col p-8 pb-8"
           data-aos="zoom-in-up"
@@ -295,7 +295,7 @@ const F2f = ({token, isPatient}) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default F2f
+export default F2f;

@@ -5,9 +5,8 @@ import Specials from "../../Specials.json";
 import SubSpecial from "../../SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
-import login from "../../Login/Login"
 
-const Appointment = ({ token, isPatient }) => {
+const Appointment = () => {
   //TODO: Pagination
 
   //Search and reset Function
@@ -30,7 +29,7 @@ const Appointment = ({ token, isPatient }) => {
   const [showFill, setShowFill] = useState(true);
   useEffect(() => {
     const fetchFilter = async () => {
-      const { data, error } = await supabase.from("Dr information").select("*");
+      const { data, error } = await supabase.from("Dr_information").select("*");
       if (error) {
         console.error("Failed to fetch", error.message);
       } else {
@@ -55,25 +54,31 @@ const Appointment = ({ token, isPatient }) => {
   }, [Name]);
 
   //DEFAULT DATA
-  useEffect(() => {
-    if (token) {
-      const fetchDoc = async () => {
-        const { data, error } = await supabase
-          .from("Dr information")
-          .select("*");
+  const fetchDoc = async () => {
+    const { data, error } = await supabase.from("Dr_information").select("*");
 
-        if (error) {
-          setDoctors(null);
-          console.log(error);
-        }
-        if (data) {
-          return setDoctors(data);
-        }
-      };
-      fetchDoc();
+    if (error) {
+      setDoctors(null);
+      console.log(error);
     }
-  }, [token]);
-
+    if (data) {
+      return setDoctors(data);
+    }
+  };
+  //*REAL TIME DOCTOR DATA
+  useEffect(() => {
+    fetchDoc();
+    supabase
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Dr_information" },
+        () => {
+          fetchDoc();
+        }
+      )
+      .subscribe();
+  }, []);
   // RESET FUNCTION
   const handleReset = async () => {
     setName("");
@@ -81,7 +86,7 @@ const Appointment = ({ token, isPatient }) => {
     setSubSelect("---");
     setHmo("");
 
-    const { data, error } = await supabase.from("Dr information").select("*");
+    const { data, error } = await supabase.from("Dr_information").select("*");
 
     if (error) {
       console.error("Failed to fetch", error.message);
@@ -97,7 +102,7 @@ const Appointment = ({ token, isPatient }) => {
     } else {
       setNoResult(false);
 
-      const { data, error } = await supabase.from("Dr information").select("*");
+      const { data, error } = await supabase.from("Dr_information").select("*");
 
       if (error) {
         console.error("Error searching for data:", error.message);
@@ -137,13 +142,7 @@ const Appointment = ({ token, isPatient }) => {
   }, []);
 
   return (
-    <div
-      className={`${
-        token
-          ? "back items-center flex flex-col"
-          : "back items-center flex flex-col h-screen"
-      }`}
-    >
+    <div className="back items-center flex flex-col">
       <div
         className="hero2 p-28 py-28 flex flex-col items-center text-white space-y-14 w-full"
         data-aos="fade-up"

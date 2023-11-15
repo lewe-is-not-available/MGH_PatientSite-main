@@ -6,7 +6,7 @@ import { AiOutlineDown } from "react-icons/ai";
 import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
 
-const Online = ({ ol, CDNURL, getImages }) => {
+const StatusMap = ({ ol, CDNURL, getImages }) => {
   //TODO fix scroll animation
   //*expand details
   const [expand, setExpand] = useState(false);
@@ -49,9 +49,9 @@ const Online = ({ ol, CDNURL, getImages }) => {
   const id = ol.user_id;
   const [imgName, setimgName] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(false);
-
+  console.
   useEffect(() => {
-    getImages(id, setimgName, setImgEmpty);
+    getImages(setimgName, setImgEmpty);
   }, [ol]);
 
   //*AOS function
@@ -176,7 +176,7 @@ const Online = ({ ol, CDNURL, getImages }) => {
               onClick={(e) => e.stopPropagation()}
               className="text-lg px-14  transition duration-100 text-white hover:bg-red-700 bg-red-500 rounded-md"
             >
-               Cancel
+              Cancel
             </button>
           </div>
         </div>
@@ -185,4 +185,4 @@ const Online = ({ ol, CDNURL, getImages }) => {
   );
 };
 
-export default Online;
+export default StatusMap;

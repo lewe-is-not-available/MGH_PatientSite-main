@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { AiOutlineEyeInvisible, AiFillEye } from "react-icons/ai";
 //import useAuth from "../Hooks/useAuth";
 import supabase from "../config/Supabase";
 import { useNavigate } from "react-router-dom";
+import { PiEye, PiEyeClosed } from "react-icons/pi";
 
 const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
   //TODO: Make registration
@@ -55,13 +55,13 @@ const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
 
   //*Login button funtion
   async function handleSubmit(e) {
-       if (p) {
-        nav("/Patient/Dashboard");
-      } else if (a) {
-        nav("/Admin/Dashboard");
-      } else if (d) {
-        nav("/Doctor/Dashboard");
-      }
+    if (p) {
+      nav("/Patient/Dashboard");
+    } else if (a) {
+      nav("/Admin/Dashboard");
+    } else if (d) {
+      nav("/Doctor/Dashboard");
+    }
     e.preventDefault();
     if (token) {
       console.log(patient);
@@ -77,7 +77,7 @@ const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
       if (error) throw error;
 
       //*successful sign-in
-      nav("/Dashboard")
+      nav("/Dashboard");
 
       setToken(data);
       setSuccess(true);
@@ -144,13 +144,13 @@ const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
                     name="password"
                     onChange={handleChange}
                     required
-                    className=" ml-5 px-2 text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className=" ml-4 px-2 text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                   <div
                     onClick={() => setVisible(!visible)}
-                    className="cursor-pointer mt-1 ml-1 text-lg"
+                    className="cursor-pointer mt-[2px] -ml-7 text-[20px] "
                   >
-                    {visible ? <AiFillEye /> : <AiOutlineEyeInvisible />}
+                    {visible ? <PiEye /> : <PiEyeClosed />}
                   </div>
                 </div>
                 <div className="flex justify-center">

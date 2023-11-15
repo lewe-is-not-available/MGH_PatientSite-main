@@ -10,7 +10,7 @@ import MissonVision from "./components/MissonVision";
 import Profile from "./components/HospitalProfile";
 import Feedback from "./components/Feedback";
 import Sidebar from "./components/Sidebar/Sidebar";
-import Status from "./components/patient/Appointment Process/Status";
+import Status from "./components/patient/Appointment Process/Appointment Status/Status";
 
 //patient
 import Online from "./components/patient/Appointment Process/OnlineConsult";
@@ -38,7 +38,6 @@ import AppointConfirmation from "./components/Higher user level/Admin/Confirmati
 function App() {
   //*login modal
   const [Show, FetchShow] = useState(false);
-  console.log(Show);
 
   //*Show terms and condition
   const [isRead, setRead] = useState(false);
@@ -47,7 +46,6 @@ function App() {
     e.preventDefault();
     setRead(!isRead);
   };
-  console.log(Show);
   //*For getting token of user
   const [token, setToken] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);

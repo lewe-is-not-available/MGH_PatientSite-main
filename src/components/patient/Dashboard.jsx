@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import SearchRes from "../SearchResult";
+import SearchRes from "../Doctor read/SearchResult";
 import Specials from "../Specials.json";
 import SubSpecial from "../SubSpecial.json";
 import supabase from "../config/Supabase";
@@ -60,23 +60,35 @@ const Dashboard = ({ token, showLogin }) => {
   }
   //TODO: continue the filteration
   const [showFill, setShowFill] = useState(true);
-  useEffect(() => {
-    const fetchFilter = async () => {
-      const { data, error } = await supabase.from("Dr information").select("*");
-      if (error) {
-        console.error("Failed to fetch", error.message);
-      } else {
-        const nameSuggest = data.filter((doctor) =>
-          doctor.Name.toLowerCase().includes(Name.toLowerCase())
-        );
-        setFilter(nameSuggest);
-        if (Name === "") {
-          setFilter("");
-        }
+
+  const fetchFilter = async () => {
+    const { data, error } = await supabase.from("Dr_information").select("*");
+    if (error) {
+      console.error("Failed to fetch", error.message);
+    } else {
+      const nameSuggest = data.filter((doctor) =>
+        doctor.Name.toLowerCase().includes(Name.toLowerCase())
+      );
+      setFilter(nameSuggest);
+      if (Name === "") {
+        setFilter("");
       }
-    };
+    }
+  };
+  //REAL TIME DOCTOR DATA
+  useEffect(() => {
     fetchFilter();
-  }, [Name]);
+    supabase
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Dr_information" },
+        () => {
+          fetchFilter();
+        }
+      )
+      .subscribe();
+  }, []);
   const handleNameFilterClick = (clickedName) => {
     setName(clickedName);
     setShowFill(false);
@@ -91,7 +103,7 @@ const Dashboard = ({ token, showLogin }) => {
     setSubSelect("---");
     setHmo("");
 
-    const { data, error } = await supabase.from("Dr information").select("*");
+    const { data, error } = await supabase.from("Dr_information").select("*");
 
     if (error) {
       console.error("Failed to fetch", error.message);
@@ -108,7 +120,7 @@ const Dashboard = ({ token, showLogin }) => {
     } else {
       setNoResult(false);
 
-      const { data, error } = await supabase.from("Dr information").select("*");
+      const { data, error } = await supabase.from("Dr_information").select("*");
 
       if (error) {
         console.error("Error searching for data:", error.message);
@@ -170,61 +182,84 @@ const Dashboard = ({ token, showLogin }) => {
           <div className="flex justify-center mb-20">
             <div className="grid place-items-center grid-cols-3 gap-x-20 gap-y-16 w-full">
               {/* Online consult */}
-              <div className="boxes" data-aos="fade-up">
+              <Link
+                to="/Appointment/Online"
+                className="boxes"
+                data-aos="fade-up"
+              >
                 <img src={online} alt="/" className="imgDash p-5" />
-                <Link to="/Appointment/Online" className="titleText">
-                  Online Consult
-                </Link>
+                <div className="titleText">Online Consult</div>
                 <p className="text-sm">
                   Book an appointment for online consult
                 </p>
-              </div>
+              </Link>
               {/* Face to face consult */}
-              <div className="boxes" data-aos="fade-up">
+              <Link to="/Appointment/F2f" className="boxes" data-aos="fade-up">
                 <img src={f2f} alt="/" className="imgDash object-left p-3" />
-                <Link to="/Appointment/F2f" className="titleText">
-                  Face to face Consult
-                </Link>
+                <div className="titleText">Face to face Consult</div>
                 <p className="text-sm">
                   Book an appointment for Face to face consult
                 </p>
-              </div>
+              </Link>
               {/* Contact us */}
-              <div className="boxes" data-aos="fade-up">
+              <Link to="/Contacts" className="boxes" data-aos="fade-up">
                 <img src={contact} alt="/" className=" imgDash p-5 py-8" />
-                <Link to="/Contacts" className="titleText">
-                  Contact Us!
-                </Link>
+                <div className="titleText">Contact Us!</div>
                 <p className="text-sm">Book an for online appointment</p>
-              </div>
+              </Link>
               {/* Feedback form */}
-              <div className="boxes" data-aos="fade-up">
+              <Link to="/Feedback-Form" className="boxes" data-aos="fade-up">
                 <img src={feedback} alt="/" className="imgDash p-5" />
-                <Link to="/Feedback-Form" className="titleText">
-                  Feedback form
-                </Link>
+                <div className="titleText">Feedback form</div>
                 <p className="text-sm">
                   Let us know what you think of our website
                 </p>
-              </div>
+              </Link>
               {/* Consult history */}
-              <div className="boxes" data-aos="fade-up">
-                <img src={history} alt="/" className="imgDash p-7" />
-                <Link to="/Online_Consultation_History" className="titleText">
-                  Consultation History
+              {!token ? (
+                <div onClick={showLogin} className="boxes" data-aos="fade-up">
+                  <img src={history} alt="/" className="imgDash p-7" />
+                  <div className="titleText">Consultation History</div>
+                  <p className="text-sm">
+                    Have a look at your recent online consultations
+                  </p>
+                </div>
+              ) : (
+                <Link
+                  to="/Online_Consultation_History"
+                  className="boxes"
+                  data-aos="fade-up"
+                >
+                  <img src={history} alt="/" className="imgDash p-7" />
+                  <div className="titleText">Consultation History</div>
+                  <p className="text-sm">
+                    Have a look at your recent online consultations
+                  </p>
                 </Link>
-                <p className="text-sm">
-                  Have a look at your recent online consultations
-                </p>
-              </div>
+              )}
+
               {/* Appointment status */}
-              <div className="boxes" data-aos="fade-up">
-                <img src={status} alt="/" className="imgDash p-4" />
-                <Link to="/Appointment/Status" className="titleText">
-                  Appointment status
+              {!token ? (
+                <div onClick={showLogin} className="boxes" data-aos="fade-up">
+                  <img src={status} alt="/" className="imgDash p-4" />
+                  <div className="titleText">Appointment status</div>
+                  <p className="text-sm">
+                    Keep track of your appointment status
+                  </p>
+                </div>
+              ) : (
+                <Link
+                  to="/Appointment/Status"
+                  className="boxes"
+                  data-aos="fade-up"
+                >
+                  <img src={status} alt="/" className="imgDash p-4" />
+                  <div className="titleText">Appointment status</div>
+                  <p className="text-sm">
+                    Keep track of your appointment status
+                  </p>
                 </Link>
-                <p className="text-sm">Keep track of your appointment status</p>
-              </div>
+              )}
             </div>
           </div>
           {/* find a doctor */}
@@ -391,7 +426,9 @@ const Dashboard = ({ token, showLogin }) => {
             </div>
           </div>
         </>
-      ):("")}
+      ) : (
+        ""
+      )}
       {admin && <Admin />}
       {doctor && <Doc_Dash />}
     </section>

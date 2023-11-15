@@ -264,23 +264,13 @@ const Sidebar = ({
               </li>
 
               <div className={`${services ? "show" : "hide"}`}>
-                {isPatient ? (
-                  <Link
-                    ref={serviceRef}
-                    to="/Appointment"
-                    className="px-4 py-1 flex flex-col group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
-                  >
-                    <p className="translate-x-8">Appointment</p>
-                  </Link>
-                ) : (
-                  <div
-                    ref={serviceRef}
-                    onClick={showLogin}
-                    className="px-4 py-1 flex flex-col group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
-                  >
-                    <p className="translate-x-8">Appointment</p>
-                  </div>
-                )}
+                <Link
+                  ref={serviceRef}
+                  to="/Appointment"
+                  className="px-4 py-1 flex flex-col group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
+                >
+                  <p className="translate-x-8">Appointment</p>
+                </Link>
 
                 <Link
                   ref={serviceRef}
