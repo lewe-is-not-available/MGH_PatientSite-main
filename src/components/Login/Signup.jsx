@@ -103,7 +103,6 @@ const Signup = ({ Closereg, open }) => {
           },
         },
       });
-
       if (error) {
         setErr(error);
       } else {

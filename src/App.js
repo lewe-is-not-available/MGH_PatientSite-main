@@ -22,6 +22,7 @@ import OnlineConsultationHistory from "./components/patient/Appointment Process/
 import PatientDashboard from "./components/patient/Dashboard";
 import OnlineDash from "./components/patient/OnlineDash";
 import F2fDash from "./components/patient/F2fDash";
+import AfterAppointment from "./components/patient/Appointment Process/AfterAppointment";
 
 //Doctor
 import DoctorConsultHistory from "./components/Higher user level/Doctor/DoctorConsulHistory";
@@ -60,7 +61,7 @@ function App() {
       const fetchAdmin = async () => {
         const { data, error } = await supabase
           .from("profile")
-          .select("*")
+          .select()
           .single();
         //*compare roles if matched
         if (error) {
@@ -191,14 +192,16 @@ function App() {
             path="/Appointment/F2f"
             element={<F2fDash token={token} openTerms={openTerms} />}
           />
-          <Route path="/:id" element={<DocInfo />} />
+          <Route path="/DoctorInfo/:id" element={<DocInfo />} />
           <Route
             path="/Face-to-face/:id"
             element={<F2f token={token} openTerms={openTerms} />}
           />
           <Route
             path="/Online/:id"
-            element={<Online token={token} openTerms={openTerms} />}
+            element={
+              <Online token={token} openTerms={openTerms} setToken={setToken} />
+            }
           />
           <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
           {/* Appointment procedures */}
@@ -206,6 +209,7 @@ function App() {
             path={"/Appointment"}
             element={<Appointment token={token} isPatient={isPatient} />}
           />
+          <Route path={"/Appointment/Success"} element={<AfterAppointment />} />
           <Route
             path="/Dashboard"
             element={<PatientDashboard token={token} showLogin={FetchShow} />}

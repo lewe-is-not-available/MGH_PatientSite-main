@@ -69,7 +69,6 @@ const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
     try {
       //*supabase user authentication
       const { data, error } = await supabase.auth.signInWithPassword({
-        username: formData.email,
         email: formData.email,
         password: formData.password,
       });

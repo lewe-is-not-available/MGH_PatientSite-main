@@ -6,7 +6,10 @@ import { AiOutlineDown } from "react-icons/ai";
 import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
 
-const StatusMap = ({ ol, CDNURL, getImages }) => {
+const StatusMap = ({ ol, imgName, isImgEmpty }) => {
+  const CDNURL =
+    "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
+
   //TODO fix scroll animation
   //*expand details
   const [expand, setExpand] = useState(false);
@@ -29,7 +32,7 @@ const StatusMap = ({ ol, CDNURL, getImages }) => {
         document.removeEventListener("mousedown", handler);
       };
     }
-  }, [setExpand]);
+  }, [setExpand, ol]);
   //*date format
   const date = new Date(ol.created_at);
   function formateDateTime(date) {
@@ -47,12 +50,6 @@ const StatusMap = ({ ol, CDNURL, getImages }) => {
   //const [isSomeone, setSomeone] = useState(false);
   //const [SomeoneModal, setSomeoneModal] = useState(null);
   const id = ol.user_id;
-  const [imgName, setimgName] = useState([]);
-  const [isImgEmpty, setImgEmpty] = useState(false);
-  console.
-  useEffect(() => {
-    getImages(setimgName, setImgEmpty);
-  }, [ol]);
 
   //*AOS function
   useEffect(() => {
@@ -66,9 +63,8 @@ const StatusMap = ({ ol, CDNURL, getImages }) => {
   //       Aos.refresh()
   //     )
   // );
-
   return (
-    <div key={ol.user_id} className="text-base flex w-full">
+    <div key={ol.user_id} className="text-base flex w-full select-none">
       <section
         data-aos="fade-right"
         data-aos-anchor="#trigger-next"
@@ -78,7 +74,6 @@ const StatusMap = ({ ol, CDNURL, getImages }) => {
       >
         <div
           id="trigger-next"
-          scope="row"
           className=" py-3 mx-6 flex font-medium whitespace-nowrap justify-between"
         >
           <div className="flex">

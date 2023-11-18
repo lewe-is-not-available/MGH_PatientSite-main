@@ -46,7 +46,6 @@ const Sidebar = ({
   openProfileUpload,
   setimgName,
   open,
-  showLogin,
 }) => {
   //*Authentication by roles
   const [doctor, setDoctor] = useState(false);
@@ -80,13 +79,13 @@ const Sidebar = ({
   let aboutRef = useRef();
   useEffect(() => {
     let abouthandler = (e) => {
-      if (!aboutRef.current.contains(e.target)) {
-        fetchAbout(false);
-      }
-    };
-    if (open) {
+
+        if (!aboutRef.current.contains(e.target)) {
+          fetchAbout(false);
+        }
+ 
       document.addEventListener("mousedown", abouthandler);
-    }
+    };
 
     return () => {
       document.removeEventListener("mousedown", abouthandler);
@@ -94,18 +93,18 @@ const Sidebar = ({
   }, [fetchAbout]);
   useEffect(() => {
     let handler = (e) => {
-      if (!serviceRef.current.contains(e.target)) {
-        fetchServices(false);
+      if (services) {
+        if (!serviceRef.current.contains(e.target)) {
+          fetchServices(false);
+        }
       }
-    };
 
-    if (open) {
       document.addEventListener("mousedown", handler);
-    }
+    };
     return () => {
       document.removeEventListener("mousedown", handler);
     };
-  }, [fetchServices]);
+  }, [fetchServices, services]);
 
   //*show more text
   const [isTruncate, setTruncate] = useState(true);
@@ -224,7 +223,7 @@ const Sidebar = ({
         )}
 
         {/* Sidebar contents */}
-        <div className="text-lg">
+        <div className="text-lg  max-h-[28rem] overflow-y-auto overflow-x-hidden ">
           {admin || doctor ? (
             ""
           ) : (
@@ -265,7 +264,6 @@ const Sidebar = ({
 
               <div className={`${services ? "show" : "hide"}`}>
                 <Link
-                  ref={serviceRef}
                   to="/Appointment"
                   className="px-4 py-1 flex flex-col group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
                 >
@@ -273,7 +271,6 @@ const Sidebar = ({
                 </Link>
 
                 <Link
-                  ref={serviceRef}
                   to="/Feedback-Form"
                   className="px-4 py-1 flex flex-col group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
                 >

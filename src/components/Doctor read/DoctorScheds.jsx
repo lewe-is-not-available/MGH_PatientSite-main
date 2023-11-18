@@ -20,13 +20,16 @@ const DoctorScheds = () => {
   useEffect(() => {
     const fetchSched = async () => {
       const { data, error } = await supabase
-        .from("Schedule")
+        .from("Dr_information")
         .select()
-        .eq("Dr_id", id)
-        .single();
+        .eq("id", id)
 
       if (error) {
-        //console.log(error);
+        setMon("");
+        setTue("");
+        setWed("");
+        setThu("");
+        setFri("");
       }
       if (data) {
         setMon(data.Monday);

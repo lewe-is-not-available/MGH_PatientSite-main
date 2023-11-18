@@ -5,8 +5,9 @@ import { Link } from "react-router-dom";
 import { AiOutlineDown } from "react-icons/ai";
 import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
+import supabase from "../../../config/Supabase";
 
-const Online = ({ ol, CDNURL, getImages }) => {
+const Online = ({ ol, CDNURL }) => {
   //TODO fix scroll animation
   //*expand details
   const [expand, setExpand] = useState(false);
@@ -29,7 +30,7 @@ const Online = ({ ol, CDNURL, getImages }) => {
         document.removeEventListener("mousedown", handler);
       };
     }
-  }, [setExpand]);
+  }, [setExpand, ol]);
   //*date format
   const date = new Date(ol.created_at);
   function formateDateTime(date) {
@@ -42,17 +43,36 @@ const Online = ({ ol, CDNURL, getImages }) => {
 
     return `${year}/${month}/${day} ${hours}:${minutes}${ampm}`;
   }
-  //const CreatedAt = formateDateTime(date);
-  //*if booked by someone set viewable
-  //const [isSomeone, setSomeone] = useState(false);
-  //const [SomeoneModal, setSomeoneModal] = useState(null);
+
   const id = ol.user_id;
   const [imgName, setimgName] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(false);
 
+  async function getImages() {
+    const { data, error } = await supabase.storage
+      .from("images")
+      .list(id + "/", {
+        limit: 100,
+        offset: 0,
+        sortBy: { column: "created_at", order: "asc" },
+      });
+
+    if (data[0]) {
+      setImgEmpty(true);
+      setimgName(data[0].name);
+    }
+
+    if (error) {
+      setImgEmpty(false);
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
-    getImages(id, setimgName, setImgEmpty);
-  }, [ol]);
+    if (ol) {
+      getImages(id, setimgName, setImgEmpty);
+    }
+  }, [ol, id, setImgEmpty, setimgName]);
 
   //*AOS function
   useEffect(() => {
@@ -60,15 +80,8 @@ const Online = ({ ol, CDNURL, getImages }) => {
     Aos.refresh();
   }, []);
 
-  // document.querySelectorAll("img")
-  //   .forEach((img) =>
-  //     img.addEventListener("load",() =>
-  //       Aos.refresh()
-  //     )
-  // );
-
   return (
-    <div key={ol.user_id} className="text-base flex w-full">
+    <div key={ol.user_id} className="text-base flex w-full select-none">
       <section
         data-aos="fade-right"
         data-aos-anchor="#trigger-next"
@@ -176,7 +189,7 @@ const Online = ({ ol, CDNURL, getImages }) => {
               onClick={(e) => e.stopPropagation()}
               className="text-lg px-14  transition duration-100 text-white hover:bg-red-700 bg-red-500 rounded-md"
             >
-               Cancel
+              Cancel
             </button>
           </div>
         </div>

@@ -8,7 +8,7 @@ import { MdSchedule } from "react-icons/md";
 import DoctorScheds from "./DoctorScheds";
 import { toast } from "react-toastify";
 
-const DoctorInfo = ({ Doctors }) => {
+const DoctorInfo = () => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
@@ -16,26 +16,25 @@ const DoctorInfo = ({ Doctors }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [getId, setId] = useState("");
-
+  console.log(id)
   const [Name, setName] = useState("");
   const [Special, setSpecial] = useState("");
   const [Sub, setSub] = useState("");
   const [Hmo, setHmo] = useState("");
   const [Honor, setHonor] = useState("");
-
+  
   useEffect(() => {
     const fetchDoctor = async () => {
       const { data, error } = await supabase
-        .from("Dr information")
+        .from("Dr_information")
         .select()
         .eq("id", id)
         .single();
 
       if (error) {
-        toast.error("error", {
+        toast.error(error, {
           toastId: "error",
         });
-        navigate("/", { replace: true });
       }
       if (data) {
         setName(data.Name);
@@ -47,7 +46,7 @@ const DoctorInfo = ({ Doctors }) => {
       }
     };
     fetchDoctor();
-  }, [id, navigate]);
+  }, [id, navigate, setName, setSpecial, setHmo, setHonor, setId]);
 
   return (
     <div className="back p-24 flex justify-evenly space-x-14">

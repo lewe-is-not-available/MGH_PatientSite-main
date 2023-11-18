@@ -50,7 +50,6 @@ const F2f = ({ f2 }) => {
     }
   }, [f2, setMedical, isMedical, med.length]);
   return (
-    //TODO: OVERFLOW
     <tr
       key={f2.f2f_id}
       className="text-base group/tr text-gray-900 bg-white transition duration-75 ease-in text-center hover:bg-slate-200 "

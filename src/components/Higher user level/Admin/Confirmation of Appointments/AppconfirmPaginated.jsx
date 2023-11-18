@@ -7,26 +7,26 @@ const AppconfirmPaginated = ({
   books,
   CDNURL,
   user,
-  getImages,
   Loaded,
   setLoaded,
 }) => {
   //*Pagination
   const [itemOffset, setItemOffset] = useState(0);
   const [pageCount, setpageCount] = useState(0);
-  const itemsPerPage = 9;
+  const itemsPerPage = 7;
   const [currentItems, setcurrentItems] = useState(null);
-  console.log(currentItems);
   useEffect(() => {
-    const endOffset = itemOffset + itemsPerPage;
-    setcurrentItems(books.slice(itemOffset, endOffset));
-    setpageCount(Math.ceil(books.length / itemsPerPage));
-    if (currentItems) {
-      setTimeout(() => {
-        setLoaded(true);
-      }, 500);
+    if (user) {
+      const endOffset = itemOffset + itemsPerPage;
+      setcurrentItems(books.slice(itemOffset, endOffset));
+      setpageCount(Math.ceil(books.length / itemsPerPage));
+      if (currentItems) {
+        setTimeout(() => {
+          setLoaded(true);
+        }, 500);
+      }
     }
-  }, [itemOffset, itemsPerPage, books]);
+  }, [itemOffset, itemsPerPage, books, setLoaded, user]);
 
   const handlePageClick = (event) => {
     setLoaded(false);
@@ -39,7 +39,7 @@ const AppconfirmPaginated = ({
         breakLabel=". . ."
         nextLabel="next >"
         onPageChange={handlePageClick}
-        pageRangeDisplayed={2}
+        pageRangeDisplayed={3}
         pageCount={pageCount}
         previousLabel="< previous"
         renderOnZeroPageCount={null}
@@ -53,15 +53,13 @@ const AppconfirmPaginated = ({
       {Loaded ? (
         currentItems &&
         currentItems.map((ol) => (
-          <>
+          <div key={ol.book_id} className="w-full">
             <Online
-              key={ol.book_id}
               ol={ol}
               user={user}
               CDNURL={CDNURL}
-              getImages={getImages}
             />
-          </>
+          </div>
         ))
       ) : (
         <Oval

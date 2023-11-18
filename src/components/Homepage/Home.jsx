@@ -11,11 +11,6 @@ import ultrasound from "../images/slides/ultrasound.jpg";
 import echo from "../images/slides/2D-echo.jpg";
 
 const slides = [admission, outpatient, ultrasound,echo, laboratory, xray];
-// const slides = [
-// emergency,
-// laboratory
-// ];
-console.log(slides);
 const Home = () => {
   //TODO: add sign in
 
@@ -33,9 +28,9 @@ const Home = () => {
           WE'RE HERE READY FOR YOUR SERVICE!
         </p>
         <p className="text-3xl font-light" data-aos="fade-up">
-          Need some emergency assistance? Contact Us!
+          Need to book for a doctor's appointment? 
         </p>
-        <Link to="/Contacts">
+        <Link to="/Appointment">
           <button
             data-aos="fade-up"
             className="bg-transparent text-[20px] px-7 py-2 border-solid border-white border-2 transition duration-50 ease-in-out hover:text-[#315E30] hover:bg-white"

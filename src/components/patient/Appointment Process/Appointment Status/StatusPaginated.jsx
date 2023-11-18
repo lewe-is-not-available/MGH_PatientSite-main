@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from "react";
-import Online from "./StatusMap";
+import StatusMap from "./StatusMap";
 import ReactPaginate from "react-paginate";
 import { Oval } from "react-loader-spinner";
 
 const StatusPaginated = ({
   books,
-  CDNURL,
   user,
-  getImages,
   Loaded,
   setLoaded,
+  imgName,
+  isImgEmpty
 }) => {
   //*Pagination
   const [itemOffset, setItemOffset] = useState(0);
   const [pageCount, setpageCount] = useState(0);
-  const itemsPerPage = 5;
+  const itemsPerPage = 7;
   const [currentItems, setcurrentItems] = useState(null);
   useEffect(() => {
-    const endOffset = itemOffset + itemsPerPage;
+    if(user){
+       const endOffset = itemOffset + itemsPerPage;
     setcurrentItems(books.slice(itemOffset, endOffset));
     setpageCount(Math.ceil(books.length / itemsPerPage));
     if (currentItems) {
@@ -25,7 +26,9 @@ const StatusPaginated = ({
         setLoaded(true);
       }, 500);
     }
-  }, [itemOffset, itemsPerPage, books]);
+    }
+   
+  }, [itemOffset, itemsPerPage, books, setLoaded, user]);
 
   const handlePageClick = (event) => {
     setLoaded(false);
@@ -53,12 +56,12 @@ const StatusPaginated = ({
         currentItems &&
         currentItems.map((ol) => (
           <>
-            <Online
+            <StatusMap
+              imgName={imgName}
+              isImgEmpty={isImgEmpty}
               key={ol.book_id}
               ol={ol}
               user={user}
-              CDNURL={CDNURL}
-              getImages={getImages}
             />
           </>
         ))

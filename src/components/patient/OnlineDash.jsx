@@ -31,7 +31,7 @@ const Online = () => {
   const [showFill, setShowFill] = useState(true);
   useEffect(() => {
     const fetchFilter = async () => {
-      const { data, error } = await supabase.from("Dr information").select("*");
+      const { data, error } = await supabase.from("Dr_information").select("*");
       if (error) {
         console.error("Failed to fetch", error.message);
       } else {
@@ -90,7 +90,7 @@ const Online = () => {
     setSubSelect("---");
     setHmo("");
 
-    const { data, error } = await supabase.from("Dr information").select("*");
+    const { data, error } = await supabase.from("Dr_information").select("*");
 
     if (error) {
       console.error("Failed to fetch", error.message);
@@ -106,7 +106,7 @@ const Online = () => {
     } else {
       setNoResult(false);
 
-      const { data, error } = await supabase.from("Dr information").select("*");
+      const { data, error } = await supabase.from("Dr_information").select("*");
 
       if (error) {
         console.error("Error searching for data:", error.message);

@@ -4,14 +4,13 @@ import Aos from "aos";
 import "aos/dist/aos.css";
 import SomeoneF2f from "./SomeoneOnline";
 import supabase from "../../config/Supabase";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 import { RotatingLines } from "react-loader-spinner";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 
-const OnlineConsult = ({ openTerms, token }) => {
+const OnlineConsult = ({ openTerms, token, setToken }) => {
   //*make pass visible or not
   const [visible, setVisible] = useState(false);
   const [visible1, setVisible1] = useState(false);
@@ -51,9 +50,10 @@ const OnlineConsult = ({ openTerms, token }) => {
     Pass: "",
     Confirm_pass: "",
   });
-
+  //console.log(formData.Gmail + formData.Pass)
   //*Request OTP
   const email = formData.Gmail;
+  const password = formData.Pass;
   const [ReqLoaded, setReqLoaded] = useState(true);
   const [isRequested, setisRequested] = useState(false);
   const handleRequest = async (e) => {
@@ -61,13 +61,27 @@ const OnlineConsult = ({ openTerms, token }) => {
     setisRequested(true);
     const { error } = await supabase.auth.signInWithOtp({ email });
     if (error) {
+      toast.error(error, {
+        toastId: "dataError",
+      });
       console.log(error);
       setisRequested(false);
     } else {
       setReqLoaded(false);
     }
   };
-
+  //*Resend OTP
+  const handleResend = async (e) => {
+    e.preventDefault();
+    setisRequested(true);
+    const { error } = await supabase.auth.resend({ type: "signup", email });
+    if (error) {
+      console.log(error);
+      setisRequested(false);
+    } else {
+      setReqLoaded(false);
+    }
+  };
   //*Verify Email from 6 digit code
   const [VerifyLoad, setVerifyLoad] = useState(true);
   const [isVerified, setisVerified] = useState(false);
@@ -78,7 +92,7 @@ const OnlineConsult = ({ openTerms, token }) => {
     setisVerified(true);
     const { error } = await supabase.auth.verifyOtp({
       email,
-      otpToken,
+      token: otpToken,
       type: "email",
     });
     if (error) {
@@ -89,8 +103,17 @@ const OnlineConsult = ({ openTerms, token }) => {
     }
   };
   //*Getting user's data
+  const [Representative, setRepresentative] = useState();
+
   useEffect(() => {
     if (token) {
+      setRepresentative(
+        token.user.user_metadata.first_name +
+          " " +
+          token.user.user_metadata.middle_name +
+          " " +
+          token.user.user_metadata.last_name
+      );
       if (isSomeone === false) {
         setID(token.user.id);
         //to wait loading of token and avoid error
@@ -122,82 +145,124 @@ const OnlineConsult = ({ openTerms, token }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    //*Compare pass and confirm pass if similar
-    if (!token) {
+    //* if user is logged in
+    if (token) {
+      const { error } = await supabase.from("Patient_Appointments").insert([
+        {
+          user_id: userID,
+          appointee: isSomeone ? Representative : "",
+          docname: Name,
+          fname: formData.Fname,
+          lname: formData.Lname,
+          mname: formData.Mname,
+          email: formData.Gmail,
+          number: formData.Number,
+          date: formData.Date,
+          time: formData.Time,
+          reason: formData.Reason,
+          relation: formData.Relation,
+          age: formData.PatientAge,
+          bday: formData.PatientBday,
+          someone: checkedSomeone,
+          honorific: Honor,
+          type: "ol",
+          status: "pending",
+        },
+        {},
+      ]);
+      if (error) {
+        console.log(error);
+        toast.error(error, {
+          toastId: "dataError",
+        });
+      }
+    }
+
+    //*if user is not logged in
+    else if (!token) {
+      //*Compare pass and confirm pass if similar
       if (formData.Pass !== formData.Confirm_pass) {
         toast.error("Your password doesn't match", {
           toastId: "dataError",
         });
         return;
       }
-    }
-    if (token) {
-      const { error } = await supabase.from("Patient_Appointments").insert([
-        {
-          user_id: userID,
-        },
-      ]);
-    }
-    const { error } = await supabase.from("Patient_Appointments").insert([
-      {
-        docname: Name,
-        fname: formData.Fname,
-        lname: formData.Lname,
-        mname: formData.Mname,
-        email: formData.Gmail,
-        number: formData.Number,
-        date: formData.Date,
-        time: formData.Time,
-        reason: formData.Reason,
-        relation: formData.Relation,
-        age: formData.PatientAge,
-        bday: formData.PatientBday,
-        someone: checkedSomeone,
-        honorific: Honor,
-        type: "ol",
-        status: "pending",
-      },
-    ]);
-    if (error) {
-      console.log(error);
-      toast.error(error, {
-        toastId: "dataError",
-      });
-    }
-    if (!token) {
       if (isVerified) {
-        const { error } = await supabase.auth.signUp({
-          email: formData.Gmail,
-          password: formData.Pass,
-          sendOtp: true,
-          options: {
-            data: {
-              first_name: formData.Fname,
-              last_name: formData.Lname,
-              middle_name: formData.Mname,
-              phone: formData.Phone,
-              birth_date: formData.PatientBday,
-              role: "patient",
-            },
-          },
-        });
-
-        if (error) {
-          toast.error(error);
-        } else {
-          toast.info("veirification sent in your email.");
+        const { error: updateError } = await supabase
+          .from("profile")
+          .update({
+            role: "patient",
+          })
+          .eq("email", "");
+        if (updateError) {
+          toast.error(updateError, {
+            toastId: "dataError",
+          });
         }
+        // const { error: errSignUp } = await supabase.auth.signUp({
+        //   email: formData.Gmail,
+        //   password: formData.Pass,
+        //   sendOtp: true,
+        //   options: {
+        //     data: {
+        //       username: formData.Mname + formData.Lname,
+        //       first_name: formData.Fname,
+        //       last_name: formData.Lname,
+        //       middle_name: formData.Mname,
+        //       phone: formData.Phone,
+        //       birth_date: formData.PatientBday,
+        //       role: "patient",
+        //     },
+        //   },
+        // });
+        // if (errSignUp) {
+        //   toast.error(errSignUp);
+        //   console.log(errSignUp);
+        // } else {
+        //   const { error: ErrApp, data: success } = await supabase
+        //     .from("Patient_Appointments")
+        //     .insert([
+        //       {
+        //         appointee: isSomeone ? Representative : "",
+        //         docname: Name,
+        //         fname: formData.Fname,
+        //         lname: formData.Lname,
+        //         mname: formData.Mname,
+        //         email: formData.Gmail,
+        //         number: formData.Number,
+        //         date: formData.Date,
+        //         time: formData.Time,
+        //         reason: formData.Reason,
+        //         relation: formData.Relation,
+        //         age: formData.PatientAge,
+        //         bday: formData.PatientBday,
+        //         someone: checkedSomeone,
+        //         honorific: Honor,
+        //         type: "ol",
+        //         status: "pending",
+        //       },
+        //     ]);
+        //   if (ErrApp) {
+        //     console.log(ErrApp);
+        //     toast.error(ErrApp, {
+        //       toastId: "dataError",
+        //     });
+        //     if (success) {
+        //       toast.success("Succesfully appointed", {
+        //         toastId: "success",
+        //       });
+        //       toast.info(
+        //         "Please wait for booking and scheduling confirmation."
+        //       );
+        //       navigate("/Appointment/Success");
+        //     }
+        //   }
+        // }
       } else {
         e.preventDefault();
         toast.error("Please finish the verification first");
       }
     }
-
-    navigate("/");
-    toast.success("Succesfully appointed", {
-      toastId: "success",
-    });
-    toast.info("Please wait for booking and scheduling confirmation.");
   };
   //*Doctor's Data
   const [Honor, setHonor] = useState("");
@@ -207,7 +272,6 @@ const OnlineConsult = ({ openTerms, token }) => {
   const { id } = useParams();
 
   //*function for Doctor's Data to get from supabase
-
   const fetchDoctor = async () => {
     const { data, error } = await supabase
       .from("Dr_information")
@@ -405,7 +469,7 @@ const OnlineConsult = ({ openTerms, token }) => {
                   Mobile Number:{" "}
                   <span className="lowercase font-thin text-sm text-green-800">
                     (Input a number only)
-                  </span>{" "}
+                  </span>
                   <br />
                   <input
                     name="Number"
@@ -442,7 +506,7 @@ const OnlineConsult = ({ openTerms, token }) => {
                           placeholder="OTP here"
                           onChange={handleChange}
                           required
-                          className="px-2 w-[6.4rem] rounded-md mr-2 h-8 text-slate-900 ring-1 ring-inset ring-gray-300
+                          className="px-2 w-[6.4rem] font-thin rounded-md mr-2 h-8 text-slate-900 ring-1 ring-inset ring-gray-300
                         placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600
                         sm:text-sm sm:leading-6"
                         />
@@ -478,13 +542,21 @@ const OnlineConsult = ({ openTerms, token }) => {
                               </div>
                             )
                           ) : (
-                            <button
-                              className="text-sm px-2 h-6 mt-1 transition duration-75 rounded-md text-[#102915]
+                            <>
+                              <button
+                                className="text-sm px-2 h-6 mt-1 transition duration-75 rounded-md text-[#102915]
                           hover:text-white hover:bg-[#78b673f8] bg-[#98dd93c4]"
-                              onClick={handleVerify}
-                            >
-                              Verify
-                            </button>
+                                onClick={handleVerify}
+                              >
+                                Verify
+                              </button>
+                              <button
+                                className="font-thin text-xs"
+                                onClick={handleResend}
+                              >
+                                Resend OTP
+                              </button>
+                            </>
                           )
                         ) : (
                           <button
@@ -623,8 +695,11 @@ const OnlineConsult = ({ openTerms, token }) => {
                     required
                   />
 
-                  <label className="ml-2 text-sm">
-                    Do you accept giving us your detail?
+                  <label className="ml-2 text-sm font-thin">
+                    Terms and Condition
+                    <button onClick={openTerms} className="text-primary">
+                      Read More
+                    </button>
                   </label>
                 </div>
               </div>

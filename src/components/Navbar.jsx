@@ -11,10 +11,6 @@ import "react-toastify/dist/ReactToastify.css";
 import DragandDrop from "./Sidebar/Drag_and_Drop";
 import Consent from "./patient/Appointment Process/Consent";
 
-const bodyScrollLock = require("body-scroll-lock");
-const disableBodyScroll = bodyScrollLock.disableBodyScroll;
-const enableBodyScroll = bodyScrollLock.enableBodyScroll;
-
 const Navbar = ({
   token,
   setToken,

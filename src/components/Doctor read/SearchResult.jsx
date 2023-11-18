@@ -38,7 +38,7 @@ const SearchResult = ({ Doctors }) => {
           <span className="mr-2 font-bold">Schedule: </span>
           <p className="text-base mb-4">{Doctors.Schedule}</p>
         </div>
-        <Link to={'/' + Doctors.id} data-aos="fade-up">
+        <Link to={'/DoctorInfo/' + Doctors.id} data-aos="fade-up">
           <button className="flex text-base bg-[#418D3F] p-2 rounded-md text-white font-bold ring-[#418D3F] ring-2 transition duration-75 ease-in hover:bg-[#A5DD9D] hover:text-[#267124]">
             <HiOutlineInformationCircle className="mr-1" size={23} /> Check
             Information

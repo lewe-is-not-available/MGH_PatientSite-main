@@ -14,15 +14,15 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
   //TODO: REDESIGN TABLE INTO BULK WITH PROFILE PIC
   //*prevent access from non-admin users
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchAdmin = async () => {
-      const { data } = await supabase.from("profile").select("*").single();
-      if (data.role !== "admin") {
-        navigate("/Dashboard");
-      }
-    };
-    fetchAdmin();
-  }, [navigate]);
+  // useEffect(() => {
+  //   const fetchAdmin = async () => {
+  //     const { data } = await supabase.from("profile").select("*").single();
+  //     if (data.role !== "admin") {
+  //       navigate("/Dashboard");
+  //     }
+  //   };
+  //   fetchAdmin();
+  // }, [navigate]);
 
   const [filt, setfilt] = useState([]);
 
@@ -35,7 +35,8 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
   const [createdAt, setCreated] = useState("");
   const [isAsc, setisAsc] = useState(true);
   useEffect(() => {
-    //booked by someone
+    if(user){
+       //booked by someone
     if (Someone === "Show all") {
       setSomeone("");
     } //status
@@ -60,7 +61,10 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
     } else if (Type === "Face to face Consult") {
       setType("f2f");
     }
+    }
+   
   }, [
+    user,
     createdAt,
     setisAsc,
     Status,
@@ -80,7 +84,7 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
     setLoaded(false);
     const { data, error } = await supabase
       .from("Patient_Appointments")
-      .select("*");
+      .select();
     if (error) {
       toast.error(error, {
         toastId: "dataError",
@@ -98,7 +102,6 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
   const handleSearch = () => {
     setsearchLoad(false);
     const search = filt.filter((items) => {
-      console.log(items);
       const fname = items.fname.toLowerCase().includes(Search.toLowerCase());
       const lname = items.lname.toLowerCase().includes(Search.toLowerCase());
       const mname = items.mname.toLowerCase().includes(Search.toLowerCase());
@@ -161,25 +164,7 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
 
   const [isFilterOpen, setisFilterOpen] = useState(false);
   //*images function
-  async function getImages(id, setimgName, setImgEmpty) {
-    const { data, error } = await supabase.storage
-      .from("images")
-      .list(id + "/", {
-        limit: 100,
-        offset: 0,
-        sortBy: { column: "created_at", order: "asc" },
-      });
-
-    if (data[0]) {
-      setImgEmpty(true);
-      setimgName(data[0].name);
-    }
-
-    if (error) {
-      setImgEmpty(false);
-      console.log(error);
-    }
-  }
+ 
 
   //*Aos Function
   useEffect(() => {
@@ -308,15 +293,14 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
             </div>
           </div>
         </div>
-
         <div className=" flex justify-center">
-          <div className="w-full h-auto min-h-screen text-sm flex mt-3 mb-10 flex-wrap justify-between rounded-lg text-gray-500 dark:text-gray-400">
+          <div className="w-full h-auto min-h-screen text-sm flex mt-3 mb-10 flex-wrap justify-between
+           rounded-lg text-gray-500 dark:text-gray-400">
             {searchLoad ? (
               <AppconfirmPaginated
                 books={books}
                 user={user}
                 CDNURL={CDNURL}
-                getImages={getImages}
                 setLoaded={setLoaded}
                 Loaded={Loaded}
               />

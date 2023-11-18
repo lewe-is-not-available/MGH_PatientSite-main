@@ -17,8 +17,9 @@ const Consent = ({ setRead }) => {
   }, [setRead]);
   return (
     <div className="flex justify-center backdrop-blur-sm bg-slate-700 fixed z-50 inset-0 bg-opacity-30">
-      <div ref={TermsRef} className="absolute abs rounded-md bg-white mt-40">
-        <div className="overflow-y-scroll h-72">
+      <div ref={TermsRef} className="absolute abs w-[60%] p-10 rounded-md bg-white mt-40">
+        <div className="text-xl">
+          <h1 className="font-semibold text-2xl mb-2">Terms and Condition</h1>
           "I, [Your Name], hereby confirm that I am booking this appointment on
           behalf of [Patient's Full Name] and have obtained their express
           consent to do so. I understand and agree to the following: I have the
