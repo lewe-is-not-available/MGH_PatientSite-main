@@ -22,7 +22,8 @@ import OnlineConsultationHistory from "./components/patient/Appointment Process/
 import PatientDashboard from "./components/patient/Dashboard";
 import OnlineDash from "./components/patient/OnlineDash";
 import F2fDash from "./components/patient/F2fDash";
-import AfterAppointment from "./components/patient/Appointment Process/AfterAppointment";
+import AfterAppointment from "./components/patient/Appointment Process/After Submitting/SuccessAppointment";
+import WaitVerify from "./components/patient/Appointment Process/After Submitting/WaitingVerify";
 
 //Doctor
 import DoctorConsultHistory from "./components/Higher user level/Doctor/DoctorConsulHistory";
@@ -55,34 +56,52 @@ function App() {
   const [user, setUser] = useState([]);
 
   //*initiates after login
+
+  const fetchProfile = async () => {
+    const { data, error } = await supabase
+      .from("profile")
+      .select("*")
+      .eq("email", token.user.email)
+      .single();
+    //*compare roles if matched
+    if (error) {
+      console.log(error);
+    }
+
+    if (data.role) {
+      if (data.role === "admin") {
+        setIsAdmin(true);
+      }
+      if (data.role === "doctor") {
+        setIsDoctor(true);
+      }
+      if (data.role === "patient") {
+        setIsPatient(true);
+      }
+    }
+    if (data) {
+      setUser(data);
+    }
+  };
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", JSON.stringify(token));
-      const fetchAdmin = async () => {
-        const { data, error } = await supabase
-          .from("profile")
-          .select()
-          .single();
-        //*compare roles if matched
-        if (error) {
-          console.log(error);
-        }
-        if (data && data.role) {
-          if (data.role === "admin") {
-            setIsAdmin(true);
+      fetchProfile();
+
+      supabase
+        .channel("custom-all-channel")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "profile",
+          },
+          () => {
+            fetchProfile();
           }
-          if (data.role === "doctor") {
-            setIsDoctor(true);
-          }
-          if (data.role === "patient") {
-            setIsPatient(true);
-          }
-        }
-        if (data) {
-          return setUser(data);
-        }
-      };
-      fetchAdmin();
+        )
+        .subscribe();
     }
   }, [token]);
 
@@ -168,7 +187,7 @@ function App() {
       <main
         className={`${
           open
-            ? "flex-grow h-auto transition ease-in duration-200 translate-x-[18.7rem] w-[86%]"
+            ? "flex-grow h-auto max-md:h-full overflow-hidden transition ease-in duration-200 translate-x-[18.7rem] w-[86%]"
             : "flex-grow h-auto transition ease-out duration-200  translate-x-0 w-screen"
         }`}
       >
@@ -209,10 +228,11 @@ function App() {
             path={"/Appointment"}
             element={<Appointment token={token} isPatient={isPatient} />}
           />
-          <Route path={"/Appointment/Success"} element={<AfterAppointment />} />
+          <Route path={"/Appointment/Success"} element={<AfterAppointment token={token} setToken={setToken}/>} />
+          <Route path={"/Appointment/Verifying"} element={<WaitVerify />} />
           <Route
             path="/Dashboard"
-            element={<PatientDashboard token={token} showLogin={FetchShow} />}
+            element={<PatientDashboard token={token} showLogin={FetchShow} admin={isAdmin} doctor={isDoctor} patient={isPatient} />}
           />
           {token && (
             <>

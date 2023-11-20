@@ -21,13 +21,13 @@ const Home = () => {
   return (
     <div>
       <div
-        className="hero1 p-28 py-28 flex flex-col items-center text-white space-y-14"
+        className="hero1 max-md:px-16 px-28 py-28 flex flex-col text-center items-center text-white space-y-14"
         data-aos="fade-up"
       >
-        <p className="text-5xl font-semibold" data-aos="fade-up">
+        <p className="text-5xl max-md:text-4xl font-semibold" data-aos="fade-up">
           WE'RE HERE READY FOR YOUR SERVICE!
         </p>
-        <p className="text-3xl font-light" data-aos="fade-up">
+        <p className="text-3xl max-md:text-2xl  font-light" data-aos="fade-up">
           Need to book for a doctor's appointment? 
         </p>
         <Link to="/Appointment">

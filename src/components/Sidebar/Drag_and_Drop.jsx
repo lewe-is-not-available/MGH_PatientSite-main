@@ -8,7 +8,6 @@ const Drag_and_Drop = ({
   closeProfileUpload,
   user,
   imgName,
-  isProfileOpen,
   setUploaded,
   isImgEmpty,
 }) => {
@@ -103,7 +102,6 @@ const Drag_and_Drop = ({
               src={image}
               alt="/"
             />
-            {isProfileOpen ? (
               <ul className="flex w-[90%]">
                 <p className="font-semibold whitespace-nowrap mr-2">
                   File Name:{" "}
@@ -114,9 +112,7 @@ const Drag_and_Drop = ({
                   </li>
                 ))}
               </ul>
-            ) : (
-              ""
-            )}
+         
             <div className="border-b-2 border-slate-300 w-full mt-3 mb-6" />
 
             <div className="flex space-x-4 mb-4 mt-4">

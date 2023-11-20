@@ -18,13 +18,14 @@ const SomeoneF2f = ({
   setVisible,
   isOpen,
   isConfirmOpen,
-  isRequested,
-  ReqLoaded,
-  isVerified,
-  VerifyLoad,
-  handleRequest,
-  handleVerify,
-  token
+  token,
+  isSelected,
+  image,
+  handleCancel,
+  handleDragOver,
+  handleDrop,
+  handleFile,
+  File,
 }) => {
   //*If Relation is Other
   const [isOtherRelation, setOtherRelation] = useState(false);
@@ -59,7 +60,6 @@ const SomeoneF2f = ({
   useEffect(() => {
     Aos.init({ duration: 500 });
   }, []);
-
 
   return (
     <div
@@ -126,73 +126,6 @@ const SomeoneF2f = ({
           className="outline-none rounded-md font-thin border-2 px-2 grid- border-slate-300 focus:border-[#71b967d3] w-full"
         />
       </p>
-      {!token && (
-        <div className="">
-          <p>Verify Email: </p>
-          <div className="flex item-center">
-            <input
-              name="confirmEmail"
-              placeholder="OTP here"
-              onChange={handleChange}
-              autoComplete="on"
-              required
-              className="px-2 w-[6.4rem] rounded-md mr-2 h-8 text-slate-900 ring-1 ring-inset ring-gray-300
-                        placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600
-                        sm:text-sm sm:leading-6"
-            />
-
-            {isRequested ? (
-              ReqLoaded ? (
-                <div className="flex items-center">
-                  <RotatingLines
-                    strokeColor="grey"
-                    strokeWidth="3"
-                    animationDuration="0.75"
-                    width="25"
-                    visible={true}
-                  />
-                  <p className="text-xs ml-2">requesting</p>
-                </div>
-              ) : isVerified ? (
-                VerifyLoad ? (
-                  <div className="flex items-center">
-                    <RotatingLines
-                      strokeColor="grey"
-                      strokeWidth="3"
-                      animationDuration="0.75"
-                      width="23"
-                      visible={true}
-                    />
-                    <p className="text-xs ml-1">verifying</p>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-1 text-green-600">
-                    <p>verified</p>
-                    <AiOutlineCheckCircle />
-                  </div>
-                )
-              ) : (
-                <button
-                  className="text-sm px-2 h-6 mt-1 transition duration-75 rounded-md text-[#102915]
-                          hover:text-white hover:bg-[#78b673f8] bg-[#98dd93c4]"
-                  onClick={handleVerify}
-                >
-                  Verify
-                </button>
-              )
-            ) : (
-              <button
-                onClick={handleRequest}
-                className="text-xs px-2 h-6 mt-1 transition duration-75 rounded-md text-[#102915]
-                           hover:text-white hover:bg-[#78b673f8] bg-[#98dd93c4]"
-              >
-                Send OTP
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
       <p>
         Relation with patient: <br />
         <select
@@ -250,7 +183,7 @@ const SomeoneF2f = ({
           />
         </div>
       </div>
-      <div>
+      <div className="col-span-2">
         <p className="whitespace-normal ">Select Date of the appointment:</p>
         <input
           name="Date"
@@ -263,34 +196,34 @@ const SomeoneF2f = ({
         />
       </div>
       {!token && (
-        <div className=" w-full -mt-2">
-          <label className="text-lg">
-            Password
-            <br />
-            <p className="font-thin text-sm mb-3">
+        <>
+          <div className="col-span-3 flex -mb-7">
+            <p className="font-thin text-base text-green-600 mb-3">
               We require you to register in our website in order for you to
-              monitor your appointment
+              monitor your appointment status
             </p>
-          </label>
-          <div className="flex items-center select-none">
-            <input
-              name="Pass"
-              type={isOpen}
-              autoComplete="on"
-              onChange={handleChange}
-              required
-              className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full"
-            />
-            <div
-              onClick={() => setVisible(!visible)}
-              className="cursor-pointer -ml-7 text-[20px] "
-            >
-              {visible ? <PiEye /> : <PiEyeClosed />}
-            </div>
           </div>
 
-          <br />
-          <p className="">
+          <div className="select-none">
+            <label className="text-lg">Password</label>
+            <div className="flex items-center">
+              <input
+                name="Pass"
+                type={isOpen}
+                autoComplete="on"
+                onChange={handleChange}
+                required
+                className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full"
+              />
+              <div
+                onClick={() => setVisible(!visible)}
+                className="cursor-pointer -ml-7 text-[20px] "
+              >
+                {visible ? <PiEye /> : <PiEyeClosed />}
+              </div>
+            </div>
+          </div>
+          <div className="col-span-2 w-1/2">
             Confrim Password: <br />
             <div className="flex items-center select-none">
               <input
@@ -308,8 +241,8 @@ const SomeoneF2f = ({
                 {visible1 ? <PiEye /> : <PiEyeClosed />}
               </div>
             </div>
-          </p>
-        </div>
+          </div>
+        </>
       )}
 
       <p className="col-span-2 row-span-2 self-center">
@@ -317,6 +250,7 @@ const SomeoneF2f = ({
         <textarea
           name="Address"
           autoComplete="on"
+          value={formData.Address}
           onChange={handleChange}
           required
           className="outline-none border-2 font-thin px-2 h-28 rounded-md border-slate-300 focus:border-[#71b967d3] w-full"
@@ -333,6 +267,103 @@ const SomeoneF2f = ({
           className="outline-none border-2 font-thin px-3 py-2 h-56 rounded-md border-slate-300 focus:border-[#71b967d3] w-full"
         />
       </p>
+      <p className="col-span-3 text-xl text-center">PAYMENT </p>
+      <div className="col-span-3 items-center grid grid-cols-2 font-thin">
+        <div className="flex flex-col items-center">
+          <div className="flex">
+            <span className="font-semibold">Step 1:</span> Scan the QR code to
+            pay using Gcash
+          </div>
+
+          <div className="p-40 bg-slate-400 flex whitespace-nowrap text-white font-bold">
+            QR code here
+          </div>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="flex">
+            <span className="font-semibold">Step 2:</span> Screenshot your
+            payment receipt and upload here
+          </div>
+          {isSelected ? (
+            <div className="flex flex-col items-center -mb-16">
+              <img
+                className="object-contain mb-4 rounded-md items-center justify-center w-full h-[20rem]"
+                src={image}
+                alt="/"
+              />
+
+              <ul className="flex">
+                <p className="font-semibold whitespace-nowrap mr-2">
+                  File Name:{" "}
+                </p>
+                {Array.from(File).map((file, idx) => (
+                  <li className="truncate" key={idx}>
+                    {file.name}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="flex space-x-4 mb-4">
+                <button
+                  className="text-gray-900 bg-white border border-gray-300 focus:outline-none
+               transition duration-75 ease-in hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 
+               font-medium rounded-lg px-5 dark:bg-gray-800 dark:text-white dark:border-gray-600
+                dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  onClick={handleCancel}
+                >
+                  Choose another file
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center w-full">
+              {/* Drop-Zone */}
+              <label
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                accept="image/png, image/jpeg"
+                className="flex flex-col mb-5 rounded-md items-center justify-center w-[80%] h-[21rem] border-2
+                     border-gray-300 border-dashed cursor-pointer bg-gray-50 transition duration-100 ease-in dark:hover:bg-bray-800
+                    dark:bg-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:hover:border-gray-500
+                    dark:hover:bg-gray-600"
+              >
+                <div className="flex flex-col items-center pt-5 pb-6">
+                  <svg
+                    className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 16"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                    />
+                  </svg>
+
+                  <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                    <span className="font-semibold">Click to upload</span> or
+                    drag and drop
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    PNG or JPG
+                  </p>
+                </div>
+                {/* Image input */}
+                <input
+                  id="dropzone-file"
+                  onChange={handleFile}
+                  accept="image/png, image/jpeg"
+                  type="file"
+                  className="hidden"
+                />
+              </label>
+            </div>
+          )}
+        </div>
+      </div>
       <div className="flex items-center mb-6 font-extralight whitespace-nowrap">
         <input
           id="default-checkbox"

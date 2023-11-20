@@ -81,7 +81,7 @@ const Navbar = ({
   }, [token, isAdmin, isDoctor, isPatient]);
 
   //*Logout Function
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   async function handleLogout() {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -89,7 +89,6 @@ const Navbar = ({
     } else {
       setToken(false);
       localStorage.removeItem("token");
-      navigate("/");
       window.location.reload();
     }
   }
@@ -97,7 +96,7 @@ const Navbar = ({
   return (
     <div>
       <ToastContainer />
-      <div className="z-50 flex justify-between top-0 w-full bg-[#315E30] px-3 pl-5">
+      <div className="z-50 flex justify-between items-center top-0 w-full bg-[#315E30] px-3 pl-5">
         <div className="flex items-center">
           {/* Open button for side */}
           <div
@@ -114,27 +113,27 @@ const Navbar = ({
 
             <Link
               to="/Dashboard"
-              className="hover:cursor-pointer flex p-3 ml-5"
+              className="hover:cursor-pointer flex items-center p-3 ml-5"
             >
-              <div className="w-[65px]">
+              <div className="w-[65px] max-md:w-[40px]">
                 <img src={logo} alt="/" />
               </div>
-              <h1 className="font-bold text-6xl text-white pl-2 flex">
+              <h1 className="font-bold text-6xl max-md:text-4xl whitespace-nowrap text-white pl-2 flex">
                 MGH
                 {patient && (
-                  <p className="ml-3 font-thin text-4xl mt-4">Patient's page</p>
+                  <p className="ml-3 font-thin text-4xl self-center max-md:text-xl">Patient's page</p>
                 )}
                 {doctor && (
-                  <p className="ml-3 font-thin text-4xl mt-4">Doctor's page</p>
+                  <p className="ml-3 font-thin text-4xl self-center max-md:text-xl">Doctor's page</p>
                 )}
                 {admin && (
-                  <p className="ml-3 font-thin text-4xl mt-4">Admin's page</p>
+                  <p className="ml-3 font-thin text-4xl self-center max-md:text-xl">Admin's page</p>
                 )}
               </h1>
             </Link>
           </div>
         </div>
-        <div className=" mt-7 mr-12 text-lg ">
+        <div className=" mr-12 text-lg max-md:text-sm ">
           {token ? (
             <div className="flex space-x-4 -mt-2 items-center">
               <p className="text-white text-right font-medium uppercase">

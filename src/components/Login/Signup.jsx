@@ -64,21 +64,6 @@ const Signup = ({ Closereg, open }) => {
       //setOTP(session.provider_token);
     }
   };
-  //*Request OTP
-  const [ReqLoaded, setReqLoaded] = useState(true);
-  const [isRequested, setisRequested] = useState(false);
-  const handleRequest = async (e) => {
-    e.preventDefault();
-    setisRequested(true);
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) {
-      console.log(error);
-      setisRequested(false);
-      setErr(error);
-    } else {
-      setReqLoaded(false);
-    }
-  };
   //*Onsubmit
   const handleSubmit = async (e) => {
     if (formData.password !== formData.confrimPass) {
@@ -204,69 +189,16 @@ const Signup = ({ Closereg, open }) => {
                       focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
+                 
                   <div className="">
-                    <p>Verify Email: </p>
-                    <div className="flex item-center">
-                      <input
-                        name="confirmEmail"
-                        placeholder="OTP here"
-                        onChange={handleChange}
-                        autoComplete="on"
-                        required
-                        className="px-2 w-[6.4rem] rounded-md mr-2 h-8 text-slate-900 ring-1 ring-inset ring-gray-300
-                        placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600
-                        sm:text-sm sm:leading-6"
-                      />
-
-                      {isRequested ? (
-                        ReqLoaded ? (
-                          <div className="flex items-center">
-                            <RotatingLines
-                              strokeColor="grey"
-                              strokeWidth="3"
-                              animationDuration="0.75"
-                              width="25"
-                              visible={true}
-                            />
-                            <p className="text-xs ml-2">requesting</p>
-                          </div>
-                        ) : isVerified ? (
-                          VerifyLoad ? (
-                            <div className="flex items-center">
-                              <RotatingLines
-                                strokeColor="grey"
-                                strokeWidth="3"
-                                animationDuration="0.75"
-                                width="23"
-                                visible={true}
-                              />
-                              <p className="text-xs ml-1">verifying</p>
-                            </div>
-                          ) : (
-                            <div className="flex items-center space-x-1 text-green-600">
-                              <p>verified</p>
-                              <AiOutlineCheckCircle />
-                            </div>
-                          )
-                        ) : (
-                          <button
-                            className="text-sm px-2 h-6 mt-1 transition duration-75 rounded-md text-[#102915]
-                          hover:text-white hover:bg-[#78b673f8] bg-[#98dd93c4]"
-                            onClick={handleVerify}
-                          >
-                            Verify
-                          </button>
-                        )
-                      ) : (
-                        <button
-                          onClick={handleRequest}
-                          className="text-xs px-2 h-6 mt-1 transition duration-75 rounded-md text-[#102915]
-                           hover:text-white hover:bg-[#78b673f8] bg-[#98dd93c4]"
-                        >
-                          Send OTP
-                        </button>
-                      )}
-                    </div>
+                    <p>Contact Number: </p>
+                    <input
+                      name="Phone"
+                      onChange={handleChange}
+                      autoComplete="on"
+                      required
+                      className="px-2 w-full text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
                   </div>
                   <div className="">
                     <p>Contact Number: </p>

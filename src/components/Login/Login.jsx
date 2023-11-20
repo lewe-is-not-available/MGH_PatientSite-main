@@ -35,33 +35,9 @@ const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
 
   //*navigates the user back to dashboard based on role
   const nav = useNavigate();
-  const [p, setP] = useState(false);
-  const [d, setd] = useState(false);
-  const [a, seta] = useState(false);
-
-  useEffect(() => {
-    if (token) {
-      if (patient) {
-        setP(true);
-      }
-      if (admin) {
-        seta(true);
-      }
-      if (doctor) {
-        setd(true);
-      }
-    }
-  }, [token, seta, admin, doctor, patient]);
 
   //*Login button funtion
   async function handleSubmit(e) {
-    if (p) {
-      nav("/Patient/Dashboard");
-    } else if (a) {
-      nav("/Admin/Dashboard");
-    } else if (d) {
-      nav("/Doctor/Dashboard");
-    }
     e.preventDefault();
     if (token) {
       console.log(patient);
@@ -83,7 +59,7 @@ const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
 
       //* error handling
     } catch (error) {
-      setErr(error + "");
+      setErr(error.message + "");
       console.log(error);
     }
   }

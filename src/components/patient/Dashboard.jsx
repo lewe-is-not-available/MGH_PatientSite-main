@@ -15,30 +15,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Admin from "../Higher user level/Admin/AdminDashboard";
 import Doc_Dash from "../Higher user level/Doctor/DoctorPage";
 
-const Dashboard = ({ token, showLogin }) => {
+const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
   //TODO: Show dashboard even if logged out but link them to open modal
-  //*Role Based components
-  const [loading, setLoading] = useState(true);
-  const [patient, setPatient] = useState(false);
-  const [admin, setAdmin] = useState(false);
-  const [doctor, setDoctor] = useState(false);
 
-  useEffect(() => {
-    const fetchAdmin = async () => {
-      const { data } = await supabase.from("profile").select("*").single();
-      setLoading(false);
-      if (token) {
-        if (data.role === "admin") {
-          setAdmin(true);
-        } else if (data.role === "patient") {
-          setPatient(true);
-        } else if (data.role === "doctor") {
-          setDoctor(true);
-        }
-      }
-    };
-    fetchAdmin();
-  }, [token]);
   //*For Search window drop function
   const [Show, FetchShow] = useState(null);
   const Close = () => FetchShow(false);
