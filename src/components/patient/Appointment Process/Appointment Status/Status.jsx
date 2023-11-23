@@ -13,19 +13,19 @@ const Status = ({ user }) => {
   const [isImgEmpty, setImgEmpty] = useState(false);
 
   useEffect(() => {
-    if (user.id) {
+    if (user.email) {
       async function getImages() {
         const { data, error } = await supabase.storage
           .from("images")
-          .list(id + "/", {
-            limit: 1,
+          .list(user.email + "/", {
+            limit: 10,
             offset: 0,
             sortBy: { column: "created_at", order: "asc" },
           });
 
-        if (data[0]) {
+        if (data[1]) {
           setImgEmpty(true);
-          setimgName(data[0].name);
+          setimgName(data[1].name);
         }
 
         if (error) {
@@ -84,7 +84,6 @@ const Status = ({ user }) => {
     settime,
     setType,
   ]);
-
   const [Loaded, setLoaded] = useState(true);
   //*search filter
   const [searchLoad, setsearchLoad] = useState(true);
@@ -116,7 +115,7 @@ const Status = ({ user }) => {
       const { data, error } = await supabase
         .from("Patient_Appointments")
         .select("*")
-        .eq("user_id", user.id);
+        .eq("email", user.email);
 
       if (error) {
         toast.error(error, {
@@ -132,26 +131,25 @@ const Status = ({ user }) => {
   };
   //*Filter function
   useEffect(() => {
-
-      const filterBook = filt
-        .filter((item) => {
-          const defStat = !item.status.includes("Confirmed");
-          const someone = item.someone.includes(Someone);
-          const Time = item.time.toLowerCase().includes(time);
-          const type = item.type.toLowerCase().includes(Type);
-          const status = item.status.toLowerCase().includes(Status);
-          return defStat && someone && Time && type && status;
-        })
-        .sort((a, b) =>
-          isAsc
-            ? a.created_at > b.created_at
-              ? -1
-              : 1
-            : a.created_at < b.created_at
+    const filterBook = filt
+      .filter((item) => {
+        const defStat = !item.status.includes("Confirmed");
+        const someone = item.someone.includes(Someone);
+        const Time = item.time.toLowerCase().includes(time);
+        const type = item.type.toLowerCase().includes(Type);
+        const status = item.status.toLowerCase().includes(Status);
+        return defStat && someone && Time && type && status;
+      })
+      .sort((a, b) =>
+        isAsc
+          ? a.created_at > b.created_at
             ? -1
             : 1
-        );
-      setBook(filterBook);
+          : a.created_at < b.created_at
+          ? -1
+          : 1
+      );
+    setBook(filterBook);
 
     if (books) {
       setTimeout(() => {

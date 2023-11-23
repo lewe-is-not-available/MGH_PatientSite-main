@@ -6,7 +6,7 @@ import { AiOutlineDown } from "react-icons/ai";
 import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
 
-const StatusMap = ({ ol, imgName, isImgEmpty }) => {
+const ArchiveMap = ({ ol, imgName, isImgEmpty }) => {
   const CDNURL =
     "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
 
@@ -180,4 +180,4 @@ const StatusMap = ({ ol, imgName, isImgEmpty }) => {
   );
 };
 
-export default StatusMap;
+export default ArchiveMap;

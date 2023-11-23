@@ -44,7 +44,7 @@ const Online = ({ ol, CDNURL }) => {
     return `${year}/${month}/${day} ${hours}:${minutes}${ampm}`;
   }
 
-  const id = ol.user_id;
+  const id = ol.email;
   const [imgName, setimgName] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(false);
 
@@ -57,9 +57,9 @@ const Online = ({ ol, CDNURL }) => {
         sortBy: { column: "created_at", order: "asc" },
       });
 
-    if (data[0]) {
+    if (data[1]) {
       setImgEmpty(true);
-      setimgName(data[0].name);
+      setimgName(data[1].name);
     }
 
     if (error) {
@@ -67,7 +67,6 @@ const Online = ({ ol, CDNURL }) => {
       console.log(error);
     }
   }
-
   useEffect(() => {
     if (ol) {
       getImages(id, setimgName, setImgEmpty);
@@ -99,7 +98,7 @@ const Online = ({ ol, CDNURL }) => {
               className="object-cover rounded-full w-[4rem] h-[4rem]"
               src={`${
                 isImgEmpty
-                  ? CDNURL + id + "/" + imgName
+                  ? CDNURL + ol.email + "/" + imgName
                   : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
               }`}
               alt="/"

@@ -21,19 +21,19 @@ const Home = () => {
   return (
     <div>
       <div
-        className="hero1 max-md:px-16 px-28 py-28 flex flex-col text-center items-center text-white space-y-14"
+        className="hero1 max-lg:px-10 max-lg:py-10 max-lg:space-y-4 px-28 py-28 flex flex-col text-center items-center text-white space-y-14"
         data-aos="fade-up"
       >
-        <p className="text-5xl max-md:text-4xl font-semibold" data-aos="fade-up">
+        <p className="text-5xl max-lg:text-3xl font-semibold" data-aos="fade-up">
           WE'RE HERE READY FOR YOUR SERVICE!
         </p>
-        <p className="text-3xl max-md:text-2xl  font-light" data-aos="fade-up">
+        <p className="text-3xl max-lg:text-lg  font-light" data-aos="fade-up">
           Need to book for a doctor's appointment? 
         </p>
         <Link to="/Appointment">
           <button
             data-aos="fade-up"
-            className="bg-transparent text-[20px] px-7 py-2 border-solid border-white border-2 transition duration-50 ease-in-out hover:text-[#315E30] hover:bg-white"
+            className="bg-transparent text-[20px] max-lg:text-xl max-md:px-4 px-7 py-2 border-solid border-white border-2 transition duration-50 ease-in-out hover:text-[#315E30] hover:bg-white"
           >
             Click Here!
           </button>
@@ -44,13 +44,13 @@ const Home = () => {
         <section id="Contact-num">
           <div className="mb-[33px] flex flex-col space-y-2 items-center">
             <p
-              className="text-xl font-semibold text-[#315E30]"
+              className="text-xl max-sm:text-base font-semibold text-[#315E30]"
               data-aos="fade-up"
             >
               CONTACT NUMBERS
             </p>
             <label
-              className="text-[#315E30] flex flex-col text-center space-y-3"
+              className="text-[#315E30] text-base max-sm:text-sm flex flex-col text-center space-y-3"
               data-aos="fade-up"
             >
               <span data-aos="fade-up">+63 995 230 2499</span>
@@ -59,12 +59,12 @@ const Home = () => {
             </label>
 
             <p
-              className="text-xl font-semibold text-[#315E30]"
+              className="text-xl max-sm:text-base font-semibold text-[#315E30]"
               data-aos="fade-up"
             >
               E-MAIL ADDRESSES
             </p>
-            <span className="text-[#315E30]" data-aos="fade-up">
+            <span className="text-[#315E30] text-base max-sm:text-sm" data-aos="fade-up">
               mendozageneralhospital@gmail.com
             </span>
           </div>
@@ -76,14 +76,14 @@ const Home = () => {
           className="flex flex-col items-center"
         >
           <h1
-            className="text-4xl font-semibold text-[#315E30]"
+            className="text-4xl max-sm:text-2xl text-center font-semibold text-[#315E30]"
             data-aos="fade-up"
             data-aos-duration="500"
           >
             Showcase of Services Offered
           </h1>
 
-          <div className="w-[60%] mb-12">
+          <div className="w-[60%] carouselmain max-[1024px]: max-[1024px]:-mb-7 mb-12">
             <Carousel slides={slides} />
           </div>
         </section>
@@ -98,7 +98,7 @@ const Home = () => {
               Blogs
             </h1>
             <div
-              className="bg-slate-400 p-6 w-2/3 flex"
+              className="bg-slate-400 p-6 w-2/3 max-[1440px]:w-[80%] max-[765px]:flex-col flex"
               data-aos="zoom-out"
               data-aos-anchor-placement="center-bottom"
               data-aos-duration="500"
@@ -120,7 +120,7 @@ const Home = () => {
               </div>
             </div>
             <div
-              className="bg-slate-400 p-6 w-2/3 flex"
+              className="bg-slate-400 p-6 w-2/3 max-[1440px]:w-[80%] max-[765px]:flex-col flex"
               data-aos="zoom-out"
               data-aos-anchor-placement="center-bottom"
               data-aos-duration="500"

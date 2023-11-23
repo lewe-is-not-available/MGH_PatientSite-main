@@ -30,14 +30,13 @@ const Navbar = ({
   Show,
   openTerms,
   isRead,
-  setRead
+  setRead,
 }) => {
   // if (Show) {
   //   disableBodyScroll("root");
   // } else {
   //   enableBodyScroll("root");
   // }
- 
 
   //*Function to show/hide registration and login
   const [doctor, setDoctor] = useState(false);
@@ -93,6 +92,9 @@ const Navbar = ({
     }
   }
 
+  //*responsive dropdown account
+  const [OpenAccount, setOpenAccount] = useState(false);
+
   return (
     <div>
       <ToastContainer />
@@ -103,7 +105,7 @@ const Navbar = ({
             className={`${
               open
                 ? "flex items-center transition-transform duration-200 ease-in -translate-x-20"
-                : "flex items-center transition-transform duration-200 ease-out translate-x-0"
+                : "flex items-center transition-transform duration-200 ease-out translate-x-0 "
             }`}
           >
             <BiMenu
@@ -115,19 +117,25 @@ const Navbar = ({
               to="/Dashboard"
               className="hover:cursor-pointer flex items-center p-3 ml-5"
             >
-              <div className="w-[65px] max-md:w-[40px]">
+              <div className="w-[65px] max-[769px]:w-[40px]">
                 <img src={logo} alt="/" />
               </div>
-              <h1 className="font-bold text-6xl max-md:text-4xl whitespace-nowrap text-white pl-2 flex">
+              <h1 className="font-bold text-6xl  max-[769px]:text-4xl whitespace-nowrap text-white pl-2 flex">
                 MGH
                 {patient && (
-                  <p className="ml-3 font-thin text-4xl self-center max-md:text-xl">Patient's page</p>
+                  <p className="ml-3 font-thin max-[930px]:hidden text-4xl self-center max-md:text-xl">
+                    Patient's page
+                  </p>
                 )}
                 {doctor && (
-                  <p className="ml-3 font-thin text-4xl self-center max-md:text-xl">Doctor's page</p>
+                  <p className="ml-3 font-thin max-[930px]:hidden text-4xl self-center max-md:text-xl">
+                    Doctor's page
+                  </p>
                 )}
                 {admin && (
-                  <p className="ml-3 font-thin text-4xl self-center max-md:text-xl">Admin's page</p>
+                  <p className="ml-3 font-thin max-[930px]:hidden text-4xl self-center max-md:text-xl">
+                    Admin's page
+                  </p>
                 )}
               </h1>
             </Link>
@@ -135,26 +143,30 @@ const Navbar = ({
         </div>
         <div className=" mr-12 text-lg max-md:text-sm ">
           {token ? (
-            <div className="flex space-x-4 -mt-2 items-center">
-              <p className="text-white text-right font-medium uppercase">
+            <div className="flex space-x-4 -mt-2 max-[320px]:-translate-x-8 max-[320px]:w-[10rem] items-center">
+              <p className="text-white text-right max-sm:hidden font-medium uppercase">
                 {token.user.user_metadata.username}
                 <br />
                 <span className="text-sm font-light lowercase">
                   {user.email}
                 </span>
               </p>
+              <div
+                onClick={() => setOpenAccount(!OpenAccount)}
+                className="min-[426px]:hidden p-6 z-50 translate-x-7 opacity-50 absolute rounded-full"
+              ></div>
               <img
-                className="object-cover rounded-full w-[3rem] h-[3rem] "
+                className="object-cover rounded-full max-[425px]:translate-x-7 w-[3rem] h-[3rem]"
                 src={`${
                   isImgEmpty
-                    ? CDNURL + user.id + "/" + imgName
+                    ? CDNURL + user.email + "/" + imgName
                     : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
                 }`}
                 alt="https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
               />
               <button
                 onClick={handleLogout}
-                className="ring-2 text-white ring-white hover:ring-[#5f915a] hover:text-[#315E30] hover:bg-[#A5DD9D] transition duration-100 px-2 rounded-full self-center"
+                className="ring-2 text-white max-[425px]:hidden whitespace-nowrap ring-white hover:ring-[#5f915a] hover:text-[#315E30] hover:bg-[#A5DD9D] transition duration-100 px-2 rounded-full self-center"
               >
                 Sign out
               </button>
@@ -170,6 +182,27 @@ const Navbar = ({
           )}
         </div>
       </div>
+      {token && (
+        <div
+          className={`${
+            OpenAccount
+              ? "visible absolute w-full flex justify-end"
+              : "hidden absolute w-full justify-end"
+          }`}
+        >
+          <div className="bg-white abs p-4 w-fit flex flex-col space-y-2">
+            <h1>{token.user.user_metadata.username}</h1>
+            <p>{user.email}</p>
+            <button
+              onClick={handleLogout}
+              className="px-3 bg-slate-200 active:bg-slate-400 rounded-md"
+            >
+              Sign out
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className={`${regOpen ? "visible" : "hidden"}`}>
         <Reg Closereg={Closereg} open={Open} />
       </div>

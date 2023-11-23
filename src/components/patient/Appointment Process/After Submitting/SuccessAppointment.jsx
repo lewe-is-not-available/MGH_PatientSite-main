@@ -6,7 +6,7 @@ import { PiEye, PiEyeClosed } from "react-icons/pi";
 import SuccessLoggedIn from "./SuccessLoggedIn";
 import { useNavigate } from "react-router-dom";
 
-const AfterAppointment = ({ token, setToken }) => {
+const AfterAppointment = ({ token, setToken, user }) => {
   //TODO: Make registration
   //!Fix login
   const nav = useNavigate();
@@ -63,10 +63,10 @@ const AfterAppointment = ({ token, setToken }) => {
 
   return (
     <div className="back flex items-center h-screen justify-center">
-      <div className="flex py-20 px-14 flex-col items-center abs rounded-md bg-white">
+      <div className="flex py-20 px-14 flex-col items-center abs rounded-lg bg-white">
         {token ? (
           <>
-            <SuccessLoggedIn />
+            <SuccessLoggedIn user={user}/>
           </>
         ) : (
           <>

@@ -47,11 +47,11 @@ const Drag_and_Drop = ({
     closeProfileUpload();
     if (imgName) {
       if (isImgEmpty) {
-        supabase.storage.from("images").remove([user.id + "/" + imgName]);
+        supabase.storage.from("images").remove([user.email + "/" + imgName]);
       }
       const { data, error } = await supabase.storage
         .from("images")
-        .upload(user.id + "/" + uuidv4(), File[0]);
+        .upload(user.email + "/" + uuidv4(), File[0]);
       if (error) {
         console.log(error);
       }

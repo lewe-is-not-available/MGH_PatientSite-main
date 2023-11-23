@@ -15,7 +15,7 @@ const AppointmentDetails = () => {
   const { id } = useParams();
   const [data, setData] = useState("");
   const [loading, setLoading] = useState(true);
-  const [userID, setUserID] = useState("");
+  const [Email, setEmail] = useState("");
   const [isSomeone, setisSomeone] = useState();
   useEffect(() => {
     const fetchData = async () => {
@@ -35,7 +35,7 @@ const AppointmentDetails = () => {
       } else {
         setisSomeone(false);
       }
-      setUserID(data.user_id);
+      setEmail(data.email);
       setData(data);
       setLoading(false);
     };
@@ -44,19 +44,19 @@ const AppointmentDetails = () => {
   console.log(isSomeone);
   //*getting image
   useEffect(() => {
-    if (userID) {
+    if (Email) {
       async function getImages() {
         const { data, error } = await supabase.storage
           .from("images")
-          .list(userID + "/", {
-            limit: 1,
+          .list(Email + "/", {
+            limit: 10,
             offset: 0,
             sortBy: { column: "created_at", order: "asc" },
           });
 
-        if (data[0]) {
+        if (data[1]) {
           setImgEmpty(true);
-          setimgName(data[0].name);
+          setimgName(data[1].name);
         }
 
         if (error) {
@@ -66,7 +66,7 @@ const AppointmentDetails = () => {
       }
       getImages();
     }
-  }, [setimgName, userID, setImgEmpty]);
+  }, [setimgName, Email, setImgEmpty]);
 
   //*date format
   const date = new Date(data.created_at);
@@ -122,7 +122,7 @@ const AppointmentDetails = () => {
                 className="object-cover rounded-full shadow-xl w-[13rem] mb-5 h-[13rem]"
                 src={`${
                   isImgEmpty
-                    ? CDNURL + userID + "/" + imgName
+                    ? CDNURL + data.email + "/" + imgName
                     : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
                 }`}
                 alt="/"

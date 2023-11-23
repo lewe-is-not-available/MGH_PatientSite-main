@@ -145,20 +145,21 @@ const Online = () => {
       className="back items-center flex flex-col"
     >
       <div
-        className="hero2 p-28 py-28 flex flex-col items-center text-white space-y-14 w-full"
+        className="hero2 p-28 py-28 max-sm:px-10 max-sm:py-14 text-center max-sm:space-y-4 flex flex-col
+        items-center text-white space-y-14 w-full"
         data-aos="fade-up"
       >
-        <p className="text-5xl font-semibold" data-aos="fade-up">
+        <p className="text-5xl max-sm:text-3xl font-semibold uppercase" data-aos="fade-up">
           RESERVE AN APPOINTMENT NOW!
         </p>
-        <p className="text-3xl font-light" data-aos="fade-up">
-          Let us assist your appointment either online or onsite.
+        <p className="text-3xl max-sm:text-lg font-light" data-aos="fade-up">
+          Let us assist your appointment for your online consultation.
         </p>
       </div>
 
       <div className="flex flex-col py-[80px] pb-6 items-center">
         <h1
-          className="text-4xl font-semibold text-[#315E30] mb-10 text-center"
+          className="text-4xl max-[425px]:text-3xl font-semibold text-[#315E30] mb-10 text-center"
           data-aos="fade-up"
         >
           Find a Doctor
@@ -166,95 +167,79 @@ const Online = () => {
           (Online Conultation)
         </h1>
         <div
-          className="find bg-white flex flex-col p-8 pb-8"
+          className="find bg-white flex items-center search_box flex-col px-10 outbox py-8 rounded-md"
           data-aos="zoom-in-up"
         >
-          <div className="flex flex-col items-center z-[99999]">
-            <table>
-              <thead data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <tr>
-                  <td className="text-xl text-[#315E30] pb-3">Doctor's Name</td>
-                  <td className="text-xl text-[#315E30] pb-3">
-                    Specialization
-                  </td>
-                  <td className="text-xl text-[#315E30] pb-3">
-                    Sub-Specialization
-                  </td>
-                  <td className="text-xl text-[#315E30] pb-3">
-                    HMO Accredation
-                  </td>
-                </tr>
-              </thead>
-              <tbody data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-                <tr>
-                  <td>
-                    <input
-                      type="text"
-                      placeholder="Enter Name"
-                      className="py-1 mr-6 bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
+          <div className="flex flex-col items-center space-y-4">
+            <div className="grid grid-cols-4 containtsearch">
+              <div className="text-xl text-[#315E30]">
+                <p className="search_label">Doctor's Name</p>
+                <input
+                  type="text"
+                  placeholder="Enter Name"
+                  className="py-1 mr-6 serachInput bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
                         focus:border-b-[#315E30]"
-                      value={Name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  </td>
-
-                  <td>
-                    <div className="flex mr-5">
-                      {/* Specialization Dropdown */}
-                      <select
-                        className="w-56 py-1 duration-100 border-b-2 focus:outline-[#315E30]"
-                        value={spSelect}
-                        onChange={(e) => setSpSelect(e.target.value)}
-                      >
-                        {Specials.map((Spec) => {
-                          return (
-                            <option key={Spec.id}>{Spec.Specialization}</option>
-                          );
-                        })}
-                      </select>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="flex mr-5">
-                      {/* Sub-Specialization Dropdown */}
-                      <select
-                        id="finddoctor-form-subspec"
-                        value={subSelect}
-                        onChange={(e) => setSubSelect(e.target.value)}
-                        className="w-full py-1 duration-100 border-b-2 border-siteGreen-darker"
-                      >
-                        <option key="">---</option>
-                        {SubSpecial.map((subspec) => {
-                          return (
-                            <option key={subspec.id}>
-                              {subspec.SubSpecialization}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
-                  </td>
-                  <td>
-                    {/* Hmo input */}
-                    <input
-                      type="text"
-                      value={Hmo}
-                      onChange={(e) => setHmo(e.target.value)}
-                      placeholder="Enter Accredation"
-                      className="py-1 pr-8 bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
+                  value={Name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div className="text-xl text-[#315E30]">
+                <p className="search_label">Specialization</p>
+                <div className="flex mr-10">
+                  {/* Specialization Dropdown */}
+                  <select
+                    className="w-44 py-2 serachInput duration-100 border-b-2 focus:outline-[#315E30]"
+                    value={spSelect}
+                    onChange={(e) => setSpSelect(e.target.value)}
+                  >
+                    {Specials.map((Spec) => {
+                      return (
+                        <option key={Spec.id}>{Spec.Specialization}</option>
+                      );
+                    })}
+                  </select>
+                </div>
+              </div>
+              <div className="text-xl text-[#315E30]">
+                <p className="search_label">Sub-Specialization</p>
+                <div className="flex mr-10">
+                  {/* Sub-Specialization Dropdown */}
+                  <select
+                    id="finddoctor-form-subspec"
+                    value={subSelect}
+                    onChange={(e) => setSubSelect(e.target.value)}
+                    className="w-44 py-2 serachInput duration-100 border-b-2 focus:outline-[#315E30]"
+                  >
+                    <option key="">---</option>
+                    {SubSpecial.map((subspec) => {
+                      return (
+                        <option key={subspec.id}>
+                          {subspec.SubSpecialization}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              </div>
+              <div className="text-xl text-[#315E30]">
+                <p className="search_label">HMO Accredation</p>
+                {/* Hmo input */}
+                <input
+                  type="text"
+                  value={Hmo}
+                  onChange={(e) => setHmo(e.target.value)}
+                  placeholder="Enter Accredation"
+                  className="py-2 pr-8 serachInput bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
               focus:border-b-[#315E30]"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
+                />
+              </div>
+            </div>
             <button
               type="submit"
               data-aos-anchor-placement="top-bottom"
               data-aos="fade-up"
               onClick={handleSearch}
-              className="bg-[#418D3F] w-2/5 py-1 mt-5 font-semibold text-xl text-white rounded-md transition duration-10 ease-in-out hover:bg-[#A5DD9D] hover:text-[#267124] hover:ring-[#418D3F] hover:ring-[3px]"
+              className="bg-[#418D3F] searchbutton w-2/5 py-1 font-semibold text-xl text-white rounded-md transition duration-10 ease-in-out hover:bg-[#A5DD9D] hover:text-[#267124] hover:ring-[#418D3F] hover:ring-[3px]"
             >
               SEARCH
             </button>
@@ -262,7 +247,7 @@ const Online = () => {
               data-aos-anchor-placement="top-bottom"
               data-aos="fade-up"
               onClick={handleReset}
-              className="text-[#267124] text-lg mt-3"
+              className="text-[#267124] resetbutton text-lg"
             >
               reset
             </button>
@@ -292,7 +277,7 @@ const Online = () => {
         </p>
       )}
       {Doctors && (
-        <div className="Doctors grid -z-[0] grid-cols-4 gap-x-10 gap-y-2">
+        <div className="grid -z-[0] md:grid-cols-3 max-[844px]:grid-cols-2 mx-auto justify-center max-sm:gap-y-0 xl:grid-cols-4 gap-x-10 gap-y-2">
           {Doctors.map((Doctors) => (
             <DocUniq key={Doctors.id} Doctors={Doctors} />
           ))}

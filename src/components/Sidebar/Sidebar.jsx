@@ -4,9 +4,14 @@ import copy from "copy-to-clipboard";
 import { toast } from "react-toastify";
 import { IoClose } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import { AiOutlineHome, AiFillHome } from "react-icons/ai";
+import {
+  AiOutlineHome,
+  AiFillHome,
+  AiOutlineSchedule,
+  AiFillSchedule,
+} from "react-icons/ai";
 import { FiChevronDown } from "react-icons/fi";
-import { FaUserDoctor, FaUserGroup } from "react-icons/fa6";
+import { FaUserDoctor, FaUserGroup, FaHandshakeAngle } from "react-icons/fa6";
 import { GoHistory } from "react-icons/go";
 import { GrStatusGood, GrStatusGoodSmall } from "react-icons/gr";
 import {
@@ -23,6 +28,8 @@ import {
   RiComputerFill,
   RiDashboardLine,
   RiDashboardFill,
+  RiHospitalLine,
+  RiHospitalFill,
 } from "react-icons/ri";
 import {
   MdOutlinePermContactCalendar,
@@ -79,11 +86,10 @@ const Sidebar = ({
   let aboutRef = useRef();
   useEffect(() => {
     let abouthandler = (e) => {
+      if (!aboutRef.current.contains(e.target)) {
+        fetchAbout(false);
+      }
 
-        if (!aboutRef.current.contains(e.target)) {
-          fetchAbout(false);
-        }
- 
       document.addEventListener("mousedown", abouthandler);
     };
 
@@ -118,7 +124,6 @@ const Sidebar = ({
       toastId: "info",
     });
   };
-
   //*Getting image from storage
   // eslint-disable-next-line
   useEffect(() => {
@@ -127,15 +132,15 @@ const Sidebar = ({
         try {
           const { data, error } = await supabase.storage
             .from("images")
-            .list(user.id + "/", {
-              limit: 1,
+            .list(user.email + "/", {
+              limit: 10,
               offset: 0,
               sortBy: { column: "created_at", order: "asc" },
             });
           //console.log(user.id)
-          if (data[0]) {
+          if (data[1]) {
             setImgEmpty(true);
-            setimgName(data[0].name);
+            setimgName(data[1].name);
           } else {
             setImgEmpty(false);
             toast.error(error, {
@@ -159,8 +164,8 @@ const Sidebar = ({
   }, [user, isImgEmpty, imgName, setimgName, setImgEmpty]);
   //console.log(imgName)
   return (
-    <div className="w-[18.8rem] fixed">
-      <div className="bg-[#dcf7dc8f] pt-1 h-screen shadow-2xl">
+    <div className="w-[18.8rem] bg-[#f0fcec] fixed">
+      <div className=" pt-1 h-screen shadow-2xl">
         {/* close button */}
         <div className="flex justify-end mx-4 mt-4 mb-0">
           <IoClose
@@ -184,7 +189,7 @@ const Sidebar = ({
                 className="object-cover rounded-full w-[10rem] h-[10rem]"
                 src={`${
                   isImgEmpty
-                    ? CDNURL + user.id + "/" + imgName
+                    ? CDNURL + user.email + "/" + imgName
                     : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
                 }`}
                 alt="/"
@@ -223,7 +228,7 @@ const Sidebar = ({
         )}
 
         {/* Sidebar contents */}
-        <div className="text-lg  max-h-[28rem] overflow-y-auto overflow-x-hidden ">
+        <div className="text-lg max-[]  max-h-[28rem] overflow-y-auto overflow-x-hidden ">
           {admin || doctor ? (
             ""
           ) : (
@@ -248,16 +253,19 @@ const Sidebar = ({
               <li
                 ref={serviceRef}
                 onClick={openService}
-                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+                className="px-4 py-1 group/os items-center justify-between hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4  rounded-md hover:text-white flex"
               >
-                <RiComputerLine className="text-2xl mr-2 group-hover/os:invisible" />
-                <RiComputerFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
-                <p className="-translate-x-8">Online Services</p>
+                <div className="flex items-center">
+                  <RiComputerLine className="text-2xl mr-2 group-hover/os:invisible" />
+                  <RiComputerFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
+                  <p className="-translate-x-8 ">Online Services</p>
+                </div>
+
                 <FiChevronDown
                   className={`${
                     services
-                      ? "ml-4 text-2xl transition duration-100 rotate-180"
-                      : "ml-4 text-2xl transition duration-100 "
+                      ? "text-2xl transition duration-100 rotate-180"
+                      : "text-2xl transition duration-100 "
                   }`}
                 />
               </li>
@@ -265,56 +273,59 @@ const Sidebar = ({
               <div className={`${services ? "show" : "hide"}`}>
                 <Link
                   to="/Appointment"
-                  className="px-4 py-1 flex flex-col group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
+                  className="px-4 py-1 flex group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
                 >
-                  <p className="translate-x-8">Appointment</p>
+                  <AiOutlineSchedule className="text-2xl ml-8 mr-2 group-hover/os:invisible" />
+                  <AiFillSchedule className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
+                  <p className="-translate-x-8">Appointment</p>
                 </Link>
-
                 <Link
-                  to="/Feedback-Form"
-                  className="px-4 py-1 flex flex-col group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
+                  to="/Contacts"
+                  className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
                 >
-                  <p className="translate-x-8">Feedback</p>
+                  <MdOutlinePermContactCalendar className="text-2xl ml-8 mr-2 group-hover/os:invisible" />
+                  <MdPermContactCalendar className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
+                  <p className="-translate-x-8">Contact Us</p>
                 </Link>
               </div>
               <Link
                 ref={aboutRef}
                 onClick={openAbout}
-                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+                className="px-4 py-1 group/os items-center justify-between hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
               >
-                <BsInfoCircle className="text-2xl mr-2 group-hover/os:invisible" />
-                <BsInfoCircleFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
-                <p className="-translate-x-8">About Us</p>
+                <div className="flex items-center">
+                  <BsInfoCircle className="text-2xl mr-2 group-hover/os:invisible" />
+                  <BsInfoCircleFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
+                  <p className="-translate-x-8">About Us</p>
+                </div>
+
                 <FiChevronDown
                   className={`${
                     About
-                      ? "ml-[4.2rem] text-2xl transition duration-100 rotate-180"
-                      : "ml-[4.2rem] text-2xl transition duration-100 "
+                      ? " text-2xl transition duration-100 rotate-180"
+                      : " text-2xl transition duration-100 "
                   }`}
                 />
               </Link>
               <div className={`${About ? "show -m-1" : "hide -m-1"}`}>
                 <Link
                   to="/Hospital-Profile"
-                  className="px-4 py-1 flex flex-col group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
+                  className="px-4 py-1 flex group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
                 >
-                  <p className="translate-x-8">Company Profile</p>
+                  <RiHospitalLine className="text-2xl ml-8 mr-2 group-hover/os:invisible" />
+                  <RiHospitalFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
+                  <p className="-translate-x-8 whitespace-nowrap">
+                    Company Profile
+                  </p>
                 </Link>
                 <Link
                   to="/Mission-and-Vision"
-                  className="px-4 py-1 flex flex-col group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
+                  className="px-4 py-1 flex group/os hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white"
                 >
-                  <p className="translate-x-8">Mission & Vision</p>
+                  <FaHandshakeAngle className="text-2xl ml-8 mr-2" />
+                  <p className="">Mission & Vision</p>
                 </Link>
               </div>
-              <Link
-                to="/Contacts"
-                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
-              >
-                <MdOutlinePermContactCalendar className="text-2xl mr-2 group-hover/os:invisible" />
-                <MdPermContactCalendar className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
-                <p className="-translate-x-8">Contact Us</p>
-              </Link>
             </>
           )}
 

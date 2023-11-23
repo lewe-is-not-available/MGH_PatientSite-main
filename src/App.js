@@ -18,7 +18,7 @@ import Appointment from "./components/patient/Appointment Process/Appointment";
 import DocInfo from "./components/Doctor read/DoctorInfo";
 import OnlineOrF2f from "./components/patient/Appointment Process/ChooseType";
 import F2f from "./components/patient/Appointment Process/Face2face";
-import OnlineConsultationHistory from "./components/patient/Appointment Process/OnlineConsultationHistory";
+import OnlineConsultationHistory from "./components/patient/Appointment Process/Archives/OnlineConsultationHistory";
 import PatientDashboard from "./components/patient/Dashboard";
 import OnlineDash from "./components/patient/OnlineDash";
 import F2fDash from "./components/patient/F2fDash";
@@ -30,10 +30,11 @@ import DoctorConsultHistory from "./components/Higher user level/Doctor/DoctorCo
 import DocAppointments from "./components/Higher user level/Doctor/Doc_Appointments";
 
 //admin
-import EditDoctors from "./components/Higher user level/Admin/EditDoctors";
+import EditDoctors from "./components/Higher user level/Admin/Edit Doctors/EditDoctors";
+import DocDetails from "./components/Higher user level/Admin/Edit Doctors/DocDetails";
 import EditPatients from "./components/Higher user level/Admin/EditPatients";
-import Archive from "./components/Higher user level/Admin/Archive";
-import AdminFeedback from "./components/Higher user level/Admin/feedback_Admin";
+import Archive from "./components/Higher user level/Admin/Archives/Archive";
+import AdminFeedback from "./components/Higher user level/Admin/MessagesAdmin";
 import AppointmentDetails from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentDetails";
 import AppointConfirmation from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentConfirmation";
 
@@ -56,7 +57,6 @@ function App() {
   const [user, setUser] = useState([]);
 
   //*initiates after login
-
   const fetchProfile = async () => {
     const { data, error } = await supabase
       .from("profile")
@@ -104,7 +104,6 @@ function App() {
         .subscribe();
     }
   }, [token]);
-
   //*For passing image data
   const [imgName, setimgName] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(null);
@@ -187,8 +186,8 @@ function App() {
       <main
         className={`${
           open
-            ? "flex-grow h-auto max-md:h-full overflow-hidden transition ease-in duration-200 translate-x-[18.7rem] w-[86%]"
-            : "flex-grow h-auto transition ease-out duration-200  translate-x-0 w-screen"
+            ? "flex-grow h-auto overflow-hidden transition ease-in duration-200 translate-x-[18.7rem] w-[86%]"
+            : "flex-grow h-auto transition ease-out duration-200 overflow-hidden translate-x-0 w-screen"
         }`}
       >
         <Routes>
@@ -228,56 +227,81 @@ function App() {
             path={"/Appointment"}
             element={<Appointment token={token} isPatient={isPatient} />}
           />
-          <Route path={"/Appointment/Success"} element={<AfterAppointment token={token} setToken={setToken}/>} />
+          <Route
+            path={"/Appointment/Success"}
+            element={
+              <AfterAppointment token={token} user={user} setToken={setToken} />
+            }
+          />
           <Route path={"/Appointment/Verifying"} element={<WaitVerify />} />
           <Route
             path="/Dashboard"
-            element={<PatientDashboard token={token} showLogin={FetchShow} admin={isAdmin} doctor={isDoctor} patient={isPatient} />}
+            element={
+              <PatientDashboard
+                token={token}
+                showLogin={FetchShow}
+                admin={isAdmin}
+                doctor={isDoctor}
+                patient={isPatient}
+              />
+            }
           />
           {token && (
             <>
               {/* Doctor's side */}
-              <Route
-                path="/DoctorConsultHistory"
-                element={<DoctorConsultHistory />}
-              />
-              <Route
-                path="/Doctor/Appointments"
-                element={<DocAppointments />}
-              />
-              {/*patient's side */}
-              <Route
-                path="/Online_Consultation_History"
-                element={<OnlineConsultationHistory user={user} />}
-              />
+              {isDoctor && (
+                <>
+                  <Route
+                    path="/DoctorConsultHistory"
+                    element={<DoctorConsultHistory />}
+                  />
+                  <Route
+                    path="/Doctor/Appointments"
+                    element={<DocAppointments />}
+                  />
+                  {/*patient's side */}
+                  <Route
+                    path="/Online_Consultation_History"
+                    element={<OnlineConsultationHistory user={user} />}
+                  />
 
-              <Route
-                path="/Appointment/Status"
-                element={<Status user={user} />}
-              />
+                  <Route
+                    path="/Appointment/Status"
+                    element={<Status user={user} />}
+                  />
+                </>
+              )}
 
               {/* Admin's side */}
-              <Route
-                path="/Appointment_Details/:id"
-                element={<AppointmentDetails />}
-              />
-              <Route path="/User_feedbacks" element={<AdminFeedback />} />
-              <Route path="/Archive" element={<Archive />} />
-              <Route path="/Edit_doctors" element={<EditDoctors />} />
-              <Route path="/Edit_Patients" element={<EditPatients />} />
-              <Route
-                path="/Confirm_Appointments"
-                element={
-                  <AppointConfirmation
-                    openTerms={openTerms}
-                    token={token}
-                    user={user}
-                    imgName={imgName}
-                    CDNURL={CDNURL}
-                    isImgEmpty={isImgEmpty}
+              {isAdmin && (
+                <>
+                  <Route
+                    path="/Appointment_Details/:id"
+                    element={<AppointmentDetails />}
                   />
-                }
-              />
+                  <Route path="/User_feedbacks" element={<AdminFeedback />} />
+                  <Route
+                    path="/Archive"
+                    element={<Archive CDNURL={CDNURL} />}
+                  />
+                  <Route path="/Edit_doctors" element={<EditDoctors />} />
+                  <Route path="/Edit_Doctor/:id" element={<DocDetails />} />
+                  <Route path="/Edit_Patients" element={<EditPatients />} />
+                  <Route
+                    path="/Confirm_Appointments"
+                    element={
+                      <AppointConfirmation
+                        openTerms={openTerms}
+                        token={token}
+                        user={user}
+                        imgName={imgName}
+                        CDNURL={CDNURL}
+                        isImgEmpty={isImgEmpty}
+                      />
+                    }
+                  />
+                </>
+              )}
             </>
           )}
 

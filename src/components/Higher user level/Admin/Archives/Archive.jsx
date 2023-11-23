@@ -1,31 +1,28 @@
 import React, { useState, useEffect } from "react";
-import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import Aos from "aos";
-import "aos/dist/aos.css";
+import supabase from "../../../config/Supabase";
+import ArchivePaginate from "./ArchivePaginate";
 import { VscFilter, VscFilterFilled } from "react-icons/vsc";
 import { BsSearch } from "react-icons/bs";
 import { MagnifyingGlass } from "react-loader-spinner";
-import AppconfirmPaginated from "./AppconfirmPaginated";
 
-const AppointmentConfirmation = ({ CDNURL, user }) => {
-  //TODO fix scroll animation
-  //TODO: REDESIGN TABLE INTO BULK WITH PROFILE PIC
-  //*prevent access from non-admin users
-  const navigate = useNavigate();
-  // useEffect(() => {
-  //   const fetchAdmin = async () => {
-  //     const { data } = await supabase.from("profile").select("*").single();
-  //     if (data.role !== "admin") {
-  //       navigate("/Dashboard");
-  //     }
-  //   };
-  //   fetchAdmin();
-  // }, [navigate]);
+const Archive = ({ CDNURL }) => {
+  const [books, setBook] = useState([]);
+  const [filt, setFilt] = useState([]);
 
-  const [filt, setfilt] = useState([]);
-
+  const fetchBooks = async () => {
+    const { data, error } = await supabase
+      .from("Patient_Appointments")
+      .select("*");
+    if (error) {
+      toast.error(error, {
+        toastId: "dataError",
+      });
+      console.error("Failed to fetch", error.message);
+    } else {
+      setFilt(data);
+    }
+  };
   //*get filter inputs
   const [Search, setSearch] = useState("");
   const [Someone, setSomeone] = useState("");
@@ -35,35 +32,32 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
   const [createdAt, setCreated] = useState("");
   const [isAsc, setisAsc] = useState(true);
   useEffect(() => {
-    if (user) {
-      //booked by someone
-      if (Someone === "Show all") {
-        setSomeone("");
-      } //status
-      if (Status === "Show all") {
-        setStatus("");
-      }
-      //time
-      if (time === "all") {
-        settime("");
-      }
-      //created at
-      if (createdAt === "descending") {
-        setisAsc(true);
-      } else if (createdAt === "ascending") {
-        setisAsc(false);
-      }
-      //Type
-      if (Type === "Show all") {
-        setType("");
-      } else if (Type === "Online Consult") {
-        setType("ol");
-      } else if (Type === "Face to face Consult") {
-        setType("f2f");
-      }
+    //booked by someone
+    if (Someone === "Show all") {
+      setSomeone("");
+    } //status
+    if (Status === "Show all") {
+      setStatus("");
+    }
+    //time
+    if (time === "all") {
+      settime("");
+    }
+    //created at
+    if (createdAt === "descending") {
+      setisAsc(true);
+    } else if (createdAt === "ascending") {
+      setisAsc(false);
+    }
+    //Type
+    if (Type === "Show all") {
+      setType("");
+    } else if (Type === "Online Consult") {
+      setType("ol");
+    } else if (Type === "Face to face Consult") {
+      setType("f2f");
     }
   }, [
-    user,
     createdAt,
     setisAsc,
     Status,
@@ -77,26 +71,8 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
 
   const [Loaded, setLoaded] = useState(true);
 
-  //*get patient appointments
-  const [books, setBook] = useState([]);
-  const fetchBooks = async () => {
-    setLoaded(false);
-    const { data, error } = await supabase
-      .from("Patient_Appointments")
-      .select();
-    if (error) {
-      toast.error(error, {
-        toastId: "dataError",
-      });
-      console.error("Failed to fetch", error.message);
-    }
-
-    if (data) {
-      setLoaded(true);
-      setfilt(data);
-    }
-  };
   //*search filter
+  const [isFilterOpen, setisFilterOpen] = useState(false);
   const [searchLoad, setsearchLoad] = useState(true);
   const handleSearch = () => {
     setsearchLoad(false);
@@ -107,7 +83,7 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
       const docname = items.docname
         .toLowerCase()
         .includes(Search.toLowerCase());
-      return  fname || lname || mname || docname;
+      return fname || lname || mname || docname;
     });
     setBook(search);
     if (filt) {
@@ -121,12 +97,13 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
     if (filt) {
       const filterBook = filt
         .filter((item) => {
-          const defStat = !item.status.includes("Confirmed");
+          const defStat = item.status.includes("Confirmed");
+          const defStat1 = item.status.includes("Completed");
           const someone = item.someone.includes(Someone);
           const Time = item.time.toLowerCase().includes(time);
           const type = item.type.toLowerCase().includes(Type);
           const status = item.status.toLowerCase().includes(Status);
-          return defStat && someone && Time && type && status;
+          return (defStat || defStat1) && someone && Time && type && status;
         })
         .sort((a, b) =>
           isAsc
@@ -146,7 +123,6 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
     }
   }, [isAsc, Type, Status, time, Someone, setBook, filt]);
 
-  //*Realtime data
   useEffect(() => {
     fetchBooks();
     supabase
@@ -160,20 +136,10 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
       )
       .subscribe();
   }, []);
-
-  const [isFilterOpen, setisFilterOpen] = useState(false);
-
-  //*Aos Function
-  useEffect(() => {
-    Aos.init({ duration: 1000 });
-  }, []);
   return (
     <div className="back h-full flex justify-center">
-      <div className="w-[70%] ">
-        <p className="text-4xl font-semibold text-[#315E30]"></p>
-
-        {/*search and filter  */}
-        <div className="w-full flex justify-between items-center mt-10 mb-3 ">
+      <div className="w-[70%]">
+        <div className=" flex justify-between items-center mt-10 mb-3 ">
           <div
             onClick={() => setisFilterOpen(!isFilterOpen)}
             className="px-4 py-1 items-center select-none hover:cursor-pointer w-fit transition duration-75 
@@ -266,17 +232,7 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
                 <option key="3">afternoon</option>
               </select>
             </div>
-            <div className="flex flex-col">
-              <label>status</label>
-              <select
-                className="w-full rounded-md h-8 border-slate-400 border-2"
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <option key="1">Show all</option>
-                <option key="2">pending</option>
-                <option key="3">rescheduled</option>
-              </select>
-            </div>
+      
             <div className="flex flex-col">
               <label>Booked by someone</label>
               <select
@@ -296,9 +252,8 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
            rounded-lg text-gray-500 dark:text-gray-400"
           >
             {searchLoad ? (
-              <AppconfirmPaginated
+              <ArchivePaginate
                 books={books}
-                user={user}
                 CDNURL={CDNURL}
                 setLoaded={setLoaded}
                 Loaded={Loaded}
@@ -324,4 +279,4 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
   );
 };
 
-export default AppointmentConfirmation;
+export default Archive;
