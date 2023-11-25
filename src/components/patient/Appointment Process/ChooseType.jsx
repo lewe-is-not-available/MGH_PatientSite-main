@@ -16,7 +16,7 @@ const OnlineOrF2f = () => {
   useEffect(() => {
     const fetchDoctor = async () => {
       const { data, error } = await supabase
-        .from("Dr_information")
+        .from("dr_information")
         .select()
         .eq("id", id)
         .single();

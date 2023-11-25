@@ -37,11 +37,11 @@ const DoctorInfo = () => {
         });
       }
       if (data) {
-        setName(data.Name);
+        setName(data.name);
         setSpecial(data.specialization);
-        setSub(data.SubSpecial);
-        setHmo(data.Hmo);
-        setHonor(data.Honorific);
+        setSub(data.subspecial);
+        setHmo(data.hmo);
+        setHonor(data.honorific);
         setId(data.id);
       }
     };

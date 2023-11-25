@@ -1,5 +1,5 @@
 import React from "react";
-import supabaseAdmin from "../../config/supabaseAdmin";
+import supabaseAdmin from "../../config/SupabaseAdmin";
 
 const patientMap = ({ data, setPatientId, PatientId }) => {
   setPatientId(data.id);

@@ -12,11 +12,11 @@ const Appointment = () => {
   //Search and reset Function
   const [Name, setName] = useState("");
   const [spSelect, setSpSelect] = useState("");
-  const [subSelect, setSubSelect] = useState();
+  const [subSelect, setSubSelect] = useState("");
   const [Doctors, setDoctors] = useState(null);
   const [Filter, setFilter] = useState([]);
   const [noResult, setNoResult] = useState(false);
-  const [Hmo, setHmo] = useState();
+  const [Hmo, setHmo] = useState("");
 
   //select option value
   if (spSelect === "---") {
@@ -25,18 +25,35 @@ const Appointment = () => {
   if (subSelect === "---") {
     setSubSelect("");
   }
-
+  // console.log(Name, spSelect, subSelect, Hmo)
   const [showFill, setShowFill] = useState(true);
   useEffect(() => {
     const fetchFilter = async () => {
-      const { data, error } = await supabase.from("Dr_information").select("*");
+      const { data, error } = await supabase.from("dr_information").select("*");
       if (error) {
         console.error("Failed to fetch", error.message);
       } else {
-        const nameSuggest = data.filter((doctor) =>
-          doctor.Name.toLowerCase().includes(Name.toLowerCase())
-        );
-        setFilter(nameSuggest);
+        if (data) {
+          var filteredSuggest = data.filter((doctor) => {
+            var fnameMatch = Name
+              ? doctor.fname.toLowerCase().includes(Name.toLowerCase())
+              : false;
+
+            var mnameMatch = Name
+              ? doctor.mname !== null &&
+                doctor.mname.toLowerCase().includes(Name.toLowerCase())
+              : false;
+
+            var lnameMatch = Name
+              ? doctor.lname !== null &&
+                doctor.lname.toLowerCase().includes(Name.toLowerCase())
+              : false;
+
+            return fnameMatch || mnameMatch || lnameMatch;
+          });
+          setFilter(filteredSuggest);
+        }
+
         if (Name === "") {
           setFilter("");
         }
@@ -48,14 +65,20 @@ const Appointment = () => {
   const handleNameFilterClick = (clickedName) => {
     setName(clickedName);
     setShowFill(false);
+    console.log(clickedName);
   };
-  useEffect(() => {
-    setShowFill(true);
-  }, [Name]);
 
+  function handleNameChange(e) {
+    setName(e.target.value);
+    setShowFill(true);
+  }
+  const nameClicked = (mname) => {
+    var name = mname === null ? "" : " " + mname;
+    return name;
+  };
   //DEFAULT DATA
   const fetchDoc = async () => {
-    const { data, error } = await supabase.from("Dr_information").select("*");
+    const { data, error } = await supabase.from("dr_information").select("*");
 
     if (error) {
       setDoctors(null);
@@ -72,7 +95,7 @@ const Appointment = () => {
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "Dr_information" },
+        { event: "*", schema: "public", table: "dr_information" },
         () => {
           fetchDoc();
         }
@@ -86,7 +109,7 @@ const Appointment = () => {
     setSubSelect("---");
     setHmo("");
 
-    const { data, error } = await supabase.from("Dr_information").select("*");
+    const { data, error } = await supabase.from("dr_information").select("*");
 
     if (error) {
       console.error("Failed to fetch", error.message);
@@ -102,43 +125,41 @@ const Appointment = () => {
     } else {
       setNoResult(false);
 
-      const { data, error } = await supabase.from("Dr_information").select("*");
+      const { data, error } = await supabase.from("dr_information").select("*");
 
       if (error) {
         console.error("Error searching for data:", error.message);
         return;
       }
       const filteredData = data.filter((doctor) => {
-        const nameMatch = doctor.Name.toLowerCase().includes(
-          Name.toLowerCase()
-        );
-
-        const specMatch = doctor.specialization
-          .toLowerCase()
-          .includes(spSelect.toLowerCase());
-
-        const subSpecMatch = doctor.SubSpecial.toLowerCase().includes(
-          subSelect.toLowerCase()
-        );
-
-        const HmoMatch = doctor.SubSpecial.toLowerCase().includes(
-          subSelect.toLowerCase()
-        );
-
+        const nameMatch = Name
+          ? doctor.fname.toLowerCase().includes(Name.toLowerCase()) ||
+            doctor.fname.toLowerCase().includes(Name.toLowerCase()) ||
+            doctor.fname.toLowerCase().includes(Name.toLowerCase())
+          : true;
+        const specMatch = spSelect
+          ? doctor.specialization.toLowerCase().includes(spSelect.toLowerCase())
+          : true;
+        const subSpecMatch = subSelect
+          ? doctor.subspecial.toLowerCase().includes(subSelect.toLowerCase())
+          : true;
+        const HmoMatch = Hmo
+          ? doctor.subspecial.toLowerCase().includes(subSelect.toLowerCase())
+          : true;
         return nameMatch && specMatch && subSpecMatch && HmoMatch;
       });
       setDoctors(filteredData);
       if (filteredData.length === 0) {
         setNoResult(true);
+        setDoctors("");
       } else {
         setNoResult(false);
       }
     }
   };
-  //console.log(spSelect);
-
+  console.log(Doctors);
   useEffect(() => {
-    Aos.init({ duration: 1000 });
+    Aos.init({ duration: 500 });
   }, []);
 
   return (
@@ -182,8 +203,21 @@ const Appointment = () => {
                   className="py-1 mr-6 serachInput bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
                         focus:border-b-[#315E30]"
                   value={Name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={handleNameChange}
                 />
+                {showFill && Filter && (
+                  <div className="absolute abs w-48 flex flex-wrap text-sm bg-white z-50">
+                    {Filter.map((Filter) => (
+                      <li
+                        onClick={() => handleNameFilterClick(Filter.name)}
+                        className="list-none px-2 my-1 cursor-pointer w-full hover:bg-primary hover:text-white"
+                        key={Filter.id}
+                      >
+                        {Filter.name}
+                      </li>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="text-xl text-[#315E30]">
                 <p className="search_label">Specialization</p>
@@ -255,19 +289,6 @@ const Appointment = () => {
             </button>
           </div>
         </div>
-        {showFill && Filter.length > 0 && (
-          <div className="absolute abs w-48 flex flex-wrap text-sm bg-white z-50 mr-[780px] mt-[195px]">
-            {Filter.map((Filter) => (
-              <li
-                onClick={() => handleNameFilterClick(Filter.Name)}
-                className="list-none px-2 my-1 cursor-pointer w-full hover:bg-primary hover:text-white"
-                key={Filter.id}
-              >
-                {Filter.Name}
-              </li>
-            ))}
-          </div>
-        )}
       </div>
 
       {noResult && (

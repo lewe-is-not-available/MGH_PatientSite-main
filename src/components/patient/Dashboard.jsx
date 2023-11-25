@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import SearchRes from "../Doctor read/SearchResult";
+import SearchPaginated from "../Doctor read/SearchPaginated";
 import Specials from "../Specials.json";
 import SubSpecial from "../SubSpecial.json";
 import supabase from "../config/Supabase";
@@ -11,11 +11,12 @@ import contact from "../images/dashboard_icons/contact.png";
 import feedback from "../images/dashboard_icons/feedback.png";
 import history from "../images/dashboard_icons/history.png";
 import status from "../images/dashboard_icons/status.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Admin from "../Higher user level/Admin/AdminDashboard";
 import Doc_Dash from "../Higher user level/Doctor/DoctorPage";
 
 const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
+  const [Loaded, setLoaded] = useState(true);
   //TODO: Show dashboard even if logged out but link them to open modal
   //*For Search window drop function
   const [Show, FetchShow] = useState(null);
@@ -40,12 +41,12 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
   const [showFill, setShowFill] = useState(true);
 
   const fetchFilter = async () => {
-    const { data, error } = await supabase.from("Dr_information").select("*");
+    const { data, error } = await supabase.from("dr_information").select("*");
     if (error) {
       console.error("Failed to fetch", error.message);
     } else {
       const nameSuggest = data.filter((doctor) =>
-        doctor.Name.toLowerCase().includes(Name.toLowerCase())
+        doctor.fname.toLowerCase().includes(Name.toLowerCase())
       );
       setFilter(nameSuggest);
       if (Name === "") {
@@ -60,20 +61,13 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "Dr_information" },
+        { event: "*", schema: "public", table: "dr_information" },
         () => {
           fetchFilter();
         }
       )
       .subscribe();
   }, []);
-  const handleNameFilterClick = (clickedName) => {
-    setName(clickedName);
-    setShowFill(false);
-  };
-  useEffect(() => {
-    setShowFill(true);
-  }, [Name]);
 
   const handleReset = async () => {
     setName("");
@@ -81,7 +75,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
     setSubSelect("---");
     setHmo("");
 
-    const { data, error } = await supabase.from("Dr_information").select("*");
+    const { data, error } = await supabase.from("dr_information").select("*");
 
     if (error) {
       console.error("Failed to fetch", error.message);
@@ -98,7 +92,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
     } else {
       setNoResult(false);
 
-      const { data, error } = await supabase.from("Dr_information").select("*");
+      const { data, error } = await supabase.from("dr_information").select("*");
 
       if (error) {
         console.error("Error searching for data:", error.message);
@@ -106,16 +100,18 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
       }
       const filteredData = data.filter((doctor) => {
         const nameMatch = Name
-          ? doctor.Name.toLowerCase().includes(Name.toLowerCase())
+          ? doctor.fname.toLowerCase().includes(Name.toLowerCase()) ||
+            doctor.fname.toLowerCase().includes(Name.toLowerCase()) ||
+            doctor.fname.toLowerCase().includes(Name.toLowerCase())
           : true;
         const specMatch = spSelect
           ? doctor.specialization.toLowerCase().includes(spSelect.toLowerCase())
           : true;
         const subSpecMatch = subSelect
-          ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
+          ? doctor.subspecial.toLowerCase().includes(subSelect.toLowerCase())
           : true;
         const HmoMatch = Hmo
-          ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
+          ? doctor.subspecial.toLowerCase().includes(subSelect.toLowerCase())
           : true;
         return nameMatch && specMatch && subSpecMatch && HmoMatch;
       });
@@ -128,10 +124,21 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
       }
     }
   };
-
+  const handleNameFilterClick = (clickedName) => {
+    setName(clickedName);
+    setShowFill(false);
+  };
+  function handleNameChange(e) {
+    setName(e.target.value);
+    setShowFill(true);
+  }
+  const nameClicked = (mname) => {
+    var name = mname === null ? "" : " " + mname;
+    return name;
+  };
   // Aos useEffect
   useEffect(() => {
-    Aos.init({ duration: 1000 });
+    Aos.init({ duration: 500 });
   }, []);
 
   return (
@@ -176,8 +183,28 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                       className="py-1 mr-6 serachInput bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
                         focus:border-b-[#315E30]"
                       value={Name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={handleNameChange}
                     />
+                    {showFill && Filter && (
+                      <div className="absolute abs w-48 flex flex-wrap text-sm bg-white z-50">
+                        {Filter.map((Filter) => (
+                          <li
+                            onClick={() =>
+                              handleNameFilterClick(
+                                Filter.fname +
+                                  nameClicked(Filter.mname) +
+                                  " " +
+                                  Filter.lname
+                              )
+                            }
+                            className="list-none px-2 my-1 cursor-pointer w-full hover:bg-primary hover:text-white"
+                            key={Filter.id}
+                          >
+                            {Filter.fname} {Filter.mname} {Filter.lname}{" "}
+                          </li>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="text-xl text-[#315E30]">
                     <p className="search_label">Specialization</p>
@@ -226,7 +253,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                       onChange={(e) => setHmo(e.target.value)}
                       placeholder="Enter Accredation"
                       className="py-2 pr-8 serachInput bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
-              focus:border-b-[#315E30]"
+                               focus:border-b-[#315E30]"
                     />
                   </div>
                 </div>
@@ -258,10 +285,12 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                   </p>
                 )}
                 {Doctors && (
-                  <div className="Doctors overflow-x-scroll w-[73rem] grid grid-flow-col gap-x-12">
-                    {Doctors.map((Doctors) => (
-                      <SearchRes key={Doctors.id} Doctors={Doctors} />
-                    ))}
+                  <div className="Doctors">
+                    <SearchPaginated
+                      Doctors={Doctors}
+                      Loaded={Loaded}
+                      setLoaded={setLoaded}
+                    />
                   </div>
                 )}
                 <button
@@ -274,19 +303,6 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                 </button>
               </div>
             </div>
-            {showFill && Filter.length > 0 && (
-              <div className="absolute abs w-48 flex flex-wrap text-sm bg-white z-50 mr-[652px] mt-[195px]">
-                {Filter.map((Filter) => (
-                  <li
-                    onClick={() => handleNameFilterClick(Filter.Name)}
-                    className="list-none px-2 my-1 cursor-pointer w-full hover:bg-primary hover:text-white"
-                    key={Filter.id}
-                  >
-                    {Filter.Name}
-                  </li>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       )}
@@ -307,6 +323,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                 to="/Appointment/Online"
                 className="boxes"
                 data-aos="fade-up"
+                id="trigger"
               >
                 <img src={online} alt="/" className="imgDash p-5" />
                 <div className="titleText">Online Consult</div>
@@ -329,14 +346,24 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                 <p>Need to give us a message? Feel free to contact us.</p>
               </Link>
               {/* Feedback form */}
-              <Link to="/Feedback-Form" className="boxes" data-aos="fade-up">
+              <Link
+                to="/Feedback-Form"
+                className="boxes"
+                data-aos-anchor="#trigger"
+                data-aos="fade-up"
+              >
                 <img src={feedback} alt="/" className="imgDash p-5" />
                 <div className="titleText">Feedback form</div>
                 <p>Let us know what you think of our website</p>
               </Link>
               {/* Consult history */}
               {!token ? (
-                <div onClick={showLogin} className="boxes" data-aos="fade-up">
+                <div
+                  onClick={showLogin}
+                  className="boxes"
+                  data-aos-anchor="#trigger"
+                  data-aos="fade-up"
+                >
                   <img src={history} alt="/" className="imgDash p-7" />
                   <div className="titleText">Consultation History</div>
                   <p>Have a look at your recent online consultations</p>
@@ -346,6 +373,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                   to="/Online_Consultation_History"
                   className="boxes"
                   data-aos="fade-up"
+                  data-aos-anchor="#trigger"
                 >
                   <img src={history} alt="/" className="imgDash p-7" />
                   <div className="titleText">Consultation History</div>
@@ -355,7 +383,12 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
 
               {/* Appointment status */}
               {!token ? (
-                <div onClick={showLogin} className="boxes" data-aos="fade-up">
+                <div
+                  onClick={showLogin}
+                  className="boxes"
+                  data-aos-anchor="#trigger"
+                  data-aos="fade-up"
+                >
                   <img src={status} alt="/" className="imgDash p-4" />
                   <div className="titleText">Appointment status</div>
                   <p>Keep track of your appointment status</p>
@@ -365,6 +398,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                   to="/Appointment/Status"
                   className="boxes"
                   data-aos="fade-up"
+                  data-aos-anchor="#trigger"
                 >
                   <img src={status} alt="/" className="imgDash p-4" />
                   <div className="titleText">Appointment status</div>

@@ -189,7 +189,7 @@ const Signup = ({ Closereg, open }) => {
                       focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
-                 
+
                   <div className="">
                     <p>Contact Number: </p>
                     <input

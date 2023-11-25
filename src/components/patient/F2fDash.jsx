@@ -31,7 +31,7 @@ const F2f = ({ token, isPatient }) => {
   const [showFill, setShowFill] = useState(true);
   useEffect(() => {
     const fetchFilter = async () => {
-      const { data, error } = await supabase.from("Dr_information").select("*");
+      const { data, error } = await supabase.from("dr_information").select("*");
       if (error) {
         console.error("Failed to fetch", error.message);
       } else {
@@ -56,7 +56,7 @@ const F2f = ({ token, isPatient }) => {
 
   //DEFAULT DATA
   const fetchDoc = async () => {
-    const { data, error } = await supabase.from("Dr_information").select("*");
+    const { data, error } = await supabase.from("dr_information").select("*");
 
     if (error) {
       setDoctors(null);
@@ -74,7 +74,7 @@ const F2f = ({ token, isPatient }) => {
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "Dr_information" },
+        { event: "*", schema: "public", table: "dr_information" },
         () => {
           fetchDoc();
         }
@@ -88,7 +88,7 @@ const F2f = ({ token, isPatient }) => {
     setSubSelect("---");
     setHmo("");
 
-    const { data, error } = await supabase.from("Dr_information").select("*");
+    const { data, error } = await supabase.from("dr_information").select("*");
 
     if (error) {
       console.error("Failed to fetch", error.message);
@@ -104,7 +104,7 @@ const F2f = ({ token, isPatient }) => {
     } else {
       setNoResult(false);
 
-      const { data, error } = await supabase.from("Dr_information").select("*");
+      const { data, error } = await supabase.from("dr_information").select("*");
 
       if (error) {
         console.error("Error searching for data:", error.message);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import supabase from "../config/Supabase";
 import DocUniq from "./Appointment Process/DoctorsOnline";
 import Specials from "../Specials.json";
-import SubSpecial from "../SubSpecial.json";
+import subspecial from "../SubSpecial.json";
 import Aos from "aos";
 import "aos/dist/aos.css";
 
@@ -12,7 +12,7 @@ const Online = () => {
   //TODO: Pagination
 
   //Search and reset Function
-  const [Name, setName] = useState("");
+  const [name, setName] = useState("");
   const [spSelect, setSpSelect] = useState("");
   const [subSelect, setSubSelect] = useState();
   const [Doctors, setDoctors] = useState(null);
@@ -31,41 +31,41 @@ const Online = () => {
   const [showFill, setShowFill] = useState(true);
   useEffect(() => {
     const fetchFilter = async () => {
-      const { data, error } = await supabase.from("Dr_information").select("*");
+      const { data, error } = await supabase.from("dr_information").select("*");
       if (error) {
         console.error("Failed to fetch", error.message);
       } else {
         const nameSuggest = data.filter((doctor) =>
-          doctor.Name.toLowerCase().includes(Name.toLowerCase())
+          doctor.fname.toLowerCase().includes(name.toLowerCase())
         );
         setFilter(nameSuggest);
-        if (Name === "") {
+        if (name === "") {
           setFilter("");
         }
       }
     };
     fetchFilter();
-  }, [Name]);
+  }, [name]);
   const handleNameFilterClick = (clickedName) => {
     setName(clickedName);
     setShowFill(false);
   };
   useEffect(() => {
     setShowFill(true);
-  }, [Name]);
+  }, [name]);
 
   //DEFAULT DATA
-    const fetchDoc = async () => {
-      const { data, error } = await supabase.from("Dr_information").select("*");
+  const fetchDoc = async () => {
+    const { data, error } = await supabase.from("dr_information").select("*");
 
-      if (error) {
-        setDoctors(null);
-        console.log(error);
-      }
-      if (data) {
-        setDoctors(data);
-      }
-    };
+    if (error) {
+      setDoctors(null);
+      console.log(error);
+    }
+    if (data) {
+      setDoctors(data);
+    }
+  };
 
   //REAL TIME LOADING OF DATA
   useEffect(() => {
@@ -74,14 +74,13 @@ const Online = () => {
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "Dr_information" },
+        { event: "*", schema: "public", table: "dr_information" },
         () => {
           fetchDoc();
         }
       )
       .subscribe();
   }, []);
-
 
   // RESET FUNCTION
   const handleReset = async () => {
@@ -90,7 +89,7 @@ const Online = () => {
     setSubSelect("---");
     setHmo("");
 
-    const { data, error } = await supabase.from("Dr_information").select("*");
+    const { data, error } = await supabase.from("dr_information").select("*");
 
     if (error) {
       console.error("Failed to fetch", error.message);
@@ -101,29 +100,29 @@ const Online = () => {
 
   //SEARCH FUNCTION
   const handleSearch = async () => {
-    if (!Name && !spSelect && !subSelect && !Hmo) {
+    if (!name && !spSelect && !subSelect && !Hmo) {
       setNoResult(true);
     } else {
       setNoResult(false);
 
-      const { data, error } = await supabase.from("Dr_information").select("*");
+      const { data, error } = await supabase.from("dr_information").select("*");
 
       if (error) {
         console.error("Error searching for data:", error.message);
         return;
       }
       const filteredData = data.filter((doctor) => {
-        const nameMatch = Name
-          ? doctor.Name.toLowerCase().includes(Name.toLowerCase())
+        const nameMatch = name
+          ? doctor.fname.toLowerCase().includes(name.toLowerCase())
           : true;
         const specMatch = spSelect
           ? doctor.specialization.toLowerCase().includes(spSelect.toLowerCase())
           : true;
         const subSpecMatch = subSelect
-          ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
+          ? doctor.subspecial.toLowerCase().includes(subSelect.toLowerCase())
           : true;
         const HmoMatch = Hmo
-          ? doctor.SubSpecial.toLowerCase().includes(subSelect.toLowerCase())
+          ? doctor.subspecial.toLowerCase().includes(subSelect.toLowerCase())
           : true;
         return nameMatch && specMatch && subSpecMatch && HmoMatch;
       });
@@ -141,15 +140,16 @@ const Online = () => {
     Aos.init({ duration: 1000 });
   }, []);
   return (
-    <div
-      className="back items-center flex flex-col"
-    >
+    <div className="back items-center flex flex-col">
       <div
         className="hero2 p-28 py-28 max-sm:px-10 max-sm:py-14 text-center max-sm:space-y-4 flex flex-col
         items-center text-white space-y-14 w-full"
         data-aos="fade-up"
       >
-        <p className="text-5xl max-sm:text-3xl font-semibold uppercase" data-aos="fade-up">
+        <p
+          className="text-5xl max-sm:text-3xl font-semibold uppercase"
+          data-aos="fade-up"
+        >
           RESERVE AN APPOINTMENT NOW!
         </p>
         <p className="text-3xl max-sm:text-lg font-light" data-aos="fade-up">
@@ -173,20 +173,20 @@ const Online = () => {
           <div className="flex flex-col items-center space-y-4">
             <div className="grid grid-cols-4 containtsearch">
               <div className="text-xl text-[#315E30]">
-                <p className="search_label">Doctor's Name</p>
+                <p className="search_label">Doctor's name</p>
                 <input
                   type="text"
-                  placeholder="Enter Name"
+                  placeholder="Enter name"
                   className="py-1 mr-6 serachInput bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
                         focus:border-b-[#315E30]"
-                  value={Name}
+                  value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div className="text-xl text-[#315E30]">
-                <p className="search_label">Specialization</p>
+                <p className="search_label">specialization</p>
                 <div className="flex mr-10">
-                  {/* Specialization Dropdown */}
+                  {/* specialization Dropdown */}
                   <select
                     className="w-44 py-2 serachInput duration-100 border-b-2 focus:outline-[#315E30]"
                     value={spSelect}
@@ -194,16 +194,16 @@ const Online = () => {
                   >
                     {Specials.map((Spec) => {
                       return (
-                        <option key={Spec.id}>{Spec.Specialization}</option>
+                        <option key={Spec.id}>{Spec.specialization}</option>
                       );
                     })}
                   </select>
                 </div>
               </div>
               <div className="text-xl text-[#315E30]">
-                <p className="search_label">Sub-Specialization</p>
+                <p className="search_label">Sub-specialization</p>
                 <div className="flex mr-10">
-                  {/* Sub-Specialization Dropdown */}
+                  {/* Sub-specialization Dropdown */}
                   <select
                     id="finddoctor-form-subspec"
                     value={subSelect}
@@ -211,7 +211,7 @@ const Online = () => {
                     className="w-44 py-2 serachInput duration-100 border-b-2 focus:outline-[#315E30]"
                   >
                     <option key="">---</option>
-                    {SubSpecial.map((subspec) => {
+                    {subspecial.map((subspec) => {
                       return (
                         <option key={subspec.id}>
                           {subspec.SubSpecialization}
@@ -257,11 +257,11 @@ const Online = () => {
           <div className="absolute abs w-48 flex flex-wrap text-sm bg-white z-50 mr-[780px] mt-[195px]">
             {Filter.map((Filter) => (
               <li
-                onClick={() => handleNameFilterClick(Filter.Name)}
+                onClick={() => handleNameFilterClick(Filter.name)}
                 className="list-none px-2 my-1 cursor-pointer w-full hover:bg-primary hover:text-white"
                 key={Filter.id}
               >
-                {Filter.Name}
+                {Filter.name}
               </li>
             ))}
           </div>

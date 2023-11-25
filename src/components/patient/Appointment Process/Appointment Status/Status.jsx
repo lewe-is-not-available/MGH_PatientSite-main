@@ -174,7 +174,7 @@ const Status = ({ user }) => {
       .subscribe();
   }, [user.id]);
   return (
-    <div className="back h-full flex justify-center">
+    <div className="back min-h-screen h-auto flex justify-center">
       <div className="w-[70%]">
         {/*search and filter  */}
         <div className="w-full items-center mt-10 mb-3 ">

@@ -67,6 +67,7 @@ const Online = ({ ol, CDNURL }) => {
       console.log(error);
     }
   }
+  
   useEffect(() => {
     if (ol) {
       getImages(id, setimgName, setImgEmpty);

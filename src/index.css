@@ -6,7 +6,7 @@
     margin: 0;
   }
   html {
-    @apply text-neutral-800 overflow-x-hidden;
+    @apply text-neutral-800 w-full overflow-x-hidden
   }
   html.dark {
     @apply text-neutral-50;
@@ -16,6 +16,9 @@
 @tailwind components;
 @tailwind utilities;
 
+.body{
+  @apply  w-full m-0 p-0
+}
 .show {
   @apply transition-all duration-500 ease-in overflow-y-visible max-h-[45rem]
 }
@@ -23,16 +26,23 @@
   @apply transition-all opacity-0 duration-500 ease-out overflow-y-hidden max-h-0
 }
 .boxes{
-  @apply abs py-9 px-6 w-[17rem] cursor-pointer border-[1px] border-green-300 text-sm text-center flex flex-col items-center bg-white rounded-xl transition duration-200 hover:shadow-none
+  @apply abs py-9 px-6 w-[17rem] cursor-pointer border-[1px] border-green-300 
+  text-sm text-center flex flex-col items-center bg-white rounded-xl transition 
+  duration-200 hover:shadow-none
+}
+.Adminboxes{
+  @apply abs py-4 px-6 w-[17rem] cursor-pointer border-[1px] text-sm 
+  text-left flex flex-col items-start bg-white rounded-xl transition duration-200 
+  hover:shadow-none
 }
 .imgDash{
   @apply  mb-7 w-[13rem] h-[13rem] bg-[#a7eb9c85] rounded-2xl
 }
 .titleText{
-  @apply text-white hover:bg-opacity-80 transition duration-100 font-semibold text-lg mb-3 text-center w-[110%] bg-green-600
+  @apply text-white hover:bg-opacity-80 transition duration-100 font-semibold text-lg mb-3 text-center w-full bg-green-600
 }
-.active_modal{
-  overflow-y: hidden;
+.AdmintitleText{
+  @apply font-semibold text-lg mb-3
 }
 
 .nav:hover {
@@ -126,6 +136,20 @@
     @apply h-[32rem]
   }
  }
+@media (max-width: 1366px) { 
+  .docs {
+    @apply w-[12rem] text-[13px]
+  }
+  .valueDoc{
+    @apply text-[12px] max-w-[5rem] whitespace-nowrap
+  }
+  .Docbtn{
+    @apply text-[12px] whitespace-nowrap py-0
+  }
+  .Doctors{
+    @apply w-[60rem]
+  }
+ }
 @media (max-width: 1654px) { 
   .carousel {
     @apply h-[32rem]
@@ -194,7 +218,7 @@
   }
   .titleText{
     @apply text-white hover:bg-opacity-80 transition duration-100 
-    font-semibold text-sm mb-3 text-center w-[110%] bg-green-600
+    font-semibold text-sm mb-3 text-center w-full bg-green-600
   }
   .imgDash{
     @apply  mb-7 w-[7rem] h-[7rem] bg-[#a7eb9c85] rounded-2xl
@@ -219,5 +243,8 @@
   }
   .resetbutton{
     @apply text-xs
+  }
+  .fillup{
+    @apply grid grid-cols-1
   }
 }

@@ -131,8 +131,8 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen w-screen flex flex-col ">
-      <header className="sticky w-screen top-0 z-50">
+    <div className=" flex flex-col ">
+      <header className="sticky top-0 z-50">
         <Navbar
           isRead={isRead}
           setRead={setRead}
@@ -174,7 +174,6 @@ function App() {
             imgName={imgName}
             user={user}
             closeSide={closeSide}
-            className="h-screen left-0"
             token={token}
             isAdmin={isAdmin}
             isDoctor={isDoctor}
@@ -186,8 +185,8 @@ function App() {
       <main
         className={`${
           open
-            ? "flex-grow h-auto overflow-hidden transition ease-in duration-200 translate-x-[18.7rem] w-[86%]"
-            : "flex-grow h-auto transition ease-out duration-200 overflow-hidden translate-x-0 w-screen"
+            ? "flex-grow min-h-screen h-auto transition ease-in duration-200 translate-x-[18.7rem] w-[86%]"
+            : "flex-grow min-h-screen h-auto transition ease-out duration-200 translate-x-0 w-screen"
         }`}
       >
         <Routes>
@@ -259,6 +258,10 @@ function App() {
                     path="/Doctor/Appointments"
                     element={<DocAppointments />}
                   />
+                </>
+              )}
+              {isPatient && (
+                <>
                   {/*patient's side */}
                   <Route
                     path="/Online_Consultation_History"
@@ -271,7 +274,6 @@ function App() {
                   />
                 </>
               )}
-
               {/* Admin's side */}
               {isAdmin && (
                 <>

@@ -15,7 +15,7 @@ const Home = () => {
   //TODO: add sign in
 
   useEffect(() => {
-    Aos.init({ duration: 1000 });
+    Aos.init({ duration: 500 });
   }, []);
 
   return (

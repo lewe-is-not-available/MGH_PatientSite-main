@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import supabase from "../../../config/Supabase";
-import supabaseAdmin from "../../../config/supabaseAdmin";
-import UserMap from "./EditDocMap";
+import supabaseAdmin from "../../../config/SupabaseAdmin";
+import UserMap from "./EditDocPage";
 import { VscFilter, VscFilterFilled } from "react-icons/vsc";
 import { BsSearch } from "react-icons/bs";
 import { MagnifyingGlass } from "react-loader-spinner";
@@ -11,7 +11,7 @@ const EditDoctors = () => {
   const [books, setBook] = useState([]);
   const [filt, setFilt] = useState([]);
   const fetchBooks = async () => {
-    const { data, error } = await supabase.from("Dr_information").select("*");
+    const { data, error } = await supabase.from("dr_information").select("*");
     if (error) {
       toast.error(error, {
         toastId: "dataError",
@@ -27,25 +27,35 @@ const EditDoctors = () => {
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "Dr_information" },
+        { event: "*", schema: "public", table: "dr_information" },
         () => {
           fetchBooks();
         }
       )
       .subscribe();
   }, []);
-
+  const [PatientId, setPatientId] = useState();
   const fetchDocAcc = async () => {
-    await supabaseAdmin.auth.admin.createUser({
-      email: "user@email.com",
-      password: "password",
-      email_confirm: true,
-      options: {
-        data: {
+    const { data: created, error: fail } =
+      await supabaseAdmin.auth.admin.createUser({
+        email: "user1@email.com",
+        password: "password",
+        email_confirm: true,
+        user_metadata: {
           role: "doctor",
         },
-      },
-    });
+      });
+    try {
+      if (fail) throw fail;
+      else if (created) {
+        toast.success("success", {
+          toastId: "success",
+        });
+      }
+    } catch (fail) {
+      toast.error(fail.message);
+      console.log(fail);
+    }
   };
   const [User, setUsers] = useState();
   const fetchUsers = async () => {
@@ -58,7 +68,6 @@ const EditDoctors = () => {
     }
   };
 
-  const [PatientId, setPatientId] = useState();
   const fetchDocRole = async () => {
     const { error } = await supabase
       .from("profile")
@@ -189,8 +198,8 @@ const EditDoctors = () => {
   // }, []);
 
   return (
-    <div className="back h-full w-full flex place-content-center">
-      <div className="w-[80%] max-2xl:w-[90%] max-sm:w-full mt-10 rounded-lg p-10 max-sm:p-3 ">
+    <div className="back h-auto min-h-screen w-full flex place-content-center">
+      <div className="w-[70%] max-2xl:w-[90%] max-sm:w-full mt-10 rounded-lg p-10 max-sm:p-3 ">
         {/* filter */}
         <section>
           <div className=" flex justify-between items-center mt-10 mb-3 ">
@@ -304,16 +313,15 @@ const EditDoctors = () => {
           </div>
         </section>
         <button onClick={fetchDocAcc}>submit</button>
-        <div className="grid -z-[0] md:grid-cols-3 max-[844px]:grid-cols-2 mx-auto justify-center max-sm:gap-y-0 xl:grid-cols-4 gap-x-10   gap-y-2">
+        <div className="-z-[0] flex flex-col mx-auto justify-center">
           {searchLoad ? (
-            books &&
-            books.map((data) => (
-              <UserMap
-                ol={data}
-                setPatientId={setPatientId}
-                PatientId={PatientId}
-              />
-            ))
+            <UserMap
+              setLoaded={setLoaded}
+              Loaded={Loaded}
+              books={books}
+              setPatientId={setPatientId}
+              PatientId={PatientId}
+            />
           ) : (
             <div className="w-full flex justify-center mt-20">
               <MagnifyingGlass

@@ -169,19 +169,6 @@ const SomeoneF2f = ({
             required
           />
         </p>
-        <div className="ml-3 whitespace-nowrap">
-          <p className="-ml-1">
-            Patient's Age:
-            <br />
-          </p>
-          <input
-            name="PatientAge"
-            type="number"
-            autoComplete="on"
-            required
-            className="outline-none rounded-md font-thin w-20 border-2 px-2 border-slate-300 focus:border-[#71b967d3]"
-          />
-        </div>
       </div>
       <div className="col-span-2">
         <p className="whitespace-normal ">Select Date of the appointment:</p>
@@ -275,7 +262,7 @@ const SomeoneF2f = ({
             pay using Gcash
           </div>
 
-          <div className="p-40 bg-slate-400 flex whitespace-nowrap text-white font-bold">
+          <div className="py-40 w-full place-content-center bg-slate-400 flex whitespace-nowrap text-white font-bold">
             QR code here
           </div>
         </div>
@@ -294,7 +281,7 @@ const SomeoneF2f = ({
 
               <ul className="flex">
                 <p className="font-semibold whitespace-nowrap mr-2">
-                  File Name:{" "}
+                  File name:{" "}
                 </p>
                 {Array.from(File).map((file, idx) => (
                   <li className="truncate" key={idx}>
@@ -306,9 +293,9 @@ const SomeoneF2f = ({
               <div className="flex space-x-4 mb-4">
                 <button
                   className="text-gray-900 bg-white border border-gray-300 focus:outline-none
-               transition duration-75 ease-in hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 
-               font-medium rounded-lg px-5 dark:bg-gray-800 dark:text-white dark:border-gray-600
-                dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                           transition duration-75 ease-in hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 
+                                          font-medium rounded-lg px-5 dark:bg-gray-800 dark:text-white dark:border-gray-600
+                                          dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                   onClick={handleCancel}
                 >
                   Choose another file
@@ -351,6 +338,7 @@ const SomeoneF2f = ({
                     PNG or JPG
                   </p>
                 </div>
+
                 {/* Image input */}
                 <input
                   id="dropzone-file"

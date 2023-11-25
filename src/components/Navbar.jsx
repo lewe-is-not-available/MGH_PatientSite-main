@@ -117,10 +117,10 @@ const Navbar = ({
               to="/Dashboard"
               className="hover:cursor-pointer flex items-center p-3 ml-5"
             >
-              <div className="w-[65px] max-[769px]:w-[40px]">
+              <div className="w-[65px] select-none max-[1366px]:w-[53px] max-[769px]:w-[40px]">
                 <img src={logo} alt="/" />
               </div>
-              <h1 className="font-bold text-6xl  max-[769px]:text-4xl whitespace-nowrap text-white pl-2 flex">
+              <h1 className="font-bold select-none text-6xl max-[1366px]:text-5xl max-[769px]:text-4xl whitespace-nowrap text-white pl-2 flex">
                 MGH
                 {patient && (
                   <p className="ml-3 font-thin max-[930px]:hidden text-4xl self-center max-md:text-xl">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import supabase from "../../config/Supabase";
-import supabaseAdmin from "../../config/supabaseAdmin";
+import supabaseAdmin from "../../config/SupabaseAdmin";
 import PatientMap from "./UserMap";
 
 const EditDoctors = () => {

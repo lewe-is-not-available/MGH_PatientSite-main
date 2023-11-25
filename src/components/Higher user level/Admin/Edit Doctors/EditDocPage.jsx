@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import Online from "./ArchiveMap";
+import Online from "./EditDocMap";
 import ReactPaginate from "react-paginate";
 import { Oval } from "react-loader-spinner";
 
-const ArchivePaginate = ({ books, CDNURL, Loaded, setLoaded }) => {
+
+const EditDocPage = ({ books, Loaded, setLoaded }) => {
   //*Pagination
   const [itemOffset, setItemOffset] = useState(0);
   const [pageCount, setpageCount] = useState(0);
@@ -28,7 +29,7 @@ const ArchivePaginate = ({ books, CDNURL, Loaded, setLoaded }) => {
     setItemOffset(newOffset);
   };
   return (
-    <div className="w-full flex flex-col items-center rounded">
+    <div className="w-full h-auto flex flex-col items-center rounded">
       <ReactPaginate
         breakLabel=". . ."
         nextLabel="next >"
@@ -48,7 +49,7 @@ const ArchivePaginate = ({ books, CDNURL, Loaded, setLoaded }) => {
         currentItems &&
         currentItems.map((ol) => (
           <div key={ol.book_id} className="w-full">
-            <Online ol={ol} CDNURL={CDNURL} />
+            <Online ol={ol} />
           </div>
         ))
       ) : (
@@ -69,4 +70,4 @@ const ArchivePaginate = ({ books, CDNURL, Loaded, setLoaded }) => {
   );
 };
 
-export default ArchivePaginate;
+export default EditDocPage;
