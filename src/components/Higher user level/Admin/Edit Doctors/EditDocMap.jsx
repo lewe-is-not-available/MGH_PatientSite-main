@@ -55,7 +55,7 @@ const EditDocMap = ({ ol }) => {
   async function getImages() {
     const { data, error } = await supabase.storage
       .from("images")
-      .list(id + "/", {
+      .list(id + "/profile/", {
         limit: 100,
         offset: 0,
         sortBy: { column: "created_at", order: "asc" },
@@ -102,7 +102,7 @@ const EditDocMap = ({ ol }) => {
               className="object-cover rounded-full w-[4rem] h-[4rem]"
               src={`${
                 isImgEmpty
-                  ? CDNURL + ol.email + "/" + imgName
+                  ? CDNURL + ol.email + "/profile/" + imgName
                   : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/doc.jpg"
               }`}
               alt="/"
@@ -181,7 +181,7 @@ const EditDocMap = ({ ol }) => {
           </div>
           <div className="max-w-full mb-5 flex justify-center space-x-10">
             <Link
-              to={"/Appointment_Details/" + ol.id}
+              to={"/Doctor_Details/" + ol.id}
               onClick={(e) => e.stopPropagation()}
             >
               <button className="text-lg px-14 py-1 transition duration-100 hover:bg-[#377532] bg-[#3dbb34] text-white rounded-md">

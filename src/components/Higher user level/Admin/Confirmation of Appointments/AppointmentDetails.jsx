@@ -20,7 +20,7 @@ const AppointmentDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       const { data, error } = await supabase
-        .from("Patient_Appointments")
+        .from("patient_Appointments")
         .select()
         .eq("book_id", id)
         .single();
@@ -85,7 +85,7 @@ const AppointmentDetails = () => {
   async function handleAccept(e) {
     e.preventDefault();
     const { error } = await supabase
-      .from("Patient_Appointments")
+      .from("patient_Appointments")
       .update({ status: "Confirmed" })
       .eq("book_id", id);
     if (error) {

@@ -82,7 +82,7 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
   const fetchBooks = async () => {
     setLoaded(false);
     const { data, error } = await supabase
-      .from("Patient_Appointments")
+      .from("patient_Appointments")
       .select();
     if (error) {
       toast.error(error, {
@@ -107,7 +107,7 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
       const docname = items.docname
         .toLowerCase()
         .includes(Search.toLowerCase());
-      return  fname || lname || mname || docname;
+      return fname || lname || mname || docname;
     });
     setBook(search);
     if (filt) {
@@ -122,11 +122,12 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
       const filterBook = filt
         .filter((item) => {
           const defStat = !item.status.includes("Confirmed");
+          const defStat2= !item.status.includes("Completed");
           const someone = item.someone.includes(Someone);
           const Time = item.time.toLowerCase().includes(time);
           const type = item.type.toLowerCase().includes(Type);
           const status = item.status.toLowerCase().includes(Status);
-          return defStat && someone && Time && type && status;
+          return defStat && defStat2 && someone && Time && type && status;
         })
         .sort((a, b) =>
           isAsc
@@ -153,7 +154,7 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "Patient_Appointments" },
+        { event: "*", schema: "public", table: "patient_Appointments" },
         () => {
           fetchBooks();
         }

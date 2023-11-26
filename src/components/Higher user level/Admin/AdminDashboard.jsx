@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import { toast } from "react-toastify";
+import { tailspin } from "ldrs";
+
+tailspin.register();
 
 const Admin = () => {
   useEffect(() => {
@@ -19,7 +22,7 @@ const Admin = () => {
   const fetchBooks = async () => {
     setLoaded(false);
     const { data, error } = await supabase
-      .from("Patient_Appointments")
+      .from("patient_Appointments")
       .select();
     if (error) {
       toast.error(error, {
@@ -27,28 +30,11 @@ const Admin = () => {
       });
       console.error("Failed to fetch", error.message);
     }
-
     if (data) {
       setLoaded(true);
       setfilt(data);
     }
   };
-
-  //*Realtime data for bookings
-  useEffect(() => {
-    fetchBooks();
-    supabase
-      .channel("custom-all-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "Patient_Appointments" },
-        () => {
-          fetchBooks();
-        }
-      )
-      .subscribe();
-  }, []);
-
   //*Get count of books
   useEffect(() => {
     if (filt) {
@@ -57,24 +43,70 @@ const Admin = () => {
         const comp = !item.status.includes("Completed");
         return conf && comp;
       });
-      const filterArch = filt.filter((item) => {
-        const conf = item.status.includes("Confirmed");
-        const comp = item.status.includes("Completed");
-        return conf || comp;
-      });
+
       setBook(filtered);
-      setarchive(filterArch);
-      console.log(filterArch);
     }
-  }, [filt]);
+    if (books) {
+      setTimeout(() => {
+        setLoaded(true);
+      }, 1000);
+    }
+  }, [filt, setBook]);
+
+  useEffect(() => {
+    const filterArch = filt.filter((item) => {
+      const conf = item.status.includes("Confirmed");
+      const comp = item.status.includes("Completed");
+      return conf || comp;
+    });
+    setarchive(filterArch);
+    if (books) {
+      setTimeout(() => {
+        setLoaded(true);
+      }, 1000);
+    }
+  }, [filt, setarchive]);
   console.log(archive);
+
+  //*Realtime data for bookings
+  useEffect(() => {
+    fetchBooks();
+    fetchDoc();
+    fetchPatients();
+    supabase
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "patient_Appointments" },
+        () => {
+          fetchBooks();
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "dr_information" },
+        (payload) => {
+          fetchDoc();
+          console.log(payload);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "profile" },
+        () => {
+          fetchPatients();
+        }
+      )
+      .subscribe();
+  }, []);
+
   //Doctors
   //*Get Doctors
   const [doc, setDoc] = useState([]);
   const [DocLoaded, setDocLoaded] = useState(true);
   const fetchDoc = async () => {
     setDocLoaded(false);
-    const { data, error } = await supabase.from("Dr_information").select();
+    const { data, error } = await supabase.from("dr_information").select();
     if (error) {
       toast.error(error, {
         toastId: "dataError",
@@ -88,20 +120,21 @@ const Admin = () => {
     }
   };
 
-  //*Realtime data for bookings
-  useEffect(() => {
-    fetchDoc();
-    supabase
-      .channel("custom-all-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "Dr_information" },
-        () => {
-          fetchDoc();
-        }
-      )
-      .subscribe();
-  }, []);
+  // //*Realtime data for doctors
+  // useEffect(() => {
+  //   fetchDoc();
+  //   supabase
+  //     .channel("custom-all-channel")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "*", schema: "public", table: "dr_information" },
+  //       (payload) => {
+  //         fetchDoc();
+  //         console.log(payload);
+  //       }
+  //     )
+  //     .subscribe();
+  // }, []);
 
   //Patients
   //*Get Patients
@@ -171,7 +204,18 @@ const Admin = () => {
           >
             <div className="AdmintitleText">Books: </div>
             <div className="w-full rounded-xl mb-4">
-              <h1 className="text-5xl font-semibold">{books.length}</h1>
+              <h1 className="text-5xl font-semibold">
+                {Loaded ? (
+                  books.length
+                ) : (
+                  <l-tailspin
+                    size="55"
+                    stroke="4"
+                    speed="0.9"
+                    color="black"
+                  ></l-tailspin>
+                )}
+              </h1>
             </div>
             <p>Booked Appointments to confirm</p>
           </Link>
@@ -179,7 +223,18 @@ const Admin = () => {
           <Link to="/Edit_doctors" className="Adminboxes" data-aos="fade-up">
             <div className="AdmintitleText">Total doctors: </div>
             <div className="w-full rounded-xl mb-4">
-              <h1 className="text-5xl font-semibold">{doc.length}</h1>
+              <h1 className="text-5xl font-semibold">
+                {DocLoaded ? (
+                  doc.length
+                ) : (
+                  <l-tailspin
+                    size="55"
+                    stroke="4"
+                    speed="0.9"
+                    color="black"
+                  ></l-tailspin>
+                )}
+              </h1>
             </div>
             <p>Book an appointment for Face to face consult</p>
           </Link>
@@ -187,7 +242,18 @@ const Admin = () => {
           <Link to="/Edit_Patients" className="Adminboxes" data-aos="fade-up">
             <div className="AdmintitleText">Total Patients: </div>
             <div className="w-full rounded-xl mb-4">
-              <h1 className="text-5xl font-semibold">{patient.length}</h1>
+              <h1 className="text-5xl font-semibold">
+                {patientLoaded ? (
+                  patient.length
+                ) : (
+                  <l-tailspin
+                    size="55"
+                    stroke="4"
+                    speed="0.9"
+                    color="black"
+                  ></l-tailspin>
+                )}
+              </h1>
             </div>
             <p>Need to give us a message? Feel free to contact us.</p>
           </Link>
@@ -195,7 +261,18 @@ const Admin = () => {
           <Link to="/Archive" className="Adminboxes " data-aos="fade-up">
             <div className="AdmintitleText">Total Archives: </div>
             <div className="w-full rounded-xl mb-4">
-              <h1 className="text-5xl font-semibold">{archive.length}</h1>
+              <h1 className="text-5xl font-semibold">
+                {Loaded ? (
+                  archive.length
+                ) : (
+                  <l-tailspin
+                    size="55"
+                    stroke="4"
+                    speed="0.9"
+                    color="black"
+                  ></l-tailspin>
+                )}
+              </h1>
             </div>
             <p>Let us know what you think of our website</p>
           </Link>

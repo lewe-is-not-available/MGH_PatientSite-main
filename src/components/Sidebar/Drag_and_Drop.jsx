@@ -51,7 +51,7 @@ const Drag_and_Drop = ({
       }
       const { data, error } = await supabase.storage
         .from("images")
-        .upload(user.email + "/" + uuidv4(), File[0]);
+        .upload(user.email + "/profile/" + uuidv4(), File[0]);
       if (error) {
         console.log(error);
       }

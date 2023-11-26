@@ -51,7 +51,7 @@ const Online = ({ ol, CDNURL }) => {
   async function getImages() {
     const { data, error } = await supabase.storage
       .from("images")
-      .list(id + "/", {
+      .list(id + "/profile/", {
         limit: 100,
         offset: 0,
         sortBy: { column: "created_at", order: "asc" },
@@ -99,7 +99,7 @@ const Online = ({ ol, CDNURL }) => {
               className="object-cover rounded-full w-[4rem] h-[4rem]"
               src={`${
                 isImgEmpty
-                  ? CDNURL + ol.email + "/" + imgName
+                  ? CDNURL + ol.email + "/profile/" + imgName
                   : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
               }`}
               alt="/"

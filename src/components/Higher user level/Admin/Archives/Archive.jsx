@@ -12,7 +12,7 @@ const Archive = ({ CDNURL }) => {
 
   const fetchBooks = async () => {
     const { data, error } = await supabase
-      .from("Patient_Appointments")
+      .from("patient_Appointments")
       .select("*");
     if (error) {
       toast.error(error, {
@@ -129,7 +129,7 @@ const Archive = ({ CDNURL }) => {
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "Patient_Appointments" },
+        { event: "*", schema: "public", table: "patient_Appointments" },
         () => {
           fetchBooks();
         }

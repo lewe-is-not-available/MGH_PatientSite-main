@@ -154,7 +154,7 @@ const OnlineConsult = ({ openTerms, token }) => {
     uploadImage();
     //* if user is logged in
     if (token) {
-      const { error } = await supabase.from("Patient_Appointments").insert([
+      const { error } = await supabase.from("patient_Appointments").insert([
         {
           user_id: userID,
           appointee: isSomeone ? Representative : "",
@@ -225,7 +225,7 @@ const OnlineConsult = ({ openTerms, token }) => {
       } else {
         navigate("/Appointment/Verifying");
         const { error: ErrApp } = await supabase
-          .from("Patient_Appointments")
+          .from("patient_Appointments")
           .insert([
             {
               appointee: isSomeone ? Representative : "",
@@ -326,7 +326,8 @@ const OnlineConsult = ({ openTerms, token }) => {
           >
             <img data-aos="fade-up" src={doc} className="px-5 py-3" alt="" />
             <p data-aos="fade-up" className="font-semibold">
-              {Honor}{name}
+              {Honor}
+              {name}
             </p>
             <p data-aos="fade-up">{Special}</p>
             <p data-aos="fade-up">{Sub} </p>

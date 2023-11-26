@@ -64,7 +64,7 @@ const Appointment = () => {
   }
   //DEFAULT DATA
   const fetchDoc = async () => {
-    const { data, error } = await supabase.from("drinformation").select("*");
+    const { data, error } = await supabase.from("dr_information").select("*");
 
     if (error) {
       setDoctors(null);

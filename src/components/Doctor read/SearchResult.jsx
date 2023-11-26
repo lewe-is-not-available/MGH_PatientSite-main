@@ -14,11 +14,15 @@ const SearchResult = ({ Doctors }) => {
   const id = Doctors.email;
   const [imgName, setimgName] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(false);
+  const [Sched, setSched] = useState([]);
+  useEffect(() => {
+    setSched(Doctors.schedule);
+  }, [Doctors]);
 
   async function getImages() {
     const { data, error } = await supabase.storage
       .from("images")
-      .list(id + "/", {
+      .list(id + "/profile/", {
         limit: 100,
         offset: 0,
         sortBy: { column: "created_at", order: "asc" },
@@ -52,7 +56,7 @@ const SearchResult = ({ Doctors }) => {
         <img
           src={`${
             isImgEmpty
-              ? CDNURL + Doctors.email + "/" + imgName
+              ? CDNURL + Doctors.email + "/profile/" + imgName
               : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/doc.jpg"
           }`}
           alt="/"
@@ -80,7 +84,12 @@ const SearchResult = ({ Doctors }) => {
         </div>
         <div className="flex" data-aos="fade-up">
           <span className="mr-2 font-bold">Schedule: </span>
-          <p className="text-base valueDoc mb-4">{Doctors.schedule}</p>
+          <p className="text-base valueDoc mb-4">
+            {Doctors.schedule &&
+              Doctors.schedule.map((item) => (
+                <>{item.day === "Thursday" ? "Th" : item.day[0]}</>
+              ))}
+          </p>
         </div>
         <Link to={"/DoctorInfo/" + Doctors.id} data-aos="fade-up">
           <button className="flex text-base bg-[#418D3F] Docbtn p-2 rounded-md text-white font-bold ring-[#418D3F] ring-2 transition duration-75 ease-in hover:bg-[#A5DD9D] hover:text-[#267124]">

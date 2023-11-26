@@ -36,7 +36,7 @@ const Online = () => {
         console.error("Failed to fetch", error.message);
       } else {
         const nameSuggest = data.filter((doctor) =>
-          doctor.fname.toLowerCase().includes(name.toLowerCase())
+          doctor.name.toLowerCase().includes(name.toLowerCase())
         );
         setFilter(nameSuggest);
         if (name === "") {

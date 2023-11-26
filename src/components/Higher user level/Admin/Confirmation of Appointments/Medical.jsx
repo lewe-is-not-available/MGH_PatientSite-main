@@ -10,7 +10,7 @@ const Medical = ({ setMedModal, id, MedModal }) => {
     if (MedModal && id) {
       const fetchData = async () => {
         const { data, error } = await supabase
-          .from("Patient_Appointments")
+          .from("patient_Appointments")
           .select("*")
           .eq("book_id", id)
           .single();

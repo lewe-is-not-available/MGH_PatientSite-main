@@ -159,7 +159,7 @@ const Navbar = ({
                 className="object-cover rounded-full max-[425px]:translate-x-7 w-[3rem] h-[3rem]"
                 src={`${
                   isImgEmpty
-                    ? CDNURL + user.email + "/" + imgName
+                    ? CDNURL + user.email + "/profile/" + imgName
                     : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
                 }`}
                 alt="https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"

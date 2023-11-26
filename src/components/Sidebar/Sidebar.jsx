@@ -132,15 +132,15 @@ const Sidebar = ({
         try {
           const { data, error } = await supabase.storage
             .from("images")
-            .list(user.email + "/", {
+            .list(user.email + "/profile/", {
               limit: 10,
               offset: 0,
               sortBy: { column: "created_at", order: "asc" },
             });
           //console.log(user.id)
-          if (data[1]) {
+          if (data[0]) {
             setImgEmpty(true);
-            setimgName(data[1].name);
+            setimgName(data[0].name);
           } else {
             setImgEmpty(false);
             toast.error(error, {
@@ -189,7 +189,7 @@ const Sidebar = ({
                 className="object-cover rounded-full w-[10rem] h-[10rem]"
                 src={`${
                   isImgEmpty
-                    ? CDNURL + user.email + "/" + imgName
+                    ? CDNURL + user.email + "/profile/" + imgName
                     : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
                 }`}
                 alt="/"
@@ -399,8 +399,9 @@ const Sidebar = ({
                 to="/Online_Consultation_History"
                 className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
               >
-                <GoHistory className="text-2xl mr-2" />
-                <p>Online Consultations</p>
+                <BsArchive className="text-2xl mr-2 group-hover/os:invisible" />
+                <BsArchiveFill className="text-2xl mr-2 -translate-x-7 invisible group-hover/os:visible" />
+                <p className="-translate-x-8">Archives</p>
               </Link>
               <Link
                 to="/Appointment/Status"
@@ -437,7 +438,7 @@ const Sidebar = ({
                 className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
               >
                 <GoHistory className="text-2xl mr-2" />
-                <p>Doctor's Consultation history</p>
+                <p className="-translate-x-8">Archives</p>
               </Link>
             </>
           )}

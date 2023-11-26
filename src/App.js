@@ -287,7 +287,8 @@ function App() {
                     element={<Archive CDNURL={CDNURL} />}
                   />
                   <Route path="/Edit_doctors" element={<EditDoctors />} />
-                  <Route path="/Edit_Doctor/:id" element={<DocDetails />} />
+                  <Route path="/Edit_doctors" element={<EditDoctors />} />
+                  <Route path="/Doctor_Details/:id" element={<DocDetails />} />
                   <Route path="/Edit_Patients" element={<EditPatients />} />
                   <Route
                     path="/Confirm_Appointments"

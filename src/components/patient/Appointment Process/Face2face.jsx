@@ -164,7 +164,7 @@ const Face2face = ({ token, openTerms }) => {
     uploadImage();
     //*if user is logged in
     if (token) {
-      const { error } = await supabase.from("Patient_Appointments").insert([
+      const { error } = await supabase.from("patient_Appointments").insert([
         {
           user_id: userID,
           appointee: isSomeone ? Representative : "",
@@ -232,7 +232,7 @@ const Face2face = ({ token, openTerms }) => {
       } else {
         navigate("/Appointment/Verifying");
         const { error: ErrApp } = await supabase
-          .from("Patient_Appointments")
+          .from("patient_Appointments")
           .insert([
             {
               appointee: isSomeone ? Representative : "",

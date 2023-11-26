@@ -36,7 +36,7 @@ const F2f = ({ token, isPatient }) => {
         console.error("Failed to fetch", error.message);
       } else {
         const nameSuggest = data.filter((doctor) =>
-          doctor.Name.toLowerCase().includes(Name.toLowerCase())
+          doctor.name.toLowerCase().includes(Name.toLowerCase())
         );
         setFilter(nameSuggest);
         if (Name === "") {

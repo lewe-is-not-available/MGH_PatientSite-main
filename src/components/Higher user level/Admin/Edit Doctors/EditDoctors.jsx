@@ -137,7 +137,7 @@ const EditDoctors = () => {
         }, 1000);
       }
     }
-  }, [isAsc, Type, Status, time, Someone, setBook, filt]);
+  }, [isAsc, Type, Status, Someone, setBook, filt]);
 
   //*Realtime
   useEffect(() => {

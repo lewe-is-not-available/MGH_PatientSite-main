@@ -7,7 +7,7 @@ import supabase from "../config/Supabase";
 
 const DocUniq = ({ Doctors }) => {
   const CDNURL =
-  "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
+    "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
 
   //*image
   const id = Doctors.email;
@@ -88,7 +88,12 @@ const DocUniq = ({ Doctors }) => {
           </div>
           <div className="flex" data-aos="fade-up">
             <span className="mr-2 font-bold">Schedule: </span>
-            <p className="mb-2">{Doctors.schedule}</p>
+            <p className="mb-2">
+              {Doctors.schedule &&
+                Doctors.schedule.map((item) => (
+                  <>{item.day === "Thursday" ? "Th" : item.day[0]}</>
+                ))}
+            </p>
           </div>
         </div>
 

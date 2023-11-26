@@ -17,7 +17,7 @@ const Status = ({ user }) => {
       async function getImages() {
         const { data, error } = await supabase.storage
           .from("images")
-          .list(user.email + "/", {
+          .list(user.email + "/profile/", {
             limit: 10,
             offset: 0,
             sortBy: { column: "created_at", order: "asc" },
@@ -113,7 +113,7 @@ const Status = ({ user }) => {
 
     if (user.id) {
       const { data, error } = await supabase
-        .from("Patient_Appointments")
+        .from("patient_Appointments")
         .select("*")
         .eq("email", user.email);
 
@@ -166,7 +166,7 @@ const Status = ({ user }) => {
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "Patient_Appointments" },
+        { event: "*", schema: "public", table: "patient_Appointments" },
         () => {
           fetchBooks();
         }

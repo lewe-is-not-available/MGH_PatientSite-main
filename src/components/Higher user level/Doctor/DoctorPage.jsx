@@ -12,15 +12,6 @@ const Doc_Dash = () => {
   }, []);
   const navigate = useNavigate();
 
-  const fetchDoctor = async () => {
-    const { data } = await supabase.from("profile").select("*").single();
-
-    //*prevent access from non-admin users
-    if (data.role !== "doctor") {
-      navigate("/");
-    }
-  };
-  fetchDoctor();
   return (
     <div className="h-screen text-center place-content-center">
     {/* feautures */}
