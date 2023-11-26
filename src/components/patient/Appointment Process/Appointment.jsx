@@ -35,21 +35,11 @@ const Appointment = () => {
       } else {
         if (data) {
           var filteredSuggest = data.filter((doctor) => {
-            var fnameMatch = Name
-              ? doctor.fname.toLowerCase().includes(Name.toLowerCase())
+            var nameMatch = Name
+              ? doctor.name.toLowerCase().includes(Name.toLowerCase())
               : false;
 
-            var mnameMatch = Name
-              ? doctor.mname !== null &&
-                doctor.mname.toLowerCase().includes(Name.toLowerCase())
-              : false;
-
-            var lnameMatch = Name
-              ? doctor.lname !== null &&
-                doctor.lname.toLowerCase().includes(Name.toLowerCase())
-              : false;
-
-            return fnameMatch || mnameMatch || lnameMatch;
+            return nameMatch;
           });
           setFilter(filteredSuggest);
         }
@@ -72,13 +62,9 @@ const Appointment = () => {
     setName(e.target.value);
     setShowFill(true);
   }
-  const nameClicked = (mname) => {
-    var name = mname === null ? "" : " " + mname;
-    return name;
-  };
   //DEFAULT DATA
   const fetchDoc = async () => {
-    const { data, error } = await supabase.from("dr_information").select("*");
+    const { data, error } = await supabase.from("drinformation").select("*");
 
     if (error) {
       setDoctors(null);
@@ -133,9 +119,7 @@ const Appointment = () => {
       }
       const filteredData = data.filter((doctor) => {
         const nameMatch = Name
-          ? doctor.fname.toLowerCase().includes(Name.toLowerCase()) ||
-            doctor.fname.toLowerCase().includes(Name.toLowerCase()) ||
-            doctor.fname.toLowerCase().includes(Name.toLowerCase())
+          ? doctor.name.toLowerCase().includes(Name.toLowerCase())
           : true;
         const specMatch = spSelect
           ? doctor.specialization.toLowerCase().includes(spSelect.toLowerCase())
@@ -157,7 +141,6 @@ const Appointment = () => {
       }
     }
   };
-  console.log(Doctors);
   useEffect(() => {
     Aos.init({ duration: 500 });
   }, []);

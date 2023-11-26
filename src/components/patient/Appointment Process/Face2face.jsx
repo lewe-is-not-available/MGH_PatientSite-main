@@ -289,7 +289,7 @@ const Face2face = ({ token, openTerms }) => {
     }
     if (data) {
       setHonor(data.honorific);
-      setName(data.fname);
+      setName(data.name);
       setSpecial(data.specialization);
       setSub(data.subspecial);
     }

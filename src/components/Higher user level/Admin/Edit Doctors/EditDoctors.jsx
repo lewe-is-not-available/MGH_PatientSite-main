@@ -6,6 +6,7 @@ import UserMap from "./EditDocPage";
 import { VscFilter, VscFilterFilled } from "react-icons/vsc";
 import { BsSearch } from "react-icons/bs";
 import { MagnifyingGlass } from "react-loader-spinner";
+import AddingDoctor from "./AddingDoctor";
 
 const EditDoctors = () => {
   const [books, setBook] = useState([]);
@@ -35,28 +36,7 @@ const EditDoctors = () => {
       .subscribe();
   }, []);
   const [PatientId, setPatientId] = useState();
-  const fetchDocAcc = async () => {
-    const { data: created, error: fail } =
-      await supabaseAdmin.auth.admin.createUser({
-        email: "user1@email.com",
-        password: "password",
-        email_confirm: true,
-        user_metadata: {
-          role: "doctor",
-        },
-      });
-    try {
-      if (fail) throw fail;
-      else if (created) {
-        toast.success("success", {
-          toastId: "success",
-        });
-      }
-    } catch (fail) {
-      toast.error(fail.message);
-      console.log(fail);
-    }
-  };
+
   const [User, setUsers] = useState();
   const fetchUsers = async () => {
     const { data, error } = await supabaseAdmin.auth.admin.listUsers();
@@ -65,16 +45,6 @@ const EditDoctors = () => {
     }
     if (data) {
       //console.log(data)
-    }
-  };
-
-  const fetchDocRole = async () => {
-    const { error } = await supabase
-      .from("profile")
-      .update({ role: "doctor" })
-      .eq("email", "user@email.com");
-    if (error) {
-      console.log(error);
     }
   };
 
@@ -133,7 +103,7 @@ const EditDoctors = () => {
   const handleSearch = () => {
     setsearchLoad(false);
     const search = filt.filter((items) => {
-      const fname = items.Name.toLowerCase().includes(Search.toLowerCase());
+      const fname = items.name.toLowerCase().includes(Search.toLowerCase());
       return fname;
     });
     setBook(search);
@@ -169,6 +139,7 @@ const EditDoctors = () => {
     }
   }, [isAsc, Type, Status, time, Someone, setBook, filt]);
 
+  //*Realtime
   useEffect(() => {
     fetchBooks();
     supabase
@@ -182,6 +153,14 @@ const EditDoctors = () => {
       )
       .subscribe();
   }, []);
+
+  //*Adding doctors function
+  const [ShowAdd, setShowAdd] = useState(false);
+  if (ShowAdd) {
+    document.documentElement.style.overflowY = "hidden";
+  } else {
+    document.documentElement.style.overflowY = "unset";
+  }
 
   // useEffect(() => {
   //   fetchDocRole();
@@ -199,6 +178,7 @@ const EditDoctors = () => {
 
   return (
     <div className="back h-auto min-h-screen w-full flex place-content-center">
+      {ShowAdd && <AddingDoctor setShowAdd={setShowAdd} />}
       <div className="w-[70%] max-2xl:w-[90%] max-sm:w-full mt-10 rounded-lg p-10 max-sm:p-3 ">
         {/* filter */}
         <section>
@@ -221,6 +201,12 @@ const EditDoctors = () => {
                 </>
               )}
             </div>
+            <button
+              onClick={() => setShowAdd(!ShowAdd)}
+              className="bg-slate-300 px-3"
+            >
+              Add a doctor
+            </button>
           </div>
           <div
             className={`${
@@ -312,7 +298,6 @@ const EditDoctors = () => {
             </div>
           </div>
         </section>
-        <button onClick={fetchDocAcc}>submit</button>
         <div className="-z-[0] flex flex-col mx-auto justify-center">
           {searchLoad ? (
             <UserMap

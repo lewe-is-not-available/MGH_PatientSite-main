@@ -40,34 +40,39 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
   //TODO: continue the filteration
   const [showFill, setShowFill] = useState(true);
 
-  const fetchFilter = async () => {
-    const { data, error } = await supabase.from("dr_information").select("*");
-    if (error) {
-      console.error("Failed to fetch", error.message);
-    } else {
-      const nameSuggest = data.filter((doctor) =>
-        doctor.fname.toLowerCase().includes(Name.toLowerCase())
-      );
-      setFilter(nameSuggest);
-      if (Name === "") {
-        setFilter("");
-      }
-    }
-  };
-  //REAL TIME DOCTOR DATA
   useEffect(() => {
-    fetchFilter();
-    supabase
-      .channel("custom-all-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "dr_information" },
-        () => {
-          fetchFilter();
+    const fetchFilter = async () => {
+      const { data, error } = await supabase.from("dr_information").select("*");
+      if (error) {
+        console.error("Failed to fetch", error.message);
+      } else {
+        if (data) {
+          var filteredSuggest = data.filter((doctor) => {
+            var nameMatch = Name
+              ? doctor.name.toLowerCase().includes(Name.toLowerCase())
+              : false;
+
+            return nameMatch;
+          });
+          setFilter(filteredSuggest);
         }
-      )
-      .subscribe();
-  }, []);
+
+        if (Name === "") {
+          setFilter("");
+        }
+      }
+    };
+    fetchFilter();
+  }, [Name]);
+
+  const handleNameFilterClick = (clickedName) => {
+    setName(clickedName);
+    setShowFill(false);
+  };
+  function handleNameChange(e) {
+    setName(e.target.value);
+    setShowFill(true);
+  }
 
   const handleReset = async () => {
     setName("");
@@ -100,9 +105,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
       }
       const filteredData = data.filter((doctor) => {
         const nameMatch = Name
-          ? doctor.fname.toLowerCase().includes(Name.toLowerCase()) ||
-            doctor.fname.toLowerCase().includes(Name.toLowerCase()) ||
-            doctor.fname.toLowerCase().includes(Name.toLowerCase())
+          ? doctor.name.toLowerCase().includes(Name.toLowerCase())
           : true;
         const specMatch = spSelect
           ? doctor.specialization.toLowerCase().includes(spSelect.toLowerCase())
@@ -123,18 +126,6 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
         setNoResult(false);
       }
     }
-  };
-  const handleNameFilterClick = (clickedName) => {
-    setName(clickedName);
-    setShowFill(false);
-  };
-  function handleNameChange(e) {
-    setName(e.target.value);
-    setShowFill(true);
-  }
-  const nameClicked = (mname) => {
-    var name = mname === null ? "" : " " + mname;
-    return name;
   };
   // Aos useEffect
   useEffect(() => {
@@ -189,18 +180,11 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                       <div className="absolute abs w-48 flex flex-wrap text-sm bg-white z-50">
                         {Filter.map((Filter) => (
                           <li
-                            onClick={() =>
-                              handleNameFilterClick(
-                                Filter.fname +
-                                  nameClicked(Filter.mname) +
-                                  " " +
-                                  Filter.lname
-                              )
-                            }
+                            onClick={() => handleNameFilterClick(Filter.name)}
                             className="list-none px-2 my-1 cursor-pointer w-full hover:bg-primary hover:text-white"
                             key={Filter.id}
                           >
-                            {Filter.fname} {Filter.mname} {Filter.lname}{" "}
+                            {Filter.name}
                           </li>
                         ))}
                       </div>
@@ -253,7 +237,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                       onChange={(e) => setHmo(e.target.value)}
                       placeholder="Enter Accredation"
                       className="py-2 pr-8 serachInput bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
-                               focus:border-b-[#315E30]"
+              focus:border-b-[#315E30]"
                     />
                   </div>
                 </div>

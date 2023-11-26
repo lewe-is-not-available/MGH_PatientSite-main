@@ -65,7 +65,7 @@ const DoctorsF2f = ({ Doctors }) => {
         <div className="w-full items-center flex flex-col">
           <div className="flex" data-aos="fade-up">
             <span className="mr-2 font-bold">Name:</span>
-            <p className="">{Doctors.Name}</p>
+            <p className="">{Doctors.name}</p>
           </div>
           <div className="flex" data-aos="fade-up">
             <span className="mr-2 w-fit whitespace-nowrap font-bold">
@@ -80,12 +80,12 @@ const DoctorsF2f = ({ Doctors }) => {
               Sub-Special:{" "}
             </span>
             <p className="max-w-[10rem] max-[941px]:max-w-[7rem] max-sm:max-w-[4.3rem] whitespace-nowrap overflow-hidden text-center overflow-ellipsis">
-              {Doctors.SubSpecial}
+              {Doctors.subspecial}
             </p>
           </div>
           <div className="flex" data-aos="fade-up">
             <span className="mr-2 font-bold">Schedule: </span>
-            <p className="mb-2">{Doctors.Schedule}</p>
+            <p className="mb-2">{Doctors.schedule}</p>
           </div>
         </div>
 

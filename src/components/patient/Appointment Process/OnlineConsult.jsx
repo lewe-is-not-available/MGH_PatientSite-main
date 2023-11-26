@@ -282,7 +282,7 @@ const OnlineConsult = ({ openTerms, token }) => {
     }
     if (data) {
       setHonor(data.honorific);
-      setName(data.fname);
+      setName(data.name);
       setSpecial(data.specialization);
       setSub(data.subspecial);
     }

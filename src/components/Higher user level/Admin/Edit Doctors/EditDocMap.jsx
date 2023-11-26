@@ -109,7 +109,7 @@ const EditDocMap = ({ ol }) => {
             />
             <div className="ml-4 flex-col text-left text-sm">
               <p className="text-base uppercase font-semibold text-green-800">
-                {ol.honorific} {ol.fname}
+                {ol.honorific} {ol.name}
               </p>
               <p className="">
                 <span className="font-semibold text-green-950">

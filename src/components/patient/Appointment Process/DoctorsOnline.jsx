@@ -64,9 +64,15 @@ const DoctorsOnline = ({ Doctors }) => {
         />
         <div className="w-full items-center flex flex-col">
           <div className="flex" data-aos="fade-up">
-            <span className="mr-2 w-fit whitespace-nowrap font-bold">Name:</span>
-            <p className="max-w-[10rem] max-[941px]:max-w-[7rem] max-sm:max-w-[7.3rem]
-             whitespace-nowrap overflow-hidden text-center overflow-ellipsis">{Doctors.fname}</p>
+            <span className="mr-2 w-fit whitespace-nowrap font-bold">
+              Name:
+            </span>
+            <p
+              className="max-w-[10rem] max-[941px]:max-w-[7rem] max-sm:max-w-[7.3rem]
+             whitespace-nowrap overflow-hidden text-center overflow-ellipsis"
+            >
+              {Doctors.name}
+            </p>
           </div>
           <div className="flex" data-aos="fade-up">
             <span className="mr-2 w-fit whitespace-nowrap font-bold">
@@ -92,7 +98,6 @@ const DoctorsOnline = ({ Doctors }) => {
 
         <Link
           to={"/Online/" + Doctors.id}
-          data-aos="fade-up"
           className="text-base max-sm:text-[11px] max-sm:px-1 max-sm:py-0 whitespace-nowrap bg-[#418D3F] max-[941px]:text-sm p-2 rounded-md text-white font-bold ring-[#418D3F] ring-2 transition duration-75 ease-in hover:bg-[#A5DD9D] hover:text-[#267124]"
         >
           BOOK AN APPOINTMENT
