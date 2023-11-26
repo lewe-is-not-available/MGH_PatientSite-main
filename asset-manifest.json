@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/MGHsite/static/css/main.083e62ed.css",
-    "main.js": "/MGHsite/static/js/main.29072528.js",
+    "main.css": "/MGHsite/static/css/main.b874afed.css",
+    "main.js": "/MGHsite/static/js/main.d75a6542.js",
     "static/js/200.67a89a02.chunk.js": "/MGHsite/static/js/200.67a89a02.chunk.js",
     "static/js/539.55a50ab6.chunk.js": "/MGHsite/static/js/539.55a50ab6.chunk.js",
     "static/media/mendoza.jpg": "/MGHsite/static/media/mendoza.b920eed05edcb9d2f52f.jpg",
@@ -26,13 +26,13 @@
     "static/media/MGHlogo.png": "/MGHsite/static/media/MGHlogo.2214a25b1841baf7e49d.png",
     "static/media/status.svg": "/MGHsite/static/media/status.9a2dda8e45039f86909e5be62a79b8fd.svg",
     "index.html": "/MGHsite/index.html",
-    "main.083e62ed.css.map": "/MGHsite/static/css/main.083e62ed.css.map",
-    "main.29072528.js.map": "/MGHsite/static/js/main.29072528.js.map",
+    "main.b874afed.css.map": "/MGHsite/static/css/main.b874afed.css.map",
+    "main.d75a6542.js.map": "/MGHsite/static/js/main.d75a6542.js.map",
     "200.67a89a02.chunk.js.map": "/MGHsite/static/js/200.67a89a02.chunk.js.map",
     "539.55a50ab6.chunk.js.map": "/MGHsite/static/js/539.55a50ab6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.083e62ed.css",
-    "static/js/main.29072528.js"
+    "static/css/main.b874afed.css",
+    "static/js/main.d75a6542.js"
   ]
 }
