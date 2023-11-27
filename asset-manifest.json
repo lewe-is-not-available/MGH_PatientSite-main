@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/MGHsite/static/css/main.c1aa2c84.css",
-    "main.js": "/MGHsite/static/js/main.fff24647.js",
+    "main.css": "/MGHsite/static/css/main.0447e4ce.css",
+    "main.js": "/MGHsite/static/js/main.810d6923.js",
     "static/js/200.67a89a02.chunk.js": "/MGHsite/static/js/200.67a89a02.chunk.js",
     "static/js/539.55a50ab6.chunk.js": "/MGHsite/static/js/539.55a50ab6.chunk.js",
     "static/media/mendoza.jpg": "/MGHsite/static/media/mendoza.b920eed05edcb9d2f52f.jpg",
@@ -21,18 +21,17 @@
     "static/media/f2f.png": "/MGHsite/static/media/f2f.86e56804ed69bfe79a7e.png",
     "static/media/online.png": "/MGHsite/static/media/online.af626fbf130174501b37.png",
     "static/media/history.png": "/MGHsite/static/media/history.8e8e898f50bf9ae35456.png",
-    "static/media/feedback.png": "/MGHsite/static/media/feedback.50d588437efd898d1977.png",
     "static/media/contact.png": "/MGHsite/static/media/contact.72eb6cef7817f38f097d.png",
     "static/media/MGHlogo.png": "/MGHsite/static/media/MGHlogo.2214a25b1841baf7e49d.png",
     "static/media/status.svg": "/MGHsite/static/media/status.9a2dda8e45039f86909e5be62a79b8fd.svg",
     "index.html": "/MGHsite/index.html",
-    "main.c1aa2c84.css.map": "/MGHsite/static/css/main.c1aa2c84.css.map",
-    "main.fff24647.js.map": "/MGHsite/static/js/main.fff24647.js.map",
+    "main.0447e4ce.css.map": "/MGHsite/static/css/main.0447e4ce.css.map",
+    "main.810d6923.js.map": "/MGHsite/static/js/main.810d6923.js.map",
     "200.67a89a02.chunk.js.map": "/MGHsite/static/js/200.67a89a02.chunk.js.map",
     "539.55a50ab6.chunk.js.map": "/MGHsite/static/js/539.55a50ab6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c1aa2c84.css",
-    "static/js/main.fff24647.js"
+    "static/css/main.0447e4ce.css",
+    "static/js/main.810d6923.js"
   ]
 }
