@@ -51,15 +51,15 @@ const ArchiveMap = ({ ol, CDNURL }) => {
     async function getImages() {
       const { data, error } = await supabase.storage
         .from("images")
-        .list(id + "/", {
-          limit: 100,
+        .list(id + "/profile/", {
+          limit: 10,
           offset: 0,
           sortBy: { column: "created_at", order: "asc" },
         });
   
-      if (data[1]) {
+      if (data[0]) {
         setImgEmpty(true);
-        setimgName(data[1].name);
+        setimgName(data[0].name);
       }
   
       if (error) {
@@ -98,7 +98,7 @@ const ArchiveMap = ({ ol, CDNURL }) => {
                 className="object-cover rounded-full w-[4rem] h-[4rem]"
                 src={`${
                   isImgEmpty
-                    ? CDNURL + ol.email + "/" + imgName
+                    ? CDNURL + ol.email + "/profile/" + imgName
                     : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
                 }`}
                 alt="/"

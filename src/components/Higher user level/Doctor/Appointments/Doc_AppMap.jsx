@@ -7,7 +7,7 @@ import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
 import supabase from "../../../config/Supabase";
 
-const Online = ({ ol, CDNURL }) => {
+const Doc_AppMap = ({ ol, CDNURL }) => {
   //TODO fix scroll animation
   //*expand details
   const [expand, setExpand] = useState(false);
@@ -48,11 +48,11 @@ const Online = ({ ol, CDNURL }) => {
   const [imgName, setimgName] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(false);
 
-  async function getImages() {
+  async function getImages({ ol, CDNURL }) {
     const { data, error } = await supabase.storage
       .from("images")
       .list(id + "/profile/", {
-        limit: 100,
+        limit: 10,
         offset: 0,
         sortBy: { column: "created_at", order: "asc" },
       });
@@ -67,7 +67,6 @@ const Online = ({ ol, CDNURL }) => {
       console.log(error);
     }
   }
-  
   useEffect(() => {
     if (ol) {
       getImages(id, setimgName, setImgEmpty);
@@ -76,7 +75,7 @@ const Online = ({ ol, CDNURL }) => {
 
   //*AOS function
   useEffect(() => {
-    Aos.init({ duration: 300 });
+    Aos.init({ duration: 500 });
     Aos.refresh();
   }, []);
 
@@ -198,4 +197,4 @@ const Online = ({ ol, CDNURL }) => {
   );
 };
 
-export default Online;
+export default Doc_AppMap;

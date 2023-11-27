@@ -30,6 +30,11 @@
   text-sm text-center flex flex-col items-center bg-white rounded-xl transition 
   duration-200 hover:shadow-none
 }
+.BottomBox{
+  @apply abs py-9 px-6 w-full cursor-pointer border-[1px] border-green-300 
+  text-sm text-center flex flex-col items-center bg-white rounded-xl transition 
+  duration-200 hover:shadow-none
+}
 .Adminboxes{
   @apply abs py-4 px-6 w-[17rem] cursor-pointer border-[1px] text-sm 
   text-left flex flex-col items-start bg-white rounded-xl transition duration-200 
@@ -37,6 +42,9 @@
 }
 .imgDash{
   @apply  mb-7 w-[13rem] h-[13rem] bg-[#a7eb9c85] rounded-2xl
+}
+.imgDashBottom{
+  @apply  mb-7 w-full h-[13rem] bg-[#a7eb9c85] rounded-2xl
 }
 .titleText{
   @apply text-white hover:bg-opacity-80 transition duration-100 font-semibold text-lg mb-3 text-center w-full bg-green-600

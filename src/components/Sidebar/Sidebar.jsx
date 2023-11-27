@@ -2,7 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import supabase from "../config/Supabase";
 import copy from "copy-to-clipboard";
 import { toast } from "react-toastify";
-import { IoClose } from "react-icons/io5";
+import {
+  IoClose,
+  IoNotificationsOutline,
+  IoNotificationsSharp,
+} from "react-icons/io5";
 import { Link } from "react-router-dom";
 import {
   AiOutlineHome,
@@ -387,7 +391,7 @@ const Sidebar = ({
               >
                 <MdOutlineFeedback className="text-2xl mr-2 group-hover/os:invisible" />
                 <MdFeedback className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
-                <p className="-translate-x-8">Patient's feedback form</p>
+                <p className="-translate-x-8">Message</p>
               </Link>
             </>
           )}
@@ -437,8 +441,21 @@ const Sidebar = ({
                 to="/DoctorConsultHistory"
                 className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
               >
-                <GoHistory className="text-2xl mr-2" />
+                <BsArchive className="text-2xl mr-2 group-hover/os:invisible" />
+                <BsArchiveFill className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
                 <p className="-translate-x-8">Archives</p>
+              </Link>
+            </>
+          )}
+          {token && (
+            <>
+              <Link
+                to="/Notifications"
+                className="px-4 py-1 group/os items-center hover:cursor-pointer transition duration-75 ease-in hover:bg-[#5f915a94] mx-4 my-3 rounded-md hover:text-white flex"
+              >
+                <IoNotificationsOutline className="text-2xl mr-2 group-hover/os:invisible" />
+                <IoNotificationsSharp className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
+                <p className="-translate-x-8">Notifications</p>
               </Link>
             </>
           )}

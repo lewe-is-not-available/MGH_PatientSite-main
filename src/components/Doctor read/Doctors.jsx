@@ -17,15 +17,15 @@ const DocUniq = ({ Doctors }) => {
   async function getImages() {
     const { data, error } = await supabase.storage
       .from("images")
-      .list(id + "/", {
+      .list(id + "/profile/", {
         limit: 100,
         offset: 0,
         sortBy: { column: "created_at", order: "asc" },
       });
 
-    if (data[1]) {
+    if (data[0]) {
       setImgEmpty(true);
-      setimgName(data[1].name);
+      setimgName(data[0].name);
     }
 
     if (error) {
@@ -42,6 +42,7 @@ const DocUniq = ({ Doctors }) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
+  console.log(CDNURL + Doctors.email + "/profile/" + imgName)
   return (
     <div
       data-aos="fade-up"
@@ -57,11 +58,11 @@ const DocUniq = ({ Doctors }) => {
         <img
           src={`${
             isImgEmpty
-              ? CDNURL + Doctors.email + "/" + imgName
+              ? CDNURL + Doctors.email + "/profile/" + imgName
               : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/doc.jpg"
           }`}
           alt="/"
-          className="w-[15rem] max-2xl:w-[13rem] max-sm:w-[10rem] max-sm:mb-3 mb-6 rounded-lg"
+          className="w-[15rem] h-full object-cover max-2xl:w-[13rem] max-sm:w-[10rem] max-sm:mb-3 mb-6 rounded-lg"
           data-aos="fade-up"
           data-aos-anchor-placement="top-bottom"
         />

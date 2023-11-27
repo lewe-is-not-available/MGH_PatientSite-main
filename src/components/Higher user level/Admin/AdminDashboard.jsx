@@ -35,6 +35,7 @@ const Admin = () => {
       setfilt(data);
     }
   };
+
   //*Get count of books
   useEffect(() => {
     if (filt) {
@@ -43,7 +44,6 @@ const Admin = () => {
         const comp = !item.status.includes("Completed");
         return conf && comp;
       });
-
       setBook(filtered);
     }
     if (books) {

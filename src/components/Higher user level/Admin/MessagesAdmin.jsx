@@ -1,9 +1,10 @@
-import React from 'react'
-
+import React from "react";
 const MessagesAdmin = () => {
   return (
-    <div>feedback_Admin</div>
-  )
-}
+    <div>
+    asd
+    </div>
+  );
+};
 
-export default MessagesAdmin
+export default MessagesAdmin;

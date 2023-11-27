@@ -27,6 +27,7 @@ const Signup = ({ Closereg, open }) => {
     Phone: "",
     confirmEmail: "",
     confrimPass: "",
+    Address:""
   });
 
   //*Onchange event
@@ -61,7 +62,6 @@ const Signup = ({ Closereg, open }) => {
       setisVerified(false);
     } else {
       setVerifyLoad(false);
-      //setOTP(session.provider_token);
     }
   };
   //*Onsubmit
@@ -85,6 +85,7 @@ const Signup = ({ Closereg, open }) => {
             phone: formData.Phone,
             birth_date: date,
             role: "patient",
+            address: formData.Address
           },
         },
       });
@@ -189,7 +190,6 @@ const Signup = ({ Closereg, open }) => {
                       focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
-
                   <div className="">
                     <p>Contact Number: </p>
                     <input
@@ -201,9 +201,9 @@ const Signup = ({ Closereg, open }) => {
                     />
                   </div>
                   <div className="">
-                    <p>Contact Number: </p>
-                    <input
-                      name="Phone"
+                    <p>Brgy. or municipality: </p>
+                    <textarea
+                      name="Address"
                       onChange={handleChange}
                       autoComplete="on"
                       required

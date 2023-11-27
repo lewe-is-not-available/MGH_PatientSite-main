@@ -1,7 +1,7 @@
 import React from "react";
-import supabaseAdmin from "../../config/SupabaseAdmin";
+import supabaseAdmin from "../../../config/SupabaseAdmin";
 
-const patientMap = ({ data, setPatientId, PatientId }) => {
+const PatientMap = ({ data, setPatientId, PatientId }) => {
   setPatientId(data.id);
   const deletUser = async () => {
     await supabaseAdmin.auth.admin.deleteUser(PatientId);
@@ -19,4 +19,4 @@ const patientMap = ({ data, setPatientId, PatientId }) => {
   );
 };
 
-export default patientMap;
+export default PatientMap;

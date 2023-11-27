@@ -8,7 +8,6 @@ import "aos/dist/aos.css";
 import online from "../images/dashboard_icons/online.png";
 import f2f from "../images/dashboard_icons/f2f.png";
 import contact from "../images/dashboard_icons/contact.png";
-import feedback from "../images/dashboard_icons/feedback.png";
 import history from "../images/dashboard_icons/history.png";
 import status from "../images/dashboard_icons/status.svg";
 import { Link } from "react-router-dom";
@@ -301,7 +300,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
       {patient || !token ? (
         <>
           <div className="flex justify-center mb-20">
-            <div className="grid place-items-center grid-cols-3 features gap-x-20 gap-y-16 w-full">
+            <div className="grid place-items-center grid-cols-3 features gap-10 w-full">
               {/* Online consult */}
               <Link
                 to="/Appointment/Online"
@@ -319,52 +318,6 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                 <div className="titleText">Face to face Consult</div>
                 <p>Book an appointment for Face to face consult</p>
               </Link>
-              {/* Contact us */}
-              <Link to="/Contacts" className="boxes" data-aos="fade-up">
-                <img
-                  src={contact}
-                  alt="/"
-                  className=" imgDash p-5 py-8 max-[425px]:py-5"
-                />
-                <div className="titleText">Contact Us!</div>
-                <p>Need to give us a message? Feel free to contact us.</p>
-              </Link>
-              {/* Feedback form */}
-              <Link
-                to="/Feedback-Form"
-                className="boxes"
-                data-aos-anchor="#trigger"
-                data-aos="fade-up"
-              >
-                <img src={feedback} alt="/" className="imgDash p-5" />
-                <div className="titleText">Feedback form</div>
-                <p>Let us know what you think of our website</p>
-              </Link>
-              {/* Consult history */}
-              {!token ? (
-                <div
-                  onClick={showLogin}
-                  className="boxes"
-                  data-aos-anchor="#trigger"
-                  data-aos="fade-up"
-                >
-                  <img src={history} alt="/" className="imgDash p-7" />
-                  <div className="titleText">Consultation History</div>
-                  <p>Have a look at your recent online consultations</p>
-                </div>
-              ) : (
-                <Link
-                  to="/Online_Consultation_History"
-                  className="boxes"
-                  data-aos="fade-up"
-                  data-aos-anchor="#trigger"
-                >
-                  <img src={history} alt="/" className="imgDash p-7" />
-                  <div className="titleText">Consultation History</div>
-                  <p>Have a look at your recent online consultations</p>
-                </Link>
-              )}
-
               {/* Appointment status */}
               {!token ? (
                 <div
@@ -389,6 +342,55 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                   <p>Keep track of your appointment status</p>
                 </Link>
               )}
+              <div className="grid grid-cols-2 col-span-3 gap-x-10 w-full">
+                {/* Contact us */}
+                <Link
+                  to="/Contacts"
+                  className="BottomBox"
+                  data-aos-anchor="#trigger"
+                  data-aos="fade-up"
+                >
+                  <img
+                    src={contact}
+                    alt="/"
+                    className=" imgDashBottom  px-24 py-8 max-[425px]:py-5"
+                  />
+                  <div className="titleText">Contact Us!</div>
+                  <p>Need to give us a message? Feel free to contact us.</p>
+                </Link>
+                {/* Consult history */}
+                {!token ? (
+                  <div
+                    onClick={showLogin}
+                    className="BottomBox"
+                    data-aos-anchor="#trigger"
+                    data-aos="fade-up"
+                  >
+                    <img
+                      src={history}
+                      alt="/"
+                      className="imgDashBottom px-24 py-7"
+                    />
+                    <div className="titleText">Consultation History</div>
+                    <p>Have a look at your recent online consultations</p>
+                  </div>
+                ) : (
+                  <Link
+                    to="/Online_Consultation_History"
+                    className="BottomBox"
+                    data-aos="fade-up"
+                    data-aos-anchor="#trigger"
+                  >
+                    <img
+                      src={history}
+                      alt="/"
+                      className="imgDashBottom px-24 py-7"
+                    />
+                    <div className="titleText">Consultation History</div>
+                    <p>Have a look at your recent online consultations</p>
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </>

@@ -28,9 +28,9 @@ const SearchResult = ({ Doctors }) => {
         sortBy: { column: "created_at", order: "asc" },
       });
 
-    if (data[1]) {
+    if (data[0]) {
       setImgEmpty(true);
-      setimgName(data[1].name);
+      setimgName(data[0].name);
     }
 
     if (error) {
@@ -47,7 +47,9 @@ const SearchResult = ({ Doctors }) => {
     Aos.init({ duration: 1000 });
   }, []);
   return (
-    <div className="Doc_Uniq">
+    <div
+    key={Doctors.id}
+    className="Doc_Uniq">
       <div
         data-aos="zoom-out"
         className="docs text-sm bg-[#A5DD9D] px-3 py-5 h-[98%] rounded-xl flex flex-col
@@ -60,7 +62,7 @@ const SearchResult = ({ Doctors }) => {
               : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/doc.jpg"
           }`}
           alt="/"
-          className="w-[15rem] max-2xl:w-[13rem] max-sm:w-[10rem] max-sm:mb-3 mb-6 rounded-lg"
+          className="w-[15rem] h-full object-cover max-2xl:w-[13rem] max-sm:w-[10rem] max-sm:mb-3 mb-6 rounded-lg"
           data-aos="fade-up"
           data-aos-anchor-placement="top-bottom"
         />

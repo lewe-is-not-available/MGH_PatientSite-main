@@ -8,11 +8,18 @@ import UploadPic from "./UploadPic";
 import Specials from "../../../Specials.json";
 import SubSpecial from "../../../SubSpecial.json";
 import { cardio } from "ldrs";
+import Aos from "aos";
+import "aos/dist/aos.css";
 import SuccessAdding from "./SuccessAdding";
 
 cardio.register();
 
 const AddingDoctor = ({ setShowAdd }) => {
+  //*AOS function
+  useEffect(() => {
+    Aos.init({ duration: 300 });
+    Aos.refresh();
+  }, []);
   let addDocRef = useRef();
   useEffect(() => {
     let handler = (e) => {
@@ -91,6 +98,7 @@ const AddingDoctor = ({ setShowAdd }) => {
     honorific: "",
     phone: "",
     id: "",
+    gmeet: "",
   });
   //*Schedule
   const weeks = [
@@ -184,60 +192,62 @@ const AddingDoctor = ({ setShowAdd }) => {
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    //*Creating acc function
-    const { data: created, error: fail } =
-      await supabaseAdmin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: {
-          role: "doctor",
-          birth_date: formData.bday,
-          first_name: formData.fname,
-          middle_name: formData.mname,
-          last_name: formData.lname,
-          phone: formData.phone,
-          username: formData.lname + (formData.id ? formData.id : ""),
-        },
-      });
-    try {
-      if (fail) throw fail;
-      else if (created) {
-        uploadImage();
-        const { error: insertErr } = await supabase
-          .from("dr_information")
-          .insert({
-            name: FullName,
-            phone: formData.phone,
-            specialization: formData.special,
-            subspecial: formData.subspec,
-            schedule: schedule,
-            hmo: formData.hmo,
-            honorific: formData.honorific,
-            email: email,
-          });
-        if (insertErr) {
-          setTimeout(() => {
-            setLoading(false);
-          }, 1000);
-          toast.error(insertErr.message, { autoClose: false });
-          console.log(insertErr);
-        } else {
-          setSuccess(true);
-        }
-      }
-    } catch (fail) {
+    const { error: insertErr } = await supabase.from("dr_information").insert({
+      name: FullName,
+      phone: formData.phone,
+      specialization: formData.special,
+      subspecial: formData.subspec,
+      schedule: schedule,
+      hmo: formData.hmo,
+      honorific: formData.honorific,
+      email: email,
+      type: formData.type === "Face to face" ? "f2f" : "ol",
+      gmeet: formData.gmeet,
+    });
+    if (insertErr) {
       setTimeout(() => {
         setLoading(false);
-      }, 1000);
-      toast.error(fail.message, { autoClose: false });
-      console.log(fail);
+      }, 2000);
+      toast.error(insertErr.message, { autoClose: false });
+      console.log(insertErr);
+    } else {
+      //*Creating acc function
+      const { data: created, error: fail } =
+        await supabaseAdmin.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+          user_metadata: {
+            role: "doctor",
+            birth_date: formData.bday,
+            first_name: formData.fname,
+            middle_name: formData.mname,
+            last_name: formData.lname,
+            phone: formData.phone,
+            username: formData.lname + (formData.id ? formData.id : ""),
+          },
+        });
+      try {
+        if (fail) throw fail;
+        else if (created) {
+          setTimeout(() => {
+            setLoading(false);
+            uploadImage();
+          }, 2000);
+        }
+      } catch (fail) {
+        toast.error(fail.message, { autoClose: false });
+        console.log(fail);
+      }
+      setTimeout(() => {
+        setSuccess(true);
+      }, 1500);
     }
   }
-  console.log(schedule);
   return (
     <div className="absolute bg-black bg-opacity-40 backdrop-blur-sm w-full h-full z-50 flex justify-center">
       <div
+        data-aos="fade-left"
         ref={addDocRef}
         className="bg-white mt-[5rem] flex flex-col items-center abs rounded-lg p-6 h-[60%] w-[80%]"
       >
@@ -407,6 +417,16 @@ const AddingDoctor = ({ setShowAdd }) => {
                         <option id="0">Face to face</option>
                         <option id="1">Online Consultation</option>
                       </select>
+                    </div>
+                    <div className="flex flex-col ">
+                      <p>Gmeet room link:</p>
+                      <input
+                        required
+                        type="text"
+                        name="gmeet"
+                        onChange={handleChange}
+                        className="w-fit px-3 bg-slate-100 border-b-2 border-slate-400"
+                      ></input>
                     </div>
                   </div>
 

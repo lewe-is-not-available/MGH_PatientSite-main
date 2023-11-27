@@ -7,6 +7,7 @@ import { VscFilter, VscFilterFilled } from "react-icons/vsc";
 import { BsSearch } from "react-icons/bs";
 import { MagnifyingGlass } from "react-loader-spinner";
 import AddingDoctor from "./AddingDoctor";
+import { IoMdPersonAdd } from "react-icons/io";
 
 const EditDoctors = () => {
   const [books, setBook] = useState([]);
@@ -35,8 +36,8 @@ const EditDoctors = () => {
       )
       .subscribe();
   }, []);
-  const [PatientId, setPatientId] = useState();
 
+  const [PatientId, setPatientId] = useState();
   const [User, setUsers] = useState();
   const fetchUsers = async () => {
     const { data, error } = await supabaseAdmin.auth.admin.listUsers();
@@ -139,21 +140,6 @@ const EditDoctors = () => {
     }
   }, [isAsc, Type, Status, Someone, setBook, filt]);
 
-  //*Realtime
-  useEffect(() => {
-    fetchBooks();
-    supabase
-      .channel("custom-all-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "Patient_Appointments" },
-        () => {
-          fetchBooks();
-        }
-      )
-      .subscribe();
-  }, []);
-
   //*Adding doctors function
   const [ShowAdd, setShowAdd] = useState(false);
   if (ShowAdd) {
@@ -203,9 +189,10 @@ const EditDoctors = () => {
             </div>
             <button
               onClick={() => setShowAdd(!ShowAdd)}
-              className="bg-slate-300 px-3"
+              className="px-5 py-1 rounded-full transition duration-100 flex items-center space-x-2 hover:text-white hover:bg-primary-500 bg-primary-300"
             >
-              Add a doctor
+              <IoMdPersonAdd className="text-xl" />
+              <p>Add a doctor</p>
             </button>
           </div>
           <div

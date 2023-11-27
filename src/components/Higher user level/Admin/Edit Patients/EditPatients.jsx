@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import supabase from "../../config/Supabase";
-import supabaseAdmin from "../../config/SupabaseAdmin";
-import PatientMap from "./UserMap";
+import supabase from "../../../config/Supabase";
+import supabaseAdmin from "../../../config/SupabaseAdmin";
+import PatientMap from "./PatientMap";
 
 const EditDoctors = () => {
   const [books, setBook] = useState([]);

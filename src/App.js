@@ -11,6 +11,7 @@ import Profile from "./components/HospitalProfile";
 import Feedback from "./components/Feedback";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Status from "./components/patient/Appointment Process/Appointment Status/Status";
+import Notification from "./components/Notification";
 
 //patient
 import Online from "./components/patient/Appointment Process/OnlineConsult";
@@ -27,12 +28,12 @@ import WaitVerify from "./components/patient/Appointment Process/After Submittin
 
 //Doctor
 import DoctorConsultHistory from "./components/Higher user level/Doctor/DoctorConsulHistory";
-import DocAppointments from "./components/Higher user level/Doctor/Doc_Appointments";
+import DocAppointments from "./components/Higher user level/Doctor/Appointments/Doc_Appointments";
 
 //admin
 import EditDoctors from "./components/Higher user level/Admin/Edit Doctors/EditDoctors";
 import DocDetails from "./components/Higher user level/Admin/Edit Doctors/DocDetails";
-import EditPatients from "./components/Higher user level/Admin/EditPatients";
+import EditPatients from "./components/Higher user level/Admin/Edit Patients/EditPatients";
 import Archive from "./components/Higher user level/Admin/Archives/Archive";
 import AdminFeedback from "./components/Higher user level/Admin/MessagesAdmin";
 import AppointmentDetails from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentDetails";
@@ -197,6 +198,7 @@ function App() {
           />
 
           {/*patient's side */}
+          <Route path="/Notifications" element={<Notification />} />
           <Route path="/Mission-and-Vision" element={<MissonVision />} />
           <Route path="/Feedback-Form" element={<Feedback token={token} />} />
           <Route path="/Contacts" element={<Contacts token={token} />} />
@@ -256,7 +258,7 @@ function App() {
                   />
                   <Route
                     path="/Doctor/Appointments"
-                    element={<DocAppointments />}
+                    element={<DocAppointments CDNURL={CDNURL} />}
                   />
                 </>
               )}

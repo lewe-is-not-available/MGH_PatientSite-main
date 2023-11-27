@@ -6,6 +6,7 @@ import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { AiOutlineDown } from "react-icons/ai";
+import { HiClipboardList } from "react-icons/hi";
 
 const EditDocMap = ({ ol }) => {
   const CDNURL =
@@ -61,9 +62,9 @@ const EditDocMap = ({ ol }) => {
         sortBy: { column: "created_at", order: "asc" },
       });
 
-    if (data[1]) {
+    if (data[0]) {
       setImgEmpty(true);
-      setimgName(data[1].name);
+      setimgName(data[0].name);
     }
 
     if (error) {
@@ -82,7 +83,7 @@ const EditDocMap = ({ ol }) => {
     Aos.init({ duration: 500 });
     Aos.refresh();
   }, []);
-
+  console.log(CDNURL + ol.email + "/profile/" + imgName);
   return (
     <section key={ol.id} className="text-base flex w-full select-none">
       <div
@@ -153,13 +154,16 @@ const EditDocMap = ({ ol }) => {
             <div className="flex">
               <BsFillCalendarCheckFill className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[24px]  text-green-600" />
               <label className="w-fit ml-4 text-left text-base text-black">
-                Scheduled at <p className="text-slate-400">{ol.date}</p>
+                Schedules{" "}
+                <label className="text-slate-400 flex">
+                  {ol.schedule && ol.schedule.map((sched) => <p className="p-2 rounded-sm mr-2 bg-opacity-20 text-slate-400 bg-green-600">{sched.day === "Thursday" ? "Th":sched.day[0] + " "}</p>)}
+                </label>
               </label>
             </div>
             <div className="flex">
-              <MdAccessTimeFilled className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
+              <HiClipboardList className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
               <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                Time <p className="text-slate-400">{ol.time}</p>
+                Consultation Type <p className="text-slate-400">{ol.type === "ol" ? "Online Consultations":"Face to face Consultations"}</p>
               </label>
             </div>
 
@@ -175,7 +179,7 @@ const EditDocMap = ({ ol }) => {
               {" "}
               <MdPhone className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
               <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                Phone <p className="text-slate-400">{ol.number}</p>
+                Phone <p className="text-slate-400">{ol.phone}</p>
               </label>
             </div>
           </div>
@@ -185,7 +189,7 @@ const EditDocMap = ({ ol }) => {
               onClick={(e) => e.stopPropagation()}
             >
               <button className="text-lg px-14 py-1 transition duration-100 hover:bg-[#377532] bg-[#3dbb34] text-white rounded-md">
-                Appointment Details
+                Doctor Details
               </button>
             </Link>
             <button
