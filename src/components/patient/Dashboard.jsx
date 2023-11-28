@@ -228,14 +228,13 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                     </div>
                   </div>
                   <div className="text-xl text-[#315E30]">
-                    <p className="search_label">HMO Accredation</p>
+                    <p className="search_label">Consultation Type</p>
                     {/* Hmo input */}
-                    <input
-                      type="text"
+                    <select
                       value={Hmo}
                       onChange={(e) => setHmo(e.target.value)}
                       placeholder="Enter Accredation"
-                      className="py-2 pr-8 serachInput bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
+                      className="py-2 pr-8 serachInput w-44 bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
               focus:border-b-[#315E30]"
                     />
                   </div>

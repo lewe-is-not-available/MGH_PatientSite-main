@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const SomeoneF2f = ({
   formData,
@@ -23,6 +24,7 @@ const SomeoneF2f = ({
   handleDrop,
   handleFile,
   File,
+  onChange,
 }) => {
   //*If Relation is Other
   const [isOtherRelation, setOtherRelation] = useState(false);
@@ -165,19 +167,6 @@ const SomeoneF2f = ({
             required
           />
         </p>
-        <div className="ml-3 whitespace-nowrap">
-          <p className="-ml-1">
-            Patient's Age:
-            <br />
-          </p>
-          <input
-            name="PatientAge"
-            type="number"
-            autoComplete="on"
-            required
-            className="outline-none rounded-md font-thin w-20 border-2 px-2 border-slate-300 focus:border-[#71b967d3]"
-          />
-        </div>
       </div>
       <div className="col-span-2">
         <p className="whitespace-normal ">Select Date of the appointment:</p>
@@ -360,6 +349,12 @@ const SomeoneF2f = ({
             </div>
           )}
         </div>
+      </div>
+      <div className="col-span-3">
+        <ReCAPTCHA
+          sitekey="6Ld1th8pAAAAAPXTH0voBtx2Zser_ws8kWuSyVPJ"
+          onChange={onChange}
+        />
       </div>
       <div className="flex items-center mb-6 font-extralight whitespace-nowrap">
         <input

@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
 import { Oval } from "react-loader-spinner";
-import { useNavigate } from "react-router-dom";
 
 const DocDetails = () => {
   const CDNURL =
@@ -133,7 +132,7 @@ const DocDetails = () => {
   return (
     <div className="back flex flex-col items-center min-h-screen h-auto w-full">
       <h1 className="w-full text-3xl mt-10 text-center font-semibold text-[#256e2b] uppercase">
-        Appointment details
+        Doctor's details
       </h1>
       <form className="flex flex-col px-12 py-10 mt-10 bg-white w-[80%] abs">
         {loading ? (

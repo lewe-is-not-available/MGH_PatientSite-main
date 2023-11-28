@@ -23,9 +23,9 @@ const Status = ({ user }) => {
             sortBy: { column: "created_at", order: "asc" },
           });
 
-        if (data[1]) {
+        if (data[0]) {
           setImgEmpty(true);
-          setimgName(data[1].name);
+          setimgName(data[0].name);
         }
 
         if (error) {
@@ -133,7 +133,7 @@ const Status = ({ user }) => {
   useEffect(() => {
     const filterBook = filt
       .filter((item) => {
-        const defStat = !item.status.includes("Confirmed");
+        const defStat = !item.status.includes("Completed");
         const someone = item.someone.includes(Someone);
         const Time = item.time.toLowerCase().includes(time);
         const type = item.type.toLowerCase().includes(Type);

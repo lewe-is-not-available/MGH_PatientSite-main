@@ -16,6 +16,7 @@ import Notification from "./components/Notification";
 //patient
 import Online from "./components/patient/Appointment Process/OnlineConsult";
 import Appointment from "./components/patient/Appointment Process/Appointment";
+import AppointDetails from "./components/patient/Appointment Process/Appointment Status/PatientAppointDetails";
 import DocInfo from "./components/Doctor read/DoctorInfo";
 import OnlineOrF2f from "./components/patient/Appointment Process/ChooseType";
 import F2f from "./components/patient/Appointment Process/Face2face";
@@ -223,6 +224,7 @@ function App() {
             }
           />
           <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
+          <Route path="/PatientAppointment/:id" element={<AppointDetails />} />
           {/* Appointment procedures */}
           <Route
             path={"/Appointment"}

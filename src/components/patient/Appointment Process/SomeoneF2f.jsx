@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
-import Consent from "./Consent";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
-import { RotatingLines } from "react-loader-spinner";
-import { AiOutlineCheckCircle } from "react-icons/ai";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const SomeoneF2f = ({
   formData,
@@ -26,6 +24,7 @@ const SomeoneF2f = ({
   handleDrop,
   handleFile,
   File,
+  onChange
 }) => {
   //*If Relation is Other
   const [isOtherRelation, setOtherRelation] = useState(false);
@@ -351,6 +350,12 @@ const SomeoneF2f = ({
             </div>
           )}
         </div>
+      </div>
+      <div className="col-span-3">
+        <ReCAPTCHA
+          sitekey="6Ld1th8pAAAAAPXTH0voBtx2Zser_ws8kWuSyVPJ"
+          onChange={onChange}
+        />
       </div>
       <div className="flex items-center mb-6 font-extralight whitespace-nowrap">
         <input

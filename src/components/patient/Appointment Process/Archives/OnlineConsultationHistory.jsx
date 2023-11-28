@@ -23,9 +23,9 @@ const OnlineConsultationHistory = ({ user }) => {
             sortBy: { column: "created_at", order: "asc" },
           });
 
-        if (data[1]) {
+        if (data[0]) {
           setImgEmpty(true);
-          setimgName(data[1].name);
+          setimgName(data[0].name);
         }
 
         if (error) {
@@ -38,8 +38,9 @@ const OnlineConsultationHistory = ({ user }) => {
   }, [user, setimgName, setImgEmpty]);
 
   const [filt, setfilt] = useState([]);
+  const [Book, setBook] = useState([]);
   const [Loaded, setLoaded] = useState(true);
-
+  console.log(filt)
   const fetchBooks = async () => {
     setLoaded(false);
     if (user.email) {
@@ -60,9 +61,20 @@ const OnlineConsultationHistory = ({ user }) => {
       }
     }
   };
+
+  useEffect(() => {
+    if(filt){
+      const filtered = filt.filter((item) => {
+        const stat = item.status.includes("Completed");
+        return stat;
+      });
+      setBook(filtered)
+    }
+  }, [filt]);
+
   //*REALTIME FUNCTION
   useEffect(() => {
-    fetchBooks(user.email);
+    fetchBooks();
     supabase
       .channel("custom-all-channel")
       .on(
@@ -73,7 +85,7 @@ const OnlineConsultationHistory = ({ user }) => {
         }
       )
       .subscribe();
-  }, [user.id]);
+  }, []);
   return (
     <div className="back h-full flex justify-center">
       <div className="w-[70%]">
@@ -84,7 +96,7 @@ const OnlineConsultationHistory = ({ user }) => {
           >
             <ArchivePaginated
               imgName={imgName}
-              books={filt}
+              books={Book}
               setLoaded={setLoaded}
               Loaded={Loaded}
               user={user}

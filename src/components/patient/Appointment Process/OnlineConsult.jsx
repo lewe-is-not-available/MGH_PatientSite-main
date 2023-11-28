@@ -9,8 +9,16 @@ import { toast } from "react-toastify";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 import { v4 as uuidv4 } from "uuid";
 import { ThreeDots } from "react-loader-spinner";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const OnlineConsult = ({ openTerms, token }) => {
+
+  //*ReCaptcha
+  const [Valid, setValid] = useState(false);
+  function onChange(value) {
+    console.log("Captcha value:", value);
+    setValid(value);
+  }
   //*make pass visible or not
   const [visible, setVisible] = useState(false);
   const [visible1, setVisible1] = useState(false);
@@ -143,8 +151,15 @@ const OnlineConsult = ({ openTerms, token }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    //*If captcha is not confirmed
+    if (!Valid) {
+      toast.error("Please finish the captcha first", {
+        toastId: "CaptchaErr",
+      });
+      return;
+    }
     //*If there is no screenshot uploaded
-    if (!isSelected) {
+    else if (!isSelected) {
       toast.error("Please finish the payment first", {
         toastId: "imageErr",
       });
@@ -424,6 +439,7 @@ const OnlineConsult = ({ openTerms, token }) => {
                 <div>
                   {isSomeone ? (
                     <SomeoneF2f
+                      onChange={onChange}
                       isSelected={isSelected}
                       image={image}
                       handleCancel={handleCancel}
@@ -578,7 +594,6 @@ const OnlineConsult = ({ openTerms, token }) => {
                           </p>
                         </div>
                       )}
-
                       <div className="col-span-2">
                         <p className="whitespace-normal ">
                           Select Date of the appointment:
@@ -715,6 +730,12 @@ const OnlineConsult = ({ openTerms, token }) => {
                           )}
                         </div>
                       </div>
+                      <div className="col-span-3">
+                        <ReCAPTCHA
+                          sitekey="6Ld1th8pAAAAAPXTH0voBtx2Zser_ws8kWuSyVPJ"
+                          onChange={onChange}
+                        />
+                      </div>
                       <div className="flex items-center mb-6 whitespace-nowrap">
                         <input
                           id="default-checkbox"
@@ -724,7 +745,7 @@ const OnlineConsult = ({ openTerms, token }) => {
                         />
 
                         <label className="ml-2 text-sm font-thin">
-                          Terms and Condition
+                          Terms and Condition{" "}
                           <button onClick={openTerms} className="text-primary">
                             Read More
                           </button>

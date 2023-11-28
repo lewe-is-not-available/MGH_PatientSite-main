@@ -10,8 +10,15 @@ import { useNavigate } from "react-router-dom";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 import { v4 as uuidv4 } from "uuid";
 import { ThreeDots } from "react-loader-spinner";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Face2face = ({ token, openTerms }) => {
+  //*ReCaptcha
+  const [Valid, setValid] = useState(false);
+  function onChange(value) {
+    console.log("Captcha value:", value);
+    setValid(value);
+  }
   //*make pass visible or not
   const [visible, setVisible] = useState(false);
   const [visible1, setVisible1] = useState(false);
@@ -144,6 +151,14 @@ const Face2face = ({ token, openTerms }) => {
   const [SubmitLoad, setSubLoad] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    //*If captcha is not confirmed
+    if (!Valid) {
+      toast.error("Please finish the captcha first", {
+        toastId: "CaptchaErr",
+      });
+      return;
+    }
     //*If there is no screenshot uploaded
     if (!isSelected) {
       toast.error("Please finish the payment first", {
@@ -328,7 +343,12 @@ const Face2face = ({ token, openTerms }) => {
             data-aos="fade-up"
             className="text-center flex flex-col items-center mt-[8rem]"
           >
-            <img data-aos="fade-up" src={doc} className="px-5 py-3 max-[1238px]:w-[20rem] w-[30rem]" alt="" />
+            <img
+              data-aos="fade-up"
+              src={doc}
+              className="px-5 py-3 max-[1238px]:w-[20rem] w-[30rem]"
+              alt=""
+            />
             <p data-aos="fade-up" className="font-semibold">
               {Honor} {name}
             </p>
@@ -426,6 +446,7 @@ const Face2face = ({ token, openTerms }) => {
                 <div>
                   {isSomeone ? (
                     <SomeoneF2f
+                      onChange={onChange}
                       isSelected={isSelected}
                       image={image}
                       handleCancel={handleCancel}
@@ -716,6 +737,12 @@ const Face2face = ({ token, openTerms }) => {
                             </div>
                           )}
                         </div>
+                      </div>
+                      <div className="col-span-3">
+                        <ReCAPTCHA
+                          sitekey="6Ld1th8pAAAAAPXTH0voBtx2Zser_ws8kWuSyVPJ"
+                          onChange={onChange}
+                        />
                       </div>
                       <div className="flex items-center font-light mb-6 whitespace-nowrap">
                         <input

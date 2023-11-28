@@ -51,10 +51,16 @@ const Contacts = () => {
             </p>
           </div>
           <div className="col-span-3">
+          <p>
+              Message type: <br />
+              <select className="outline-none border-2 border-slate-300 focus:border-[#71b967d3] w-full h-8" >
+                  <option value="">---</option>
+              </select>
+            </p>
+          </div>
+          <div className="col-span-3">
             <p> Your message here:</p>
-            <textarea
-              className="outline-none border-2 h-56 border-slate-300 focus:border-[#71b967d3] w-full"
-            ></textarea>
+            <textarea className="outline-none border-2 h-56 border-slate-300 focus:border-[#71b967d3] w-full"></textarea>
             {/* <textarea
                 className="peer block  min-h-[auto] w-full font-thin text-black rounded
                  px-3 h-48 leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100
@@ -99,49 +105,32 @@ const Contacts = () => {
         </div>
       </form>
       {/* Contact deatils */}
-      <section id="Contact-num ">
-        <div className="mt-[40px] flex flex-col space-y-2 pb-10 items-center">
+      <section 
+      data-Aos="fade-up"
+      id="Contact-num">
+        <div className="pb-[33px] flex flex-col space-y-2 items-center">
           <p
-            className="text-xl font-semibold text-[#315E30]"
-            data-aos="fade-up"
-            data-aos-anchor-placement="top-bottom"
+            className="text-xl max-sm:text-base font-semibold text-[#315E30]"
           >
-            CONTACT NUMBER
+            CONTACT NUMBERS
           </p>
-          <span
-            className="text-[#315E30]"
-            data-aos="fade-up"
-            data-aos-anchor-placement="top-bottom"
+          <label
+            className="text-[#315E30] text-base max-sm:text-sm flex flex-col text-center space-y-3"
           >
-            +639455963805
-          </span>
+            <span data-aos="fade-up">+63 995 230 2499</span>
+            <span data-aos="fade-up">+63 (44) 288 2417</span>
+            <span data-aos="fade-up">+63 (44) 641 1582</span>
+          </label>
+
           <p
-            className="text-xl font-semibold text-[#315E30]"
-            data-aos="fade-up"
-            data-aos-anchor-placement="top-bottom"
-          >
-            EMERGENCY HOT-LINE
-          </p>
-          <span
-            className="text-[#315E30]"
-            data-aos="fade-up"
-            data-aos-anchor-placement="top-bottom"
-          >
-            1234-567
-          </span>
-          <p
-            className="text-xl font-semibold text-[#315E30]"
-            data-aos="fade-up"
-            data-aos-anchor-placement="top-bottom"
+            className="text-xl max-sm:text-base font-semibold text-[#315E30]"
           >
             E-MAIL ADDRESSES
           </p>
           <span
-            className="text-[#315E30]"
-            data-aos="fade-up"
-            data-aos-anchor-placement="top-bottom"
+            className="text-[#315E30] text-base max-sm:text-sm"
           >
-            JuanCruz@email.com
+            mendozageneralhospital@gmail.com
           </span>
         </div>
       </section>

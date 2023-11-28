@@ -53,7 +53,6 @@ const ArchivePaginated = ({
       {Loaded ? (
         currentItems &&
         currentItems
-          .filter((data) => data.status && data.status.includes("Completed"))
           .map((ol) => (
             <>
               <ArchiveMap

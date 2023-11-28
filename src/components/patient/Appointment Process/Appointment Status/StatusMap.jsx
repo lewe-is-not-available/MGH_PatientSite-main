@@ -4,6 +4,7 @@ import "aos/dist/aos.css";
 import { Link } from "react-router-dom";
 import { AiOutlineDown } from "react-icons/ai";
 import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
+import { AiOutlineFieldNumber } from "react-icons/ai";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
 
 const StatusMap = ({ ol, imgName, isImgEmpty }) => {
@@ -136,9 +137,9 @@ const StatusMap = ({ ol, imgName, isImgEmpty }) => {
               </label>
             </div>
             <div className="flex">
-              <MdAccessTimeFilled className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
+              <AiOutlineFieldNumber className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
               <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                Time <p className="text-slate-400">{ol.time}</p>
+                Queue no. <p className="text-slate-400 text-xl">6</p>
               </label>
             </div>
 
@@ -160,19 +161,13 @@ const StatusMap = ({ ol, imgName, isImgEmpty }) => {
           </div>
           <div className="max-w-full mb-5 flex justify-center space-x-10">
             <Link
-              to={"/Appointment_Details/" + ol.book_id}
+              to={"/PatientAppointment/" + ol.book_id}
               onClick={(e) => e.stopPropagation()}
             >
-              <button className="text-lg px-14 py-1 transition duration-100 hover:bg-[#377532] bg-[#3dbb34] text-white rounded-md">
+              <button className="text-lg px-20 py-1 transition duration-100 hover:bg-[#377532] bg-[#3dbb34] text-white rounded-md">
                 Appointment Details
               </button>
             </Link>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="text-lg px-14  transition duration-100 text-white hover:bg-red-700 bg-red-500 rounded-md"
-            >
-              Cancel
-            </button>
           </div>
         </div>
       </section>
