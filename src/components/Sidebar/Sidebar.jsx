@@ -166,7 +166,6 @@ const Sidebar = ({
       getImages();
     }
   }, [user, isImgEmpty, imgName, setimgName, setImgEmpty]);
-  //console.log(imgName)
   return (
     <div className="w-[18.8rem] bg-[#f0fcec] fixed">
       <div className=" pt-1 h-screen shadow-2xl">

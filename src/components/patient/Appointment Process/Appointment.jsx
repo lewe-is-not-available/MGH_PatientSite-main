@@ -16,7 +16,7 @@ const Appointment = () => {
   const [Doctors, setDoctors] = useState(null);
   const [Filter, setFilter] = useState([]);
   const [noResult, setNoResult] = useState(false);
-  const [Hmo, setHmo] = useState("");
+  const [type, setType] = useState("");
 
   //select option value
   if (spSelect === "---") {
@@ -25,6 +25,16 @@ const Appointment = () => {
   if (subSelect === "---") {
     setSubSelect("");
   }
+  if (type === "---") {
+    setType("");
+  }
+  else if (type === "Face to face consult") {
+    setType("f2f");
+  }
+  else if (type === "Online Consult") {
+    setType("ol");
+  }
+console.log(type)
   // console.log(Name, spSelect, subSelect, Hmo)
   const [showFill, setShowFill] = useState(true);
   useEffect(() => {
@@ -93,7 +103,7 @@ const Appointment = () => {
     setName("");
     setSpSelect("---");
     setSubSelect("---");
-    setHmo("");
+    setType("");
 
     const { data, error } = await supabase.from("dr_information").select("*");
 
@@ -106,7 +116,7 @@ const Appointment = () => {
 
   //SEARCH FUNCTION
   const handleSearch = async () => {
-    if (!Name && !spSelect && !subSelect && !Hmo) {
+    if (!Name && !spSelect && !subSelect && !type) {
       setNoResult(true);
     } else {
       setNoResult(false);
@@ -127,10 +137,10 @@ const Appointment = () => {
         const subSpecMatch = subSelect
           ? doctor.subspecial.toLowerCase().includes(subSelect.toLowerCase())
           : true;
-        const HmoMatch = Hmo
-          ? doctor.subspecial.toLowerCase().includes(subSelect.toLowerCase())
+        const typeMatch = type
+          ? doctor.type.toLowerCase().includes(type.toLowerCase())
           : true;
-        return nameMatch && specMatch && subSpecMatch && HmoMatch;
+        return nameMatch && specMatch && subSpecMatch && typeMatch;
       });
       setDoctors(filteredData);
       if (filteredData.length === 0) {
@@ -183,7 +193,7 @@ const Appointment = () => {
                 <input
                   type="text"
                   placeholder="Enter Name"
-                  className="py-1 mr-6 serachInput bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
+                  className="py-1 mr-6 serachInput text-base bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
                         focus:border-b-[#315E30]"
                   value={Name}
                   onChange={handleNameChange}
@@ -207,7 +217,7 @@ const Appointment = () => {
                 <div className="flex mr-10">
                   {/* Specialization Dropdown */}
                   <select
-                    className="w-44 py-2 serachInput duration-100 border-b-2 focus:outline-[#315E30]"
+                    className="w-44 py-2 text-base serachInput duration-100 border-b-2 focus:outline-[#315E30]"
                     value={spSelect}
                     onChange={(e) => setSpSelect(e.target.value)}
                   >
@@ -227,7 +237,7 @@ const Appointment = () => {
                     id="finddoctor-form-subspec"
                     value={subSelect}
                     onChange={(e) => setSubSelect(e.target.value)}
-                    className="w-44 py-2 serachInput duration-100 border-b-2 focus:outline-[#315E30]"
+                    className="w-44 py-2 text-base serachInput duration-100 border-b-2 focus:outline-[#315E30]"
                   >
                     <option key="">---</option>
                     {SubSpecial.map((subspec) => {
@@ -242,14 +252,17 @@ const Appointment = () => {
               </div>
               <div className="text-xl text-[#315E30]">
                 <p className="search_label">Consultation Type</p>
-                {/* Hmo input */}
+                {/* Type select */}
                 <select
-                  value={Hmo}
-                  onChange={(e) => setHmo(e.target.value)}
+                  onChange={(e) => setType(e.target.value)}
                   placeholder="Enter Accredation"
-                  className="py-2 pr-8 serachInput w-44 bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
-              focus:border-b-[#315E30]"
-                />
+                  className="py-2 serachInput w-48 text-base bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
+                focus:border-b-[#315E30]"
+                >
+                  <option id="0">---</option>
+                  <option id="1">Face to face consult</option>
+                  <option id="2">Online Consult</option>
+                </select>
               </div>
             </div>
             <button

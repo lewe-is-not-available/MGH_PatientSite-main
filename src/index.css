@@ -179,7 +179,7 @@
     @apply text-base
   }
   .serachInput{
-    @apply w-[10rem]
+    @apply w-[10rem] text-base
   }
   
 }

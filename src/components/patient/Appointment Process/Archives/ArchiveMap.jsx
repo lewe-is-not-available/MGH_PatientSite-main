@@ -160,19 +160,13 @@ const ArchiveMap = ({ ol, imgName, isImgEmpty }) => {
           </div>
           <div className="max-w-full mb-5 flex justify-center space-x-10">
             <Link
-              to={"/Appointment_Details/" + ol.book_id}
+              to={"/Appointment/Patient/Details/" + ol.book_id}
               onClick={(e) => e.stopPropagation()}
             >
-              <button className="text-lg px-14 py-1 transition duration-100 hover:bg-[#377532] bg-[#3dbb34] text-white rounded-md">
+              <button className="text-lg px-20 py-1 transition duration-100 hover:bg-[#377532] bg-[#3dbb34] text-white rounded-md">
                 Appointment Details
               </button>
             </Link>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="text-lg px-14  transition duration-100 text-white hover:bg-red-700 bg-red-500 rounded-md"
-            >
-              Cancel
-            </button>
           </div>
         </div>
       </section>

@@ -40,7 +40,7 @@ const OnlineConsultationHistory = ({ user }) => {
   const [filt, setfilt] = useState([]);
   const [Book, setBook] = useState([]);
   const [Loaded, setLoaded] = useState(true);
-  console.log(filt)
+ // console.log(filt)
   const fetchBooks = async () => {
     setLoaded(false);
     if (user.email) {

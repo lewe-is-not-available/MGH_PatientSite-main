@@ -18,7 +18,6 @@ import Online from "./components/patient/Appointment Process/OnlineConsult";
 import Appointment from "./components/patient/Appointment Process/Appointment";
 import AppointDetails from "./components/patient/Appointment Process/Appointment Status/PatientAppointDetails";
 import DocInfo from "./components/Doctor read/DoctorInfo";
-import OnlineOrF2f from "./components/patient/Appointment Process/ChooseType";
 import F2f from "./components/patient/Appointment Process/Face2face";
 import OnlineConsultationHistory from "./components/patient/Appointment Process/Archives/OnlineConsultationHistory";
 import PatientDashboard from "./components/patient/Dashboard";
@@ -202,7 +201,7 @@ function App() {
           <Route path="/Notifications" element={<Notification />} />
           <Route path="/Mission-and-Vision" element={<MissonVision />} />
           <Route path="/Feedback-Form" element={<Feedback token={token} />} />
-          <Route path="/Contacts" element={<Contacts token={token} />} />
+          <Route path="/Contacts" element={<Contacts token={token} user={user} />} />
           <Route path="/Hospital-Profile" element={<Profile />} />
           <Route
             path="/Appointment/Online"
@@ -223,8 +222,7 @@ function App() {
               <Online token={token} openTerms={openTerms} setToken={setToken} />
             }
           />
-          <Route path="/ChooseType/:id" element={<OnlineOrF2f />} />
-          <Route path="/PatientAppointment/:id" element={<AppointDetails />} />
+          <Route path="/Appointment/Patient/Details/:id" element={<AppointDetails />} />
           {/* Appointment procedures */}
           <Route
             path={"/Appointment"}
@@ -282,7 +280,7 @@ function App() {
               {isAdmin && (
                 <>
                   <Route
-                    path="/Appointment_Details/:id"
+                    path="/Appointment/Admin/Details/:id"
                     element={<AppointmentDetails />}
                   />
                   <Route path="/User_feedbacks" element={<AdminFeedback />} />

@@ -5,6 +5,7 @@ import ArchivePaginate from "./DocAppPaginated";
 import { VscFilter, VscFilterFilled } from "react-icons/vsc";
 import { BsSearch } from "react-icons/bs";
 import { MagnifyingGlass } from "react-loader-spinner";
+import { IoNotificationsCircleOutline } from "react-icons/io5";
 
 const Doc_Appointments = ({ CDNURL }) => {
   const [books, setBook] = useState([]);
@@ -158,6 +159,12 @@ const Doc_Appointments = ({ CDNURL }) => {
                 <p className="">Filter</p>
               </>
             )}
+          </div>
+          <div className="px-3 py-1 rounded-full bg-primary-300 text-primary-700">
+            <div className="flex items-center">
+              <IoNotificationsCircleOutline className="mr-1 text-2xl"/>
+              <span>notify</span>
+            </div>
           </div>
         </div>
         <div

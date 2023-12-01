@@ -42,7 +42,7 @@ const DocUniq = ({ Doctors }) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
-  console.log(CDNURL + Doctors.email + "/profile/" + imgName)
+  //console.log(CDNURL + Doctors.email + "/profile/" + imgName)
   return (
     <div
       data-aos="fade-up"
@@ -99,7 +99,11 @@ const DocUniq = ({ Doctors }) => {
         </div>
 
         <Link
-          to={"/ChooseType/" + Doctors.id}
+          to={
+            Doctors.type === "f2f"
+              ? "/Face-to-face/" + Doctors.id
+              : "/Online/" + Doctors.id
+          }
           data-aos="fade-up"
           className="text-base max-sm:text-[11px] Docbtn max-sm:px-1 max-sm:py-0 whitespace-nowrap bg-[#418D3F] max-[941px]:text-sm p-2 rounded-md text-white font-bold ring-[#418D3F] ring-2 transition duration-75 ease-in hover:bg-[#A5DD9D] hover:text-[#267124]"
         >

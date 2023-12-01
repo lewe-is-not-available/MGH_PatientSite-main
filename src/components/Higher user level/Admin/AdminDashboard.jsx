@@ -281,10 +281,10 @@ const Admin = () => {
 
           <Link
             to="/Appointment/Status"
-            className="abs bg-white rounded-md col-span-3"
+            className="abs bg-white flex items-center justify-center rounded-md col-span-3"
             data-aos="fade-up"
           >
-            <p>Keep track of your appointment status</p>
+            <p>Activities</p>
           </Link>
           <Link to="/" className="Adminboxes" data-aos="fade-up">
             <div className="AdmintitleText">Messages: </div>
