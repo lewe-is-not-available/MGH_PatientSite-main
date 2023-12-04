@@ -25,6 +25,7 @@ import OnlineDash from "./components/patient/OnlineDash";
 import F2fDash from "./components/patient/F2fDash";
 import AfterAppointment from "./components/patient/Appointment Process/After Submitting/SuccessAppointment";
 import WaitVerify from "./components/patient/Appointment Process/After Submitting/WaitingVerify";
+import PatientDetails from "./components/Higher user level/Admin/Edit Patients/PatientDetails";
 
 //Doctor
 import DoctorConsultHistory from "./components/Higher user level/Doctor/DoctorConsulHistory";
@@ -35,9 +36,10 @@ import EditDoctors from "./components/Higher user level/Admin/Edit Doctors/EditD
 import DocDetails from "./components/Higher user level/Admin/Edit Doctors/DocDetails";
 import EditPatients from "./components/Higher user level/Admin/Edit Patients/EditPatients";
 import Archive from "./components/Higher user level/Admin/Archives/Archive";
-import AdminFeedback from "./components/Higher user level/Admin/MessagesAdmin";
+import AdminFeedback from "./components/Higher user level/Admin/Message Page/Messages";
 import AppointmentDetails from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentDetails";
 import AppointConfirmation from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentConfirmation";
+
 
 function App() {
   //*login modal
@@ -45,7 +47,6 @@ function App() {
 
   //*Show terms and condition
   const [isRead, setRead] = useState(false);
-
   const openTerms = (e) => {
     e.preventDefault();
     setRead(!isRead);
@@ -123,7 +124,6 @@ function App() {
   const [open, setOpen] = useState(false);
   const openSide = () => setOpen(true);
   const closeSide = () => setOpen(false);
-
   useEffect(() => {
     if (localStorage.getItem("token")) {
       let data = JSON.parse(localStorage.getItem("token"));
@@ -279,11 +279,13 @@ function App() {
               {/* Admin's side */}
               {isAdmin && (
                 <>
+
                   <Route
                     path="/Appointment/Admin/Details/:id"
                     element={<AppointmentDetails />}
                   />
-                  <Route path="/User_feedbacks" element={<AdminFeedback />} />
+                  <Route path="/User_feedbacks" element={<AdminFeedback CDNURL={CDNURL} />} />
+                  <Route path="/Admin/PatientDetails/:id" element={<PatientDetails />} />
                   <Route
                     path="/Archive"
                     element={<Archive CDNURL={CDNURL} />}

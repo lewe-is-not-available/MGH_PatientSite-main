@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Online from "./PatientMap";
+import Online from "./MessagesMap";
 import ReactPaginate from "react-paginate";
 import { Oval } from "react-loader-spinner";
 
-
-const EditDocPage = ({ books, Loaded, setLoaded }) => {
+const MessagesPaginated = ({ books, Loaded, setLoaded, setOpenMessage }) => {
   //*Pagination
   const [itemOffset, setItemOffset] = useState(0);
   const [pageCount, setpageCount] = useState(0);
@@ -49,7 +48,8 @@ const EditDocPage = ({ books, Loaded, setLoaded }) => {
         currentItems &&
         currentItems.map((ol) => (
           <div key={ol.book_id} className="w-full">
-            <Online ol={ol} />
+            <Online 
+            setOpenMessage={setOpenMessage} ol={ol} />
           </div>
         ))
       ) : (
@@ -70,4 +70,5 @@ const EditDocPage = ({ books, Loaded, setLoaded }) => {
   );
 };
 
-export default EditDocPage;
+
+export default MessagesPaginated

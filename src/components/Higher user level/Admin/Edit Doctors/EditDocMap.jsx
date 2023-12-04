@@ -83,7 +83,7 @@ const EditDocMap = ({ ol }) => {
     Aos.init({ duration: 500 });
     Aos.refresh();
   }, []);
-  console.log(CDNURL + ol.email + "/profile/" + imgName);
+  //console.log(CDNURL + ol.email + "/profile/" + imgName);
   return (
     <section key={ol.id} className="text-base flex w-full select-none">
       <div
@@ -188,16 +188,10 @@ const EditDocMap = ({ ol }) => {
               to={"/Doctor_Details/" + ol.id}
               onClick={(e) => e.stopPropagation()}
             >
-              <button className="text-lg px-14 py-1 transition duration-100 hover:bg-[#377532] bg-[#3dbb34] text-white rounded-md">
+              <button className="text-lg px-20 py-1 transition duration-100 hover:bg-[#377532] bg-[#3dbb34] text-white rounded-md">
                 Doctor Details
               </button>
             </Link>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="text-lg px-14  transition duration-100 text-white hover:bg-red-700 bg-red-500 rounded-md"
-            >
-              Cancel
-            </button>
           </div>
         </div>
       </div>

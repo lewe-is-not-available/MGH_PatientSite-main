@@ -28,13 +28,7 @@ const Appointment = () => {
   if (type === "---") {
     setType("");
   }
-  else if (type === "Face to face consult") {
-    setType("f2f");
-  }
-  else if (type === "Online Consult") {
-    setType("ol");
-  }
-console.log(type)
+  console.log(type);
   // console.log(Name, spSelect, subSelect, Hmo)
   const [showFill, setShowFill] = useState(true);
   useEffect(() => {
@@ -103,7 +97,7 @@ console.log(type)
     setName("");
     setSpSelect("---");
     setSubSelect("---");
-    setType("");
+    setType("---");
 
     const { data, error } = await supabase.from("dr_information").select("*");
 
@@ -138,7 +132,9 @@ console.log(type)
           ? doctor.subspecial.toLowerCase().includes(subSelect.toLowerCase())
           : true;
         const typeMatch = type
-          ? doctor.type.toLowerCase().includes(type.toLowerCase())
+          ? doctor.type
+              .toLowerCase()
+              .includes(type === "Face to Face Consult" ? "f2f" : "ol")
           : true;
         return nameMatch && specMatch && subSpecMatch && typeMatch;
       });
@@ -254,13 +250,13 @@ console.log(type)
                 <p className="search_label">Consultation Type</p>
                 {/* Type select */}
                 <select
+                  value={type}
                   onChange={(e) => setType(e.target.value)}
-                  placeholder="Enter Accredation"
                   className="py-2 serachInput w-48 text-base bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
                 focus:border-b-[#315E30]"
                 >
                   <option id="0">---</option>
-                  <option id="1">Face to face consult</option>
+                  <option id="1">Face to Face Consult</option>
                   <option id="2">Online Consult</option>
                 </select>
               </div>

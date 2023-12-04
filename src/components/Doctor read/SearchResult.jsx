@@ -14,10 +14,6 @@ const SearchResult = ({ Doctors }) => {
   const id = Doctors.email;
   const [imgName, setimgName] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(false);
-  const [Sched, setSched] = useState([]);
-  useEffect(() => {
-    setSched(Doctors.schedule);
-  }, [Doctors]);
 
   async function getImages() {
     const { data, error } = await supabase.storage
@@ -47,11 +43,9 @@ const SearchResult = ({ Doctors }) => {
     Aos.init({ duration: 1000 });
   }, []);
   return (
-    <div
-    key={Doctors.id}
-    className="Doc_Uniq">
+    <div key={Doctors.id} className="Doc_Uniq">
       <div
-        data-aos="zoom-out"
+        data-aos="fade-up"
         className="docs text-sm bg-[#A5DD9D] px-3 py-5 h-[98%] rounded-xl flex flex-col
          items-center space-y-3 w-[16rem] transition duration-100 ease-in-out mb-1"
       >
@@ -63,20 +57,18 @@ const SearchResult = ({ Doctors }) => {
           }`}
           alt="/"
           className="w-[15rem] h-full object-cover max-2xl:w-[13rem] max-sm:w-[10rem] max-sm:mb-3 mb-6 rounded-lg"
-          data-aos="fade-up"
-          data-aos-anchor-placement="top-bottom"
         />
-        <div className="flex" data-aos="fade-up">
+        <div className="flex">
           <span className="mr-2 font-bold">Name:</span>
           <p className="text-base valueDoc">{Doctors.name}</p>
         </div>
-        <div className="flex" data-aos="fade-up">
+        <div className="flex">
           <span className="mr-2 font-bold">Specialization: </span>{" "}
           <p className="w-28 text-base valueDoc whitespace-nowrap overflow-hidden overflow-ellipsis">
             {Doctors.specialization}
           </p>
         </div>
-        <div className="flex" data-aos="fade-up">
+        <div className="flex">
           <span className="mr-2 font-bold overflow whitespace-nowrap">
             Sub-Special:{" "}
           </span>{" "}
@@ -84,7 +76,7 @@ const SearchResult = ({ Doctors }) => {
             {Doctors.subspecial}
           </p>
         </div>
-        <div className="flex" data-aos="fade-up">
+        <div className="flex">
           <span className="mr-2 font-bold">Schedule: </span>
           <p className="text-base valueDoc mb-4">
             {Doctors.schedule &&
@@ -93,7 +85,7 @@ const SearchResult = ({ Doctors }) => {
               ))}
           </p>
         </div>
-        <Link to={"/DoctorInfo/" + Doctors.id} data-aos="fade-up">
+        <Link to={"/DoctorInfo/" + Doctors.id}>
           <button className="flex text-base bg-[#418D3F] Docbtn p-2 rounded-md text-white font-bold ring-[#418D3F] ring-2 transition duration-75 ease-in hover:bg-[#A5DD9D] hover:text-[#267124]">
             <HiOutlineInformationCircle className="mr-1" size={23} /> Check
             Information

@@ -12,7 +12,7 @@ import history from "../images/dashboard_icons/history.png";
 import status from "../images/dashboard_icons/status.svg";
 import { Link } from "react-router-dom";
 import Admin from "../Higher user level/Admin/AdminDashboard";
-import Doc_Dash from "../Higher user level/Doctor/DoctorPage";
+import DocDash from "../Higher user level/Doctor/DoctorPage";
 
 const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
   const [Loaded, setLoaded] = useState(true);
@@ -22,11 +22,11 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
   const Close = () => FetchShow(false);
   //*Search and reset Function
   const [Name, setName] = useState("");
-  const [spSelect, setSpSelect] = useState();
-  const [subSelect, setSubSelect] = useState();
+  const [spSelect, setSpSelect] = useState("");
+  const [subSelect, setSubSelect] = useState("");
   const [Doctors, setDoctors] = useState(null);
   const [noResult, setNoResult] = useState(false);
-  const [Hmo, setHmo] = useState();
+  const [type, setType] = useState("");
   const [Filter, setFilter] = useState([]);
 
   //*select option value
@@ -35,6 +35,9 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
   }
   if (subSelect === "---") {
     setSubSelect("");
+  }
+  if (type === "---") {
+    setType("");
   }
   //TODO: continue the filteration
   const [showFill, setShowFill] = useState(true);
@@ -77,7 +80,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
     setName("");
     setSpSelect("---");
     setSubSelect("---");
-    setHmo("");
+    setType("");
 
     const { data, error } = await supabase.from("dr_information").select("*");
 
@@ -90,7 +93,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
 
   const handleSearch = async () => {
     FetchShow(true);
-    if (!Name && !spSelect && !subSelect && !Hmo) {
+    if (!Name && !spSelect && !subSelect && !type) {
       setNoResult(true);
       setDoctors(null);
     } else {
@@ -112,10 +115,12 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
         const subSpecMatch = subSelect
           ? doctor.subspecial.toLowerCase().includes(subSelect.toLowerCase())
           : true;
-        const HmoMatch = Hmo
-          ? doctor.subspecial.toLowerCase().includes(subSelect.toLowerCase())
+        const typeMatch = type
+          ? doctor.type
+              .toLowerCase()
+              .includes(type === "Face to Face Consult" ? "f2f" : "ol")
           : true;
-        return nameMatch && specMatch && subSpecMatch && HmoMatch;
+        return nameMatch && specMatch && subSpecMatch && typeMatch;
       });
       setDoctors(filteredData);
       if (filteredData.length === 0) {
@@ -231,12 +236,15 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
                     <p className="search_label">Consultation Type</p>
                     {/* Hmo input */}
                     <select
-                      value={Hmo}
-                      onChange={(e) => setHmo(e.target.value)}
-                      placeholder="Enter Accredation"
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}
                       className="py-2 pr-8 serachInput w-44 bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
               focus:border-b-[#315E30]"
-                    />
+                    >
+                      <option id="0">---</option>
+                      <option id="1">Face to Face Consult</option>
+                      <option id="2">Online Consult</option>
+                    </select>
                   </div>
                 </div>
                 <button
@@ -397,7 +405,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
         ""
       )}
       {admin && <Admin />}
-      {doctor && <Doc_Dash />}
+      {doctor && <DocDash />}
     </section>
   );
 };

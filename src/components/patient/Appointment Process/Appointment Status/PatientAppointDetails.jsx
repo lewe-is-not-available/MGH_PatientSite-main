@@ -86,7 +86,7 @@ const AppointmentDetails = () => {
     }
   }
 
-  //*getting image for patient
+  //*getting image for doctor
   const [docImg, setDocImg] = useState();
   const [isDocImgEmpty, setisDocImgEmpty] = useState(false);
   useEffect(() => {

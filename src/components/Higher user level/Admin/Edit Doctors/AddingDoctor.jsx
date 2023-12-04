@@ -20,6 +20,8 @@ const AddingDoctor = ({ setShowAdd }) => {
     Aos.init({ duration: 300 });
     Aos.refresh();
   }, []);
+
+  //*close when clicked outside
   let addDocRef = useRef();
   useEffect(() => {
     let handler = (e) => {
@@ -115,6 +117,7 @@ const AddingDoctor = ({ setShowAdd }) => {
     { id: 6, day: "Sunday", value: "Sunday" },
   ];
   const [schedule, setSchedule] = useState([]);
+  console.log(schedule);
   const handleCheckboxChange = (day) => {
     setSchedule((prevSchedule) => {
       const updatedSchedule = [...prevSchedule];
@@ -127,7 +130,6 @@ const AddingDoctor = ({ setShowAdd }) => {
         // Add day if it doesn't exist
         updatedSchedule.push({ day, startTime: "", endTime: "" });
       }
-
       return updatedSchedule;
     });
   };

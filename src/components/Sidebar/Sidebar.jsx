@@ -85,7 +85,6 @@ const Sidebar = ({
   const openAbout = () => fetchAbout(!About);
 
   //*close dropdown when clicked outside
-
   let serviceRef = useRef();
   let aboutRef = useRef();
   useEffect(() => {
@@ -129,7 +128,7 @@ const Sidebar = ({
     });
   };
   //*Getting image from storage
-  // eslint-disable-next-line
+
   useEffect(() => {
     if (user) {
       async function getImages() {
@@ -165,7 +164,7 @@ const Sidebar = ({
       }
       getImages();
     }
-  }, [user, isImgEmpty, imgName, setimgName, setImgEmpty]);
+  }, [user]);
   return (
     <div className="w-[18.8rem] bg-[#f0fcec] fixed">
       <div className=" pt-1 h-screen shadow-2xl">
@@ -188,6 +187,7 @@ const Sidebar = ({
                   Upload Image
                 </p>
               </div>
+
               <img
                 className="object-cover rounded-full w-[10rem] h-[10rem]"
                 src={`${
@@ -197,6 +197,7 @@ const Sidebar = ({
                 }`}
                 alt="/"
               />
+
               {/* truncate w-full text-sm */}
               <p className="uppercase text-lg">
                 {user.last_name} {user.first_name}

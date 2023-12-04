@@ -38,7 +38,6 @@ const EditDoctors = () => {
   }, []);
 
   const [PatientId, setPatientId] = useState();
-  const [User, setUsers] = useState();
   const fetchUsers = async () => {
     const { data, error } = await supabaseAdmin.auth.admin.listUsers();
     if (error) {

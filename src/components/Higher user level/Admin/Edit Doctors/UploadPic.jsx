@@ -11,7 +11,6 @@ const UploadPic = ({
 }) => {
   return (
     <div className="flex flex-col items-center">
-      <h1>Upload Profile:</h1>
       {isSelected ? (
         <div className="flex flex-col items-center w-full -mb-16">
           <img
@@ -47,7 +46,7 @@ const UploadPic = ({
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             accept="image/png, image/jpeg"
-            className="flex flex-col mb-5 rounded-md items-center justify-center w-[70%] h-[20rem] border-2
+            className="flex flex-col mb-5 rounded-md items-center justify-center w-[20rem] h-[20rem] border-2
            border-gray-300 border-dashed cursor-pointer bg-gray-50 transition duration-100 ease-in dark:hover:bg-bray-800
           dark:bg-gray-700 hover:bg-gray-200 dark:border-gray-600 dark:hover:border-gray-500
           dark:hover:bg-gray-600"

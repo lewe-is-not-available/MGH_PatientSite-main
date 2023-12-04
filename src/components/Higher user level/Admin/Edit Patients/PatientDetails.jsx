@@ -5,10 +5,10 @@ import { toast } from "react-toastify";
 import { Oval } from "react-loader-spinner";
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import EditDoctorModal from "./EditDoctorModal";
+import EditPatientModal from "./EditPatientModal";
 import ConfirmDelete from "./ConfirmDelete";
 
-const DocDetails = () => {
+const PatientDetails = () => {
   const CDNURL =
     "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
   const [imgName, setimgName] = useState([]);
@@ -20,17 +20,17 @@ const DocDetails = () => {
   const [loading, setLoading] = useState(true);
   const nav = useNavigate();
   const fetchData = async () => {
-    const { data, error } = await supabase
-      .from("dr_information")
+    const { data, error: profileErr } = await supabase
+      .from("profile")
       .select()
       .eq("id", id)
       .single();
 
-    if (error) {
+    if (profileErr) {
       setTimeout(() => {
         setLoading(false);
       }, 1000);
-      nav("/Edit_doctors");
+      nav("/Edit_Patients");
     } else {
       setTimeout(() => {
         setLoading(false);
@@ -51,26 +51,25 @@ const DocDetails = () => {
       .channel("room1")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "dr_information" },
+        { event: "*", schema: "public", table: "profile" },
         () => {
           fetchData();
         }
       )
       .subscribe();
   }, []);
-
-  //*Get appointment count for doctor
+  //*Get appointments
   useEffect(() => {
     const fetchAppointments = async () => {
       const { data: books, error: fail } = await supabase
         .from("patient_Appointments")
         .select()
-        .eq("docname", data && data.name);
+        .eq("email", data && data.email);
 
       try {
         if (fail) throw fail;
         else {
-          if (data.name) {
+          if (data.email) {
             setAppoint(books);
           }
         }
@@ -79,8 +78,7 @@ const DocDetails = () => {
       }
     };
     fetchAppointments();
-  }, [data.name]);
-
+  }, [data.email]);
   //*filteration for count
   useEffect(() => {
     if (Appoint) {
@@ -101,7 +99,7 @@ const DocDetails = () => {
   useEffect(() => {
     if (data.email) {
       async function getImages() {
-        const { data: pic, error } = await supabase.storage
+        const { data: pic, error: imageErr } = await supabase.storage
           .from("images")
           .list(data.email + "/profile/", {
             limit: 10,
@@ -114,22 +112,14 @@ const DocDetails = () => {
           setimgName(pic[0].name);
         }
 
-        if (error) {
+        if (imageErr) {
           setImgEmpty(false);
-          console.log(error);
+          console.log(imageErr);
         }
       }
       getImages();
     }
   }, [setimgName, data.email, setImgEmpty]);
-
-  //*Convert to am/pm time
-  const convertToAMPM = (time) => {
-    return new Date(`2000-01-01T${time}`).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   //*open edit modal
   const [openEdit, setOpenEdit] = useState(false);
@@ -143,7 +133,7 @@ const DocDetails = () => {
     <div className="flex flex-col">
       <div className="sticky top-1 z-50">
         {openEdit && (
-          <EditDoctorModal
+          <EditPatientModal
             isImgEmpty={isImgEmpty}
             CDNURL={CDNURL}
             imgName={imgName}
@@ -158,7 +148,7 @@ const DocDetails = () => {
 
       <div className="back flex flex-col items-center min-h-screen h-auto w-full">
         <h1 className="w-full text-3xl mt-10 text-center font-semibold text-[#256e2b] uppercase">
-          Doctor's details
+          Patient's details
         </h1>
         <form className="flex flex-col px-12 py-10 mt-10 bg-white w-[80%] abs">
           {loading ? (
@@ -194,7 +184,7 @@ const DocDetails = () => {
                       <p className="">
                         <span className="font-semibold">Name:</span>
                         <br />
-                        {data.honorific} {data.name}
+                        {data.first_name} {data.last_name}
                       </p>
                       <p>
                         <span className="font-semibold">Email:</span>
@@ -211,19 +201,19 @@ const DocDetails = () => {
 
                   <div className="flex flex-col text-left items-left mt-10 space-y-8 pr-6">
                     <p>
-                      <span className="font-semibold">Doctor id:</span>
+                      <span className="font-semibold">Patient's id:</span>
                       <br />
                       {data.id}
                     </p>
                     <p>
-                      <span className="font-semibold">Specialization:</span>
+                      <span className="font-semibold">Address:</span>
                       <br />
-                      {data.specialization}
+                      {data.address}
                     </p>
                     <p>
-                      <span className="font-semibold">Appointment day:</span>
+                      <span className="font-semibold">Birth date:</span>
                       <br />
-                      {data.subspecial}
+                      {data.birthday}
                     </p>
 
                     <p>
@@ -271,7 +261,7 @@ const DocDetails = () => {
                         className="px-4 py-1 transition duration-75 hover:bg-primary-400 hover:text-white bg-primary-200 rounded-full flex space-x-2 items-center"
                       >
                         <FaRegEdit className="text-xl -mt-[3px]" />
-                        <span>Edit doctor's details</span>
+                        <span>Edit patient's details</span>
                       </button>
                     </div>
                     <div className="flex justify-start items-center">
@@ -282,34 +272,12 @@ const DocDetails = () => {
                         className="px-3 text-base py-1 transition duration-75 bg-red-600 hover:text-black text-white hover:bg-[#ff9090] rounded-full flex space-x-2 items-center"
                       >
                         <RiDeleteBin6Line className="text-xl -mt-[3px]" />
-                        <span>Delete Doctor</span>
+                        <span>Delete account</span>
                       </button>
                     </div>
                   </div>
                 </>
               )}
-
-              <div className="flex-col items-center  col-span-4">
-                <div className="bg-green-600 grid grid-cols-4 w-full text-white py-2 col-span-4 justify-center px-10">
-                  <p className="col-span-2">Days</p>
-                  <p className="text-center">Check In</p>
-                  <p className="text-center">Check Out</p>
-                </div>
-                {data.schedule.map((item, i) => (
-                  <div
-                    key={i}
-                    className="col-span-3 bg-slate-200 py-2 grid grid-cols-4 w-full my-3 px-10"
-                  >
-                    <div className="col-span-2 ">{item.day}</div>
-                    <div className="text-center">
-                      {convertToAMPM(item.startTime)}
-                    </div>
-                    <div className="text-center">
-                      {convertToAMPM(item.endTime)}
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           )}
         </form>
@@ -318,4 +286,4 @@ const DocDetails = () => {
   );
 };
 
-export default DocDetails;
+export default PatientDetails;

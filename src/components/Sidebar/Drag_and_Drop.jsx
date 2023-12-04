@@ -10,6 +10,7 @@ const Drag_and_Drop = ({
   imgName,
   setUploaded,
   isImgEmpty,
+  setLoad,
 }) => {
   const [File, setFile] = useState([]);
   const [isSelected, setSelected] = useState(false);
@@ -43,11 +44,14 @@ const Drag_and_Drop = ({
     setFile(null);
   };
   //*Image uploading
-  async function uploadImage() {
+  async function uploadImage(e) {
+    e.preventDefault();
     closeProfileUpload();
     if (imgName) {
       if (isImgEmpty) {
-        supabase.storage.from("images").remove([user.email + "/" + imgName]);
+        supabase.storage
+          .from("images")
+          .remove([user.email + "/profile/" + imgName]);
       }
       const { data, error } = await supabase.storage
         .from("images")
@@ -60,6 +64,7 @@ const Drag_and_Drop = ({
         setSelected(false);
         setImage(null);
         setFile(null);
+        window.location.reload();
         toast.success("Succesfully uploaded", {
           toastId: "success",
         });
@@ -102,17 +107,17 @@ const Drag_and_Drop = ({
               src={image}
               alt="/"
             />
-              <ul className="flex w-[90%]">
-                <p className="font-semibold whitespace-nowrap mr-2">
-                  File Name:{" "}
-                </p>
-                {Array.from(File).map((file, idx) => (
-                  <li className="truncate" key={idx}>
-                    {file.name}
-                  </li>
-                ))}
-              </ul>
-         
+            <ul className="flex w-[90%]">
+              <p className="font-semibold whitespace-nowrap mr-2">
+                File Name:{" "}
+              </p>
+              {Array.from(File).map((file, idx) => (
+                <li className="truncate" key={idx}>
+                  {file.name}
+                </li>
+              ))}
+            </ul>
+
             <div className="border-b-2 border-slate-300 w-full mt-3 mb-6" />
 
             <div className="flex space-x-4 mb-4 mt-4">

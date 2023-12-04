@@ -19,24 +19,24 @@ const AppointmentDetails = () => {
   const [isSomeone, setisSomeone] = useState();
   useEffect(() => {
     const fetchData = async () => {
-      const { data, error } = await supabase
+      const { data: book, error: bookErr } = await supabase
         .from("patient_Appointments")
         .select()
         .eq("book_id", id)
         .single();
 
-      if (error) {
-        toast.error(error + " error", {
+      if (bookErr) {
+        toast.error(bookErr.message, {
           toastId: "error",
         });
       }
-      if (data.someone === "Yes") {
+      if (book.someone === "Yes") {
         setisSomeone(true);
       } else {
         setisSomeone(false);
       }
-      setEmail(data.email);
-      setData(data);
+      setEmail(book.email);
+      setData(book);
       setLoading(false);
     };
     fetchData();
@@ -46,27 +46,87 @@ const AppointmentDetails = () => {
   useEffect(() => {
     if (Email) {
       async function getImages() {
+        const { data: PatientImg, error: PatientImgErr } =
+          await supabase.storage.from("images").list(Email + "/profile/", {
+            limit: 10,
+            offset: 0,
+            sortBy: { column: "created_at", order: "asc" },
+          });
+
+        if (PatientImg[0]) {
+          setImgEmpty(true);
+          setimgName(PatientImg[0].name);
+        }
+
+        if (PatientImgErr) {
+          setImgEmpty(false);
+          console.log(PatientImgErr);
+        }
+      }
+      getImages();
+    }
+  }, [setimgName, Email, setImgEmpty]);
+  //*Get doctor details
+  const [Doc, setDoc] = useState([]);
+  async function fetchDoc() {
+    if (data.docname) {
+      const { data: DocDetails, error: failDoc } = await supabase
+        .from("dr_information")
+        .select()
+        .eq("name", data.docname)
+        .single();
+      try {
+        if (failDoc) throw failDoc;
+        setDoc(DocDetails);
+        console.log(DocDetails);
+      } catch (failDoc) {
+        console.log(failDoc);
+      }
+    }
+  }
+
+  //*Realtime Doctor
+  useEffect(() => {
+    fetchDoc(data.docname);
+    supabase
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "dr_information" },
+        () => {
+          fetchDoc();
+        }
+      )
+      .subscribe();
+  }, [data.docname]);
+
+  //*getting image for doctor
+  const [docImg, setDocImg] = useState();
+  const [isDocImgEmpty, setisDocImgEmpty] = useState(false);
+  useEffect(() => {
+    if (Doc.email) {
+      async function getImageDoc() {
         const { data, error } = await supabase.storage
           .from("images")
-          .list(Email + "/profile/", {
+          .list(Doc.email + "/profile/", {
             limit: 10,
             offset: 0,
             sortBy: { column: "created_at", order: "asc" },
           });
 
         if (data[0]) {
-          setImgEmpty(true);
-          setimgName(data[0].name);
+          setisDocImgEmpty(true);
+          setDocImg(data[0].name);
         }
 
         if (error) {
-          setImgEmpty(false);
+          setisDocImgEmpty(false);
           console.log(error);
         }
       }
-      getImages();
+      getImageDoc();
     }
-  }, [setimgName, Email, setImgEmpty]);
+  }, [Doc.Email]);
 
   //*date format
   const date = new Date(data.created_at);
@@ -93,9 +153,15 @@ const AppointmentDetails = () => {
     }
     navigate("/Confirm_Appointments");
   }
-
+  //*Convert to am/pm time
+  const convertToAMPM = (time) => {
+    return new Date(`2000-01-01T${time}`).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
   return (
-    <div className="back flex flex-col items-center h-screen w-full">
+    <div className="back flex flex-col items-center h-auto pb-14 min-h-screen w-full">
       <h1 className="w-full text-3xl mt-10 text-center font-semibold text-[#256e2b] uppercase">
         Appointment details
       </h1>
@@ -214,6 +280,97 @@ const AppointmentDetails = () => {
           </div>
         )}
       </form>
+      <h1 className="w-full text-3xl mt-10 text-center font-semibold text-[#256e2b] uppercase">
+        Doctor's details
+      </h1>
+      <section className="flex flex-col px-12 py-10 mt-10 bg-white w-[80%] abs">
+        {loading ? (
+          <div className="flex justify-center w-full ">
+            <Oval
+              height={80}
+              width={80}
+              color="#4fa94d"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+              ariaLabel="oval-loading"
+              secondaryColor="#4fa94d"
+              strokeWidth={2}
+              strokeWidthSecondary={2}
+            />
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 text-lg row-span-2 gap-3">
+            {Doc && (
+              <>
+                <div className="flex flex-col  text-center items-center">
+                  <img
+                    className="object-cover rounded-md shadow-xl w-[15rem] mb-5 h-[15rem]"
+                    src={`${
+                      isDocImgEmpty
+                        ? CDNURL + Doc.email + "/profile/" + docImg
+                        : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/doc.jpg"
+                    }`}
+                    alt="/"
+                  />
+                </div>
+
+                <div className="flex flex-col text-left items-left mt-10 space-y-8 pr-6">
+                  <p className="">
+                    <span className="font-semibold">Doctor's Name:</span>
+                    <br />
+                    {Doc.honorific} {Doc.name}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Consultation type:</span>
+                    <br />
+                    {Doc.type === "ol" ? "Online Consultation" : "Face to face"}
+                  </p>
+                </div>
+                <div className="flex flex-col text-left items-left mt-10 space-y-8 pr-6">
+                  <p>
+                    <span className="font-semibold">Doctor id:</span>
+                    <br />
+                    {Doc.id}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Specialization:</span>
+                    <br />
+                    {Doc.specialization}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Sub-specialization:</span>
+                    <br />
+                    {Doc.subspecial}
+                  </p>
+                </div>
+              </>
+            )}
+            <div className="col-span-4 flex justify-center text-xl font-semibold ">
+              <p>Schedule</p>
+            </div>
+            <div className="flex-col items-center  col-span-4">
+              <div className="bg-green-600 grid grid-cols-4 w-full text-white py-2 col-span-4 justify-center px-10">
+                <p className="col-span-2">Days</p>
+                <p className="text-center">Check In</p>
+                <p className="text-center">Check Out</p>
+              </div>
+              {Doc.schedule &&
+                Doc.schedule.map((item) => (
+                  <div className="col-span-3 bg-slate-200 py-2 grid grid-cols-4 w-full my-3 px-10">
+                    <div className="col-span-2 ">{item.day}</div>
+                    <div className="text-center">
+                      {convertToAMPM(item.startTime)}
+                    </div>
+                    <div className="text-center">
+                      {convertToAMPM(item.endTime)}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+      </section>
     </div>
   );
 };
