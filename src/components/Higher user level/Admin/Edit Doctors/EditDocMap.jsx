@@ -156,14 +156,24 @@ const EditDocMap = ({ ol }) => {
               <label className="w-fit ml-4 text-left text-base text-black">
                 Schedules{" "}
                 <label className="text-slate-400 flex">
-                  {ol.schedule && ol.schedule.map((sched) => <p className="p-2 rounded-sm mr-2 bg-opacity-20 text-slate-400 bg-green-600">{sched.day === "Thursday" ? "Th":sched.day[0] + " "}</p>)}
+                  {ol.schedule &&
+                    ol.schedule.map((sched) => (
+                      <p className="p-2 rounded-sm mr-2 bg-opacity-20 text-slate-400 bg-green-600">
+                        {sched.day === "Thursday" ? "Th" : sched.day[0] + " "}
+                      </p>
+                    ))}
                 </label>
               </label>
             </div>
             <div className="flex">
               <HiClipboardList className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
               <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                Consultation Type <p className="text-slate-400">{ol.type === "ol" ? "Online Consultations":"Face to face Consultations"}</p>
+                Consultation Type{" "}
+                <p className="text-slate-400">
+                  {ol.type === "ol"
+                    ? "Online Consultations"
+                    : "Face to face Consultations"}
+                </p>
               </label>
             </div>
 

@@ -63,15 +63,14 @@ const DocUniq = ({ Doctors }) => {
           }`}
           alt="/"
           className="w-[15rem] h-full object-cover max-2xl:w-[13rem] max-sm:w-[10rem] max-sm:mb-3 mb-6 rounded-lg"
-          data-aos="fade-up"
           data-aos-anchor-placement="top-bottom"
         />
         <div className="w-full items-center flex flex-col">
-          <div className="flex" data-aos="fade-up">
+          <div className="flex">
             <span className="mr-2 font-bold">Name:</span>
             <p className="">{Doctors.name}</p>
           </div>
-          <div className="flex" data-aos="fade-up">
+          <div className="flex">
             <span className="mr-2 w-fit whitespace-nowrap font-bold">
               Specialization:{" "}
             </span>
@@ -79,7 +78,7 @@ const DocUniq = ({ Doctors }) => {
               {Doctors.specialization}
             </p>
           </div>
-          <div className="flex" data-aos="fade-up">
+          <div className="flex">
             <span className="mr-2 w-fit whitespace-nowrap font-bold">
               Sub-Special:{" "}
             </span>
@@ -87,14 +86,14 @@ const DocUniq = ({ Doctors }) => {
               {Doctors.subspecial}
             </p>
           </div>
-          <div className="flex" data-aos="fade-up">
+          <div className="flex">
             <span className="mr-2 font-bold">Schedule: </span>
-            <p className="mb-2">
+            <div className="mb-2 flex flex-wrap">
               {Doctors.schedule &&
                 Doctors.schedule.map((item) => (
-                  <>{item.day === "Thursday" ? "Th" : item.day[0]}</>
+                  <p className="p-2 rounded-sm mr-2 mb-2 bg-opacity-40 text-slate-900 bg-[#67a76c]">{item.day === "Thursday" ? "Th" : item.day[0]}</p>
                 ))}
-            </p>
+            </div>
           </div>
         </div>
 
@@ -104,7 +103,6 @@ const DocUniq = ({ Doctors }) => {
               ? "/Face-to-face/" + Doctors.id
               : "/Online/" + Doctors.id
           }
-          data-aos="fade-up"
           className="text-base max-sm:text-[11px] Docbtn max-sm:px-1 max-sm:py-0 whitespace-nowrap bg-[#418D3F] max-[941px]:text-sm p-2 rounded-md text-white font-bold ring-[#418D3F] ring-2 transition duration-75 ease-in hover:bg-[#A5DD9D] hover:text-[#267124]"
         >
           BOOK AN APPOINTMENT

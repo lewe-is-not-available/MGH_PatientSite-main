@@ -6,12 +6,10 @@ import { Oval } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import { TbCalendarTime } from "react-icons/tb";
 import { LuCalendarCheck2, LuCalendarX2 } from "react-icons/lu";
-import AcceptConfirm from "./AcceptConfirm";
-import ReschedConfirm from "./ReschedConfirm";
-import CancelConfirm from "./CancelConfirm";
-import ImageModal from "./ImageModal";
+import ReschedConfirm from "../../Admin/Confirmation of Appointments/ReschedConfirm";
+import ImageModal from "../../Admin/Confirmation of Appointments/ImageModal";
 
-const AppointmentDetails = () => {
+const DocAppDetails = () => {
   const CDNURL =
     "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
   const [imgName, setimgName] = useState([]);
@@ -167,46 +165,20 @@ const AppointmentDetails = () => {
 
     return `${year}/${month}/${day} ${hours}:${minutes}${ampm}`;
   }
-  //*accepting the appointment
-  const navigate = useNavigate();
-  async function handleAccept(e) {
-    e.preventDefault();
-    const { error } = await supabase
-      .from("patient_Appointments")
-      .update({ status: "Confirmed" })
-      .eq("book_id", id);
-    if (error) {
-      console.log(error);
-    }
-    navigate("/Confirm_Appointments");
-  }
 
   //*Modal States
-  const [accept, setAccept] = useState(false);
   const [resched, setResched] = useState(false);
-  const [reject, setReject] = useState(false);
   const [imageModal, setImageModal] = useState(false);
 
-  if (accept || resched || reject || imageModal) {
+  if (resched || imageModal) {
     document.documentElement.style.overflowY = "hidden";
   } else {
     document.documentElement.style.overflowY = "unset";
   }
 
-  //*Convert to am/pm time
-  const convertToAMPM = (time) => {
-    return new Date(`2000-01-01T${time}`).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
     <>
       <div className="sticky top-1">
-        {accept && (
-          <AcceptConfirm setAccept={setAccept} handleAccept={handleAccept} />
-        )}
         {imageModal && (
           <ImageModal
             CDNURL={CDNURL}
@@ -217,13 +189,6 @@ const AppointmentDetails = () => {
           />
         )}
         {resched && <ReschedConfirm setResched={setResched} id={id} />}
-        {reject && (
-          <CancelConfirm
-            setReject={setReject}
-            id={id}
-            handleAccept={handleAccept}
-          />
-        )}
       </div>
 
       <div className="back flex flex-col items-center h-auto pb-14 min-h-screen w-full">
@@ -276,7 +241,7 @@ const AppointmentDetails = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col text-left items-left mt-10 space-y-3 row-span-2">
+              <div className="flex flex-col text-left items-left mt-10 space-y-5 row-span-2">
                 <p>
                   <span className="font-semibold">Booking Reference id:</span>
                   <br />
@@ -385,15 +350,6 @@ const AppointmentDetails = () => {
               <div className="flex items-center space-x-6 col-span-4 mt-3 justify-end">
                 <div>
                   <button
-                    onClick={(e) => setAccept(true) || e.preventDefault()}
-                    className="transition py-2 px-7 flex items-center text-white duration-100 bg-green-600 hover:bg-green-800 rounded-full "
-                  >
-                    <LuCalendarCheck2 className="text-2xl mr-1" />
-                    <span>Accept Appointment</span>
-                  </button>
-                </div>
-                <div>
-                  <button
                     onClick={(e) => setResched(true) || e.preventDefault()}
                     className="transition flex px-7 py-2 text-white duration-100 hover:bg-primary-700 bg-primary-500 rounded-full "
                   >
@@ -402,108 +358,6 @@ const AppointmentDetails = () => {
                     <span>Reschedule Appointment</span>
                   </button>
                 </div>
-                <div>
-                  <button
-                    onClick={(e) => setReject(true) || e.preventDefault()}
-                    className="transition flex items-center px-7 py-2 text-white duration-100 bg-red-600 hover:bg-red-800 rounded-full "
-                  >
-                    <LuCalendarX2 className="text-2xl mr-1" />
-                    <span>Reject Appointment</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </section>
-        <h1 className="w-full text-3xl mt-10 text-center font-semibold text-[#256e2b] uppercase">
-          Doctor's details
-        </h1>
-        <section className="flex flex-col px-12 py-10 mt-10 rounded-xl bg-white w-[80%] abs">
-          {loading ? (
-            <div className="flex justify-center w-full ">
-              <Oval
-                height={80}
-                width={80}
-                color="#4fa94d"
-                wrapperStyle={{}}
-                wrapperClass=""
-                visible={true}
-                ariaLabel="oval-loading"
-                secondaryColor="#4fa94d"
-                strokeWidth={2}
-                strokeWidthSecondary={2}
-              />
-            </div>
-          ) : (
-            <div className="grid grid-cols-3 text-lg row-span-2 gap-3">
-              {Doc && (
-                <>
-                  <div className="flex flex-col  text-center items-center">
-                    <img
-                      className="object-cover rounded-md shadow-xl w-[15rem] mb-5 h-[15rem]"
-                      src={`${
-                        isDocImgEmpty
-                          ? CDNURL + Doc.email + "/profile/" + docImg
-                          : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/doc.jpg"
-                      }`}
-                      alt="/"
-                    />
-                  </div>
-
-                  <div className="flex flex-col text-left items-left mt-10 space-y-8 pr-6">
-                    <p className="">
-                      <span className="font-semibold">Doctor's Name:</span>
-                      <br />
-                      {Doc.honorific} {Doc.name}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Consultation type:</span>
-                      <br />
-                      {Doc.type === "ol"
-                        ? "Online Consultation"
-                        : "Face to face"}
-                    </p>
-                  </div>
-                  <div className="flex flex-col text-left items-left mt-10 space-y-8 pr-6">
-                    <p>
-                      <span className="font-semibold">Doctor id:</span>
-                      <br />
-                      {Doc.id}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Specialization:</span>
-                      <br />
-                      {Doc.specialization}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Sub-specialization:</span>
-                      <br />
-                      {Doc.subspecial}
-                    </p>
-                  </div>
-                </>
-              )}
-              <div className="col-span-4 flex justify-center text-xl font-semibold ">
-                <p>Schedule</p>
-              </div>
-              <div className="flex-col items-center  col-span-4">
-                <div className="bg-green-600 grid grid-cols-4 w-full text-white py-2 col-span-4 justify-center px-10">
-                  <p className="col-span-2">Days</p>
-                  <p className="text-center">Check In</p>
-                  <p className="text-center">Check Out</p>
-                </div>
-                {Doc.schedule &&
-                  Doc.schedule.map((item) => (
-                    <div className="col-span-3 bg-slate-200 py-2 grid grid-cols-4 w-full my-3 px-10">
-                      <div className="col-span-2 ">{item.day}</div>
-                      <div className="text-center">
-                        {convertToAMPM(item.startTime)}
-                      </div>
-                      <div className="text-center">
-                        {convertToAMPM(item.endTime)}
-                      </div>
-                    </div>
-                  ))}
               </div>
             </div>
           )}
@@ -512,4 +366,5 @@ const AppointmentDetails = () => {
     </>
   );
 };
-export default AppointmentDetails;
+
+export default DocAppDetails;

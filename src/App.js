@@ -39,7 +39,7 @@ import Archive from "./components/Higher user level/Admin/Archives/Archive";
 import AdminFeedback from "./components/Higher user level/Admin/Message Page/Messages";
 import AppointmentDetails from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentDetails";
 import AppointConfirmation from "./components/Higher user level/Admin/Confirmation of Appointments/AppointmentConfirmation";
-
+import DocAppDetails from "./components/Higher user level/Doctor/Appointments/DocAppDetails";
 
 function App() {
   //*login modal
@@ -201,7 +201,10 @@ function App() {
           <Route path="/Notifications" element={<Notification />} />
           <Route path="/Mission-and-Vision" element={<MissonVision />} />
           <Route path="/Feedback-Form" element={<Feedback token={token} />} />
-          <Route path="/Contacts" element={<Contacts token={token} user={user} />} />
+          <Route
+            path="/Contacts"
+            element={<Contacts token={token} user={user} />}
+          />
           <Route path="/Hospital-Profile" element={<Profile />} />
           <Route
             path="/Appointment/Online"
@@ -222,19 +225,25 @@ function App() {
               <Online token={token} openTerms={openTerms} setToken={setToken} />
             }
           />
-          <Route path="/Appointment/Patient/Details/:id" element={<AppointDetails />} />
+          <Route
+            path="/Appointment/Patient/Details/:id"
+            element={<AppointDetails />}
+          />
           {/* Appointment procedures */}
           <Route
             path={"/Appointment"}
             element={<Appointment token={token} isPatient={isPatient} />}
           />
           <Route
-            path={"/Appointment/Success"}
+            path={"/Appointment/Success/:bookID"}
             element={
               <AfterAppointment token={token} user={user} setToken={setToken} />
             }
           />
-          <Route path={"/Appointment/Verifying"} element={<WaitVerify />} />
+          <Route
+            path={"/Appointment/Verifying/:bookID"}
+            element={<WaitVerify />}
+          />
           <Route
             path="/Dashboard"
             element={
@@ -260,6 +269,10 @@ function App() {
                     path="/Doctor/Appointments"
                     element={<DocAppointments CDNURL={CDNURL} />}
                   />
+                  <Route
+                    path="/Doctor/Appointments/Details/:id"
+                    element={<DocAppDetails />}
+                  />
                 </>
               )}
               {isPatient && (
@@ -279,13 +292,18 @@ function App() {
               {/* Admin's side */}
               {isAdmin && (
                 <>
-
                   <Route
                     path="/Appointment/Admin/Details/:id"
                     element={<AppointmentDetails />}
                   />
-                  <Route path="/User_feedbacks" element={<AdminFeedback CDNURL={CDNURL} />} />
-                  <Route path="/Admin/PatientDetails/:id" element={<PatientDetails />} />
+                  <Route
+                    path="/User_feedbacks"
+                    element={<AdminFeedback CDNURL={CDNURL} />}
+                  />
+                  <Route
+                    path="/Admin/PatientDetails/:id"
+                    element={<PatientDetails />}
+                  />
                   <Route
                     path="/Archive"
                     element={<Archive CDNURL={CDNURL} />}

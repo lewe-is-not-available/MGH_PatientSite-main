@@ -6,6 +6,7 @@ import { AiOutlineDown } from "react-icons/ai";
 import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
+import moment from "moment/moment";
 
 const StatusMap = ({ ol, imgName, isImgEmpty }) => {
   const CDNURL =
@@ -34,23 +35,6 @@ const StatusMap = ({ ol, imgName, isImgEmpty }) => {
       };
     }
   }, [setExpand, ol]);
-  //*date format
-  const date = new Date(ol.created_at);
-  function formateDateTime(date) {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    const hours = date.getHours() % 12 || 12;
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    const ampm = date.getHours() >= 12 ? "pm" : "am";
-
-    return `${year}/${month}/${day} ${hours}:${minutes}${ampm}`;
-  }
-  //const CreatedAt = formateDateTime(date);
-  //*if booked by someone set viewable
-  //const [isSomeone, setSomeone] = useState(false);
-  //const [SomeoneModal, setSomeoneModal] = useState(null);
-  const id = ol.user_id;
 
   //*AOS function
   useEffect(() => {
@@ -95,7 +79,7 @@ const StatusMap = ({ ol, imgName, isImgEmpty }) => {
                 <span className="font-semibold text-green-950">
                   Booked at:{" "}
                 </span>
-                {formateDateTime(date)}
+                {moment(new Date(ol.created_at)).calendar()}
               </p>
               <p>
                 <span className="font-semibold text-green-950">
@@ -106,9 +90,16 @@ const StatusMap = ({ ol, imgName, isImgEmpty }) => {
             </div>
           </div>
           <div className="flex self-start mt-2">
-            <p className="bg-primary-500 text-center w-fit px-3 h-fit self-center mr-3 text-white rounded-full">
-              {ol.status}
-            </p>
+            {ol.status === "rejected" && (
+              <p className="bg-red-500 text-center w-fit px-3 h-fit self-center mr-3 text-white rounded-full">
+                {ol.status}
+              </p>
+            )}
+            {ol.status !== "rejected" && (
+              <p className="bg-primary-500 text-center w-fit px-3 h-fit self-center mr-3 text-white rounded-full">
+                {ol.status}
+              </p>
+            )}
             <button className=" mr-2 text-lg transition duration-200 group-hover/pu:bg-slate-400 p-3 rounded-lg">
               <div>
                 <AiOutlineDown

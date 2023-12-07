@@ -70,6 +70,7 @@ const EditDoctorModal = ({
       return {
         ...prevForm,
         [e.target.name]: e.target.value,
+        phone: e.target.value.slice(0, 11)
       };
     });
   };

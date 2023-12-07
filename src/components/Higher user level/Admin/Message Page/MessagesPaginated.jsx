@@ -21,7 +21,6 @@ const MessagesPaginated = ({ books, Loaded, setLoaded, setOpenMessage }) => {
       }
     }
   }, [books, itemOffset, setLoaded]);
-  console.log(currentItems)
   const handlePageClick = (event) => {
     setLoaded(false);
     const newOffset = (event.selected * itemsPerPage) % books.length;
@@ -47,7 +46,7 @@ const MessagesPaginated = ({ books, Loaded, setLoaded, setOpenMessage }) => {
       {Loaded ? (
         currentItems &&
         currentItems.map((ol) => (
-          <div key={ol.book_id} className="w-full">
+          <div key={ol.id} className="w-full">
             <Online 
             setOpenMessage={setOpenMessage} ol={ol} />
           </div>

@@ -196,7 +196,6 @@ const Admin = () => {
       {/* feautures */}
       <div className="flex justify-center mb-20">
         <div className="grid grid-cols-4 features gap-6 w-full">
-          {/* Online consult */}
           <Link
             to="/Confirm_Appointments"
             className="Adminboxes"
@@ -219,7 +218,6 @@ const Admin = () => {
             </div>
             <p>Booked Appointments to confirm</p>
           </Link>
-          {/* Face to face consult */}
           <Link to="/Edit_doctors" className="Adminboxes" data-aos="fade-up">
             <div className="AdmintitleText">Total doctors: </div>
             <div className="w-full rounded-xl mb-4">
@@ -236,9 +234,8 @@ const Admin = () => {
                 )}
               </h1>
             </div>
-            <p>Book an appointment for Face to face consult</p>
+            <p>Accounts of doctors inside this website</p>
           </Link>
-          {/* Contact us */}
           <Link to="/Edit_Patients" className="Adminboxes" data-aos="fade-up">
             <div className="AdmintitleText">Total Patients: </div>
             <div className="w-full rounded-xl mb-4">
@@ -255,9 +252,8 @@ const Admin = () => {
                 )}
               </h1>
             </div>
-            <p>Need to give us a message? Feel free to contact us.</p>
+            <p>Accounts of patients inside this website</p>
           </Link>
-          {/* Feedback form */}
           <Link to="/Archive" className="Adminboxes " data-aos="fade-up">
             <div className="AdmintitleText">Total Archives: </div>
             <div className="w-full rounded-xl mb-4">
@@ -274,25 +270,24 @@ const Admin = () => {
                 )}
               </h1>
             </div>
-            <p>Let us know what you think of our website</p>
+            <p>Completed Consultations</p>
           </Link>
-
-          {/* Appointment status */}
-
-          <Link
-            to="/Appointment/Status"
-            className="abs bg-white flex items-center justify-center rounded-md col-span-3"
-            data-aos="fade-up"
-          >
-            <p>Activities</p>
-          </Link>
-          <Link to="/" className="Adminboxes" data-aos="fade-up">
-            <div className="AdmintitleText">Messages: </div>
-            <div className="w-full rounded-xl mb-4">
-              <h1 className="text-5xl font-semibold">{archive.length}</h1>
-            </div>
-            <p>Have a look at your recent online consultations</p>
-          </Link>
+          <div className="col-span-4 grid grid-cols-2 gap-x-5">
+            <Link
+              to="/Appointment/Status"
+              className="AdminboxesBot"
+              data-aos="fade-up"
+            >
+              <p>Activities</p>
+            </Link>
+            <Link to="/" className="AdminboxesBot" data-aos="fade-up">
+              <div className="AdmintitleText">Messages: </div>
+              <div className="w-full rounded-xl mb-4">
+                <h1 className="text-5xl font-semibold">{archive.length}</h1>
+              </div>
+              <p>Messages received from Contact Us!</p>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

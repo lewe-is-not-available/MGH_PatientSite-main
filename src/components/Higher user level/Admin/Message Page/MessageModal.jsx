@@ -1,20 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
-//import UploadPic from "./UploadPic";
-import { FiUpload } from "react-icons/fi";
-import supabase from "../../../config/Supabase";
-import { v4 as uuidv4 } from "uuid";
-import { toast } from "react-toastify";
-import { cardio } from "ldrs";
 
 const MessageModal = ({
   setOpenMessage,
   ol,
   imgName,
-  setimgName,
   isImgEmpty,
-  setImgEmpty,
   CDNURL,
 }) => {
   //*AOS function
@@ -42,13 +34,19 @@ const MessageModal = ({
         ref={messRef}
         className="bg-white sticky mt-[5rem] flex flex-col items-center abs rounded-lg p-6 h-fit max-h-[60%] w-[50%]"
       >
-        <div className="w-full flex mb-5 justify-end">
-          <button
-            onClick={(e) => setOpenMessage(false) || e.preventDefault()}
-            className="bg-slate-200 hover:bg-slate-300 transition duration-75 rounded-md px-3 select-none text-lg"
-          >
-            close
-          </button>
+        <div className="grid grid-cols-3  w-full">
+          <div className=""></div>
+          <div className="flex justify-center text-black text-2xl font-semibold">
+            Message Details
+          </div>
+          <div className="w-full flex mb-5 justify-end">
+            <button
+              onClick={(e) => setOpenMessage(false) || e.preventDefault()}
+              className="bg-slate-200 hover:bg-slate-300 transition duration-75 rounded-md px-3 select-none text-lg"
+            >
+              closez
+            </button>
+          </div>
         </div>
         <div className="grid grid-cols-3 gap-2 p-2 w-full overflow-y-auto">
           <div className="flex justify-center row-span-2 ">

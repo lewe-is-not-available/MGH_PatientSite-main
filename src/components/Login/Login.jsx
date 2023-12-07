@@ -4,7 +4,7 @@ import supabase from "../config/Supabase";
 import { useNavigate } from "react-router-dom";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 
-const Login = ({ close, openReg, setToken, doctor, admin, patient, token }) => {
+const Login = ({ close, openReg, setToken, patient, token }) => {
   //TODO: Make registration
   //!Fix login
   // const navigate = useNavigate()

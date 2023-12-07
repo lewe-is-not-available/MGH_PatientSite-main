@@ -16,6 +16,7 @@ const Contacts = ({ user, token }) => {
     Aos.init({ duration: 500 });
   }, []);
   //*getting inputs
+  const [Name, setName] = useState();
   const [formData, setFormData] = useState({
     fname: "",
     lname: "",
@@ -31,10 +32,10 @@ const Contacts = ({ user, token }) => {
       return {
         ...prev,
         [e.target.name]: e.target.value,
+        phone: e.target.value.slice(0, 11),
       };
     });
   }
-
   //*autofill value
   useEffect(() => {
     if (user) {
@@ -49,14 +50,25 @@ const Contacts = ({ user, token }) => {
     }
   }, [user]);
 
+  //*Combining first last and middle name
+  useEffect(() => {
+    setName(
+      formData.fname +
+        (formData.mname ? " " + formData.mname : "") +
+        " " +
+        formData.lname
+    );
+  }, [formData]);
+
   //*Onsubmit function
   const [load, setLoad] = useState(false);
   const [submit, setSubmit] = useState(false);
   async function handlSubmit(e) {
-    e.preventDefault()
+    e.preventDefault();
     setLoad(true);
     const { error } = await supabase.from("messages").insert({
       user_id: user.id,
+      name: Name,
       fname: formData.fname,
       mname: formData.mname,
       lname: formData.lname,
@@ -170,6 +182,7 @@ const Contacts = ({ user, token }) => {
                       required
                       value={formData.phone}
                       name="phone"
+                      type="number"
                       onChange={handleChange}
                       className="outline-none border-2 font-light border-slate-300 focus:border-[#71b967d3] w-full"
                     />

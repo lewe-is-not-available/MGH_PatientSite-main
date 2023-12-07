@@ -96,7 +96,6 @@ const AddingDoctor = ({ setShowAdd }) => {
     special: "",
     subspec: "",
     type: "",
-    //hmo: [],
     honorific: "",
     phone: "",
     id: "",
@@ -153,14 +152,18 @@ const AddingDoctor = ({ setShowAdd }) => {
 
   //*Onchange function
   const handleChange = (e) => {
-    setformData((prevForm) => {
-      return {
+    if (e.target.name === "phone") {
+      setformData((prevForm) => ({
+        ...prevForm,
+        [e.target.name]: e.target.value.slice(0, 11),
+      }));
+    } else {
+      setformData((prevForm) => ({
         ...prevForm,
         [e.target.name]: e.target.value,
-      };
-    });
+      }));
+    }
   };
-
   //*Combining first last and middle name
   useEffect(() => {
     setName(
@@ -366,7 +369,7 @@ const AddingDoctor = ({ setShowAdd }) => {
                       <label className="">Contact number:</label>
                       <input
                         required
-                        type="text"
+                        type="number"
                         name="phone"
                         onChange={handleChange}
                         className="w-[73%] px-3 bg-slate-100 border-b-2 border-slate-400"

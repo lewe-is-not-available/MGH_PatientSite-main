@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import supabase from "../../../config/Supabase";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
 import SuccessLoggedIn from "./SuccessLoggedIn";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { cardio } from "ldrs";
 
 cardio.register();
@@ -31,6 +31,7 @@ const AfterAppointment = ({ token, setToken, user }) => {
 
   //*Login button funtion
   const [Loading, setLoading] = useState(false);
+  const id = useParams()
   async function handleSubmit(e) {
     e.preventDefault()
     setLoading(true);
@@ -44,7 +45,7 @@ const AfterAppointment = ({ token, setToken, user }) => {
       if (error) throw error;
       else {
         //*successful sign-in
-        nav("/Appointment/Success");
+        nav("/Appointment/Success/"+ id.bookID);
         setToken(data);
         setLoading(false);
       }

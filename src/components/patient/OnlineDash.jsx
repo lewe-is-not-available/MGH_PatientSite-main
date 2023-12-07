@@ -14,7 +14,7 @@ const Online = () => {
   //Search and reset Function
   const [name, setName] = useState("");
   const [spSelect, setSpSelect] = useState("");
-  const [subSelect, setSubSelect] = useState();
+  const [subSelect, setSubSelect] = useState("");
   const [Doctors, setDoctors] = useState(null);
   const [Filter, setFilter] = useState([]);
   const [noResult, setNoResult] = useState(false);
@@ -171,7 +171,7 @@ const Online = () => {
           data-aos="zoom-in-up"
         >
           <div className="flex flex-col items-center space-y-4">
-            <div className="grid grid-cols-4 containtsearch">
+            <div className="grid grid-cols-3 containtsearch">
               <div className="text-xl text-[#315E30]">
                 <p className="search_label">Doctor's name</p>
                 <input
@@ -188,13 +188,13 @@ const Online = () => {
                 <div className="flex mr-10">
                   {/* specialization Dropdown */}
                   <select
-                    className="w-44 py-2 serachInput duration-100 border-b-2 focus:outline-[#315E30]"
+                    className="w-full py-2 serachInput duration-100 border-b-2 focus:outline-[#315E30]"
                     value={spSelect}
                     onChange={(e) => setSpSelect(e.target.value)}
                   >
                     {Specials.map((Spec) => {
                       return (
-                        <option key={Spec.id}>{Spec.specialization}</option>
+                        <option key={Spec.id}>{Spec.Specialization}</option>
                       );
                     })}
                   </select>
@@ -202,36 +202,24 @@ const Online = () => {
               </div>
               <div className="text-xl text-[#315E30]">
                 <p className="search_label">Sub-specialization</p>
-                <div className="flex mr-10">
+                <div className="flex">
                   {/* Sub-specialization Dropdown */}
                   <select
                     id="finddoctor-form-subspec"
                     value={subSelect}
                     onChange={(e) => setSubSelect(e.target.value)}
-                    className="w-44 py-2 serachInput duration-100 border-b-2 focus:outline-[#315E30]"
+                    className="w-full py-2 serachInput duration-100 border-b-2 focus:outline-[#315E30]"
                   >
                     <option key="">---</option>
-                    {subspecial.map((subspec) => {
-                      return (
+                    {subspecial.map((subspec) => 
+                     (
                         <option key={subspec.id}>
                           {subspec.SubSpecialization}
                         </option>
-                      );
-                    })}
+                      )
+                   )}
                   </select>
                 </div>
-              </div>
-              <div className="text-xl text-[#315E30]">
-                <p className="search_label">HMO Accredation</p>
-                {/* Hmo input */}
-                <input
-                  type="text"
-                  value={Hmo}
-                  onChange={(e) => setHmo(e.target.value)}
-                  placeholder="Enter Accredation"
-                  className="py-2 pr-8 serachInput bg-white border-2 border-r-transparent border-t-transparent border-l-transparent focus:outline-none 
-              focus:border-b-[#315E30]"
-                />
               </div>
             </div>
             <button

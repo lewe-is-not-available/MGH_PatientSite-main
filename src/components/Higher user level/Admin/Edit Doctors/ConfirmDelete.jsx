@@ -78,7 +78,7 @@ const ConfirmDelete = ({ data, setConfirmDelete }) => {
 
   return (
     <div className="absolute bg-black bg-opacity-40 backdrop-blur-sm w-full h-screen z-50 flex items-center justify-center">
-      <div className="bg-white sticky mt-[5rem] flex w-[29rem] flex-col items-center abs rounded-lg p-6">
+      <div className="bg-white sticky -mt-[10rem] flex w-[29rem] flex-col items-center abs rounded-lg p-6">
         {loadConfirm ? (
           <>
             <l-cardio size="120" stroke="2" speed="1" color="rgb(0,100,0)" />

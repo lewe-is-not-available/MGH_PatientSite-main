@@ -78,7 +78,7 @@ const Doc_AppMap = ({ ol, CDNURL }) => {
     Aos.init({ duration: 500 });
     Aos.refresh();
   }, []);
-
+console.log(CDNURL + ol.email + "/profile/" + imgName)
   return (
     <div key={ol.user_id} className="text-base flex w-full select-none">
       <section
@@ -177,7 +177,7 @@ const Doc_AppMap = ({ ol, CDNURL }) => {
           </div>
           <div className="max-w-full mb-5 flex justify-center space-x-10">
             <Link
-              to={"/Appointment_Details/" + ol.book_id}
+              to={"/Doctor/Appointments/Details/" + ol.book_id}
               onClick={(e) => e.stopPropagation()}
             >
               <button className="text-lg px-14 py-1 transition duration-100 hover:bg-[#377532] bg-[#3dbb34] text-white rounded-md">

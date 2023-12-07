@@ -59,11 +59,10 @@ const DoctorsOnline = ({ Doctors }) => {
           }`}
           alt="/"
           className="w-[15rem] h-full object-cover max-2xl:w-[13rem] max-sm:w-[10rem] max-sm:mb-3 mb-6 rounded-lg"
-          data-aos="fade-up"
           data-aos-anchor-placement="top-bottom"
         />
         <div className="w-full items-center flex flex-col">
-          <div className="flex" data-aos="fade-up">
+          <div className="flex">
             <span className="mr-2 w-fit whitespace-nowrap font-bold">
               Name:
             </span>
@@ -74,7 +73,7 @@ const DoctorsOnline = ({ Doctors }) => {
               {Doctors.name}
             </p>
           </div>
-          <div className="flex" data-aos="fade-up">
+          <div className="flex">
             <span className="mr-2 w-fit whitespace-nowrap font-bold">
               Specialization:{" "}
             </span>
@@ -82,7 +81,7 @@ const DoctorsOnline = ({ Doctors }) => {
               {Doctors.specialization}
             </p>
           </div>
-          <div className="flex" data-aos="fade-up">
+          <div className="flex">
             <span className="mr-2 w-fit whitespace-nowrap font-bold">
               Sub-Special:{" "}
             </span>
@@ -90,14 +89,16 @@ const DoctorsOnline = ({ Doctors }) => {
               {Doctors.subspecial}
             </p>
           </div>
-          <div className="flex" data-aos="fade-up">
+          <div className="flex">
             <span className="mr-2 font-bold">Schedule: </span>
-            <p className="mb-2">
+            <div className="mb-2 flex flex-wrap">
               {Doctors.schedule &&
-                Doctors.schedule.map((item) => <>
-                {item.day === "Thursday" ? "Th": item.day[0]}
-                </>)}
-            </p>
+                Doctors.schedule.map((item) => (
+                  <p className="p-2 rounded-sm mr-2 mb-2 bg-opacity-40 text-slate-900 bg-[#67a76c]">
+                    {item.day === "Thursday" ? "Th" : item.day[0]}
+                  </p>
+                ))}
+            </div>
           </div>
         </div>
 

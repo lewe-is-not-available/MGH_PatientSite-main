@@ -77,14 +77,14 @@ const SearchResult = ({ Doctors }) => {
           </p>
         </div>
         <div className="flex">
-          <span className="mr-2 font-bold">Schedule: </span>
-          <p className="text-base valueDoc mb-4">
-            {Doctors.schedule &&
-              Doctors.schedule.map((item) => (
-                <>{item.day === "Thursday" ? "Th" : item.day[0]}</>
-              ))}
-          </p>
-        </div>
+            <span className="mr-2 font-bold">Schedule: </span>
+            <div className="mb-2 flex flex-wrap">
+              {Doctors.schedule &&
+                Doctors.schedule.map((item) => (
+                  <p className="p-2 rounded-sm mr-2 mb-2 bg-opacity-40 text-slate-900 bg-[#67a76c]">{item.day === "Thursday" ? "Th" : item.day[0]}</p>
+                ))}
+            </div>
+          </div>
         <Link to={"/DoctorInfo/" + Doctors.id}>
           <button className="flex text-base bg-[#418D3F] Docbtn p-2 rounded-md text-white font-bold ring-[#418D3F] ring-2 transition duration-75 ease-in hover:bg-[#A5DD9D] hover:text-[#267124]">
             <HiOutlineInformationCircle className="mr-1" size={23} /> Check

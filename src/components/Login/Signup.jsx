@@ -33,6 +33,7 @@ const Signup = ({ Closereg, open }) => {
       return {
         ...prevFormData,
         [event.target.name]: event.target.value,
+        Phone: event.target.value.slice(0, 11)
       };
     });
   }

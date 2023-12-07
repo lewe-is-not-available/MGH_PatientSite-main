@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { cardio } from "ldrs";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { IoStar } from "react-icons/io5";
 import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
@@ -13,6 +13,7 @@ const SuccessLoggedIn = ({ user }) => {
   const [message, setMessage] = useState();
   const [Load, setLoad] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const id = useParams()
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -54,7 +55,7 @@ const SuccessLoggedIn = ({ user }) => {
         click the button below to check you appointment status
       </p>
       <Link
-        to="/Appointment/Status"
+        to={"/Appointment/Patient/Details/" + id.bookID}
         className="bg-[#16891d] text-white transition duration-75 border-[3px] hover:text-green-800 hover:border-green-600 hover:bg-[#A5DD9D] border-[#16891d] w-[50%] py-2 mt-9 text-xl rounded-md"
       >
         Check Appointment Status
@@ -68,9 +69,7 @@ const SuccessLoggedIn = ({ user }) => {
             "submitted"
           ) : (
             <form onSubmit={onSubmit} className="w-full">
-              <label className="text-lg">
-                How was your booking?
-              </label>
+              <label className="text-lg">How was your booking?</label>
               <div className="flex items-center justify-center mt-2 space-x-3 text-5xl text-slate-500">
                 {[...Array(5)].map((star, i) => {
                   const currentRating = i + 1;

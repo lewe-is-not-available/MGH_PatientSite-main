@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { AiOutlineDown } from "react-icons/ai";
 import { BiSolidMessageDots, BiSolidMessageEdit } from "react-icons/bi";
 import MessageModal from "./MessageModal";
+import moment from "moment";
 
 const MessagesMap = ({ ol }) => {
   const CDNURL =
@@ -130,7 +131,13 @@ const MessagesMap = ({ ol }) => {
                   <span className="font-semibold text-green-950">
                     Created at:{" "}
                   </span>
-                  {formateDateTime(date)}
+                  {moment(new Date(ol.created_at)).calendar()}
+                </p>
+                <p className="">
+                  <span className="font-semibold text-green-950">
+                    Message Type:{" "}
+                  </span>
+                  {ol.type}
                 </p>
               </div>
             </div>
@@ -174,13 +181,6 @@ const MessagesMap = ({ ol }) => {
                 <MdPhone className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
                 <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
                   Phone <p className="text-slate-400">{ol.phone}</p>
-                </label>
-              </div>
-              <div className="flex">
-                {" "}
-                <BiSolidMessageEdit className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
-                <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                  Message type <p className="text-slate-400">{ol.type}</p>
                 </label>
               </div>
               <div className="flex">
