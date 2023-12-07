@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import supabase from "../../../config/Supabase";
-import ArchivePaginate from "./DocAppPaginated";
+import ArchivePaginate from "./ArchivePaginated";
 import { VscFilter, VscFilterFilled } from "react-icons/vsc";
 import { BsSearch } from "react-icons/bs";
 import { MagnifyingGlass } from "react-loader-spinner";
 import { IoNotificationsCircleOutline } from "react-icons/io5";
 import ReschedConfirm from "../../Admin/Confirmation of Appointments/ReschedConfirm";
 
-const Doc_Appointments = ({ CDNURL, user }) => {
+const DoctorConsulHistory = ({ CDNURL, user }) => {
   const [books, setBook] = useState([]);
   const [filt, setFilt] = useState([]);
   const name =
@@ -105,7 +105,7 @@ const Doc_Appointments = ({ CDNURL, user }) => {
     if (filt) {
       const filterBook = filt
         .filter((item) => {
-          const defStat = !item.status.includes("Completed");
+          const defStat = item.status.includes("Completed");
           const someone = item.someone.includes(Someone);
           const Time = item.time.toLowerCase().includes(time);
           const type = item.type.toLowerCase().includes(Type);
@@ -164,7 +164,7 @@ const Doc_Appointments = ({ CDNURL, user }) => {
             <div
               onClick={() => setisFilterOpen(!isFilterOpen)}
               className="px-4 py-1 items-center select-none hover:cursor-pointer w-fit transition duration-75 
-                       ease-in hover:bg-[#78b673f8] bg-[#98dd93c4] text-[#295f34] mx-4  rounded-full hover:text-white flex"
+                         ease-in hover:bg-[#78b673f8] bg-[#98dd93c4] text-[#295f34] mx-4  rounded-full hover:text-white flex"
             >
               {isFilterOpen ? (
                 <>
@@ -179,12 +179,6 @@ const Doc_Appointments = ({ CDNURL, user }) => {
                   <p className="">Filter</p>
                 </>
               )}
-            </div>
-            <div className="px-3 py-1 rounded-full bg-primary-300 text-primary-700">
-              <div className="flex items-center">
-                <IoNotificationsCircleOutline className="mr-1 text-2xl" />
-                <span>notify</span>
-              </div>
             </div>
           </div>
           <div
@@ -219,7 +213,7 @@ const Doc_Appointments = ({ CDNURL, user }) => {
                     <button
                       onClick={handleSearch}
                       className="bg-[#60af5ac4] h-8 border-l-0 hover:bg-[#84d17fc4] hover:text-[#388332c4]
-                   text-white border-[#388332c4] border-2 px-2 rounded-r-md relative"
+                     text-white border-[#388332c4] border-2 px-2 rounded-r-md relative"
                     >
                       Search
                     </button>
@@ -263,7 +257,7 @@ const Doc_Appointments = ({ CDNURL, user }) => {
           <div className=" flex justify-center">
             <div
               className="w-full h-auto min-h-screen text-sm flex mt-3 mb-10 flex-wrap justify-between
-           rounded-lg text-gray-500 dark:text-gray-400"
+             rounded-lg text-gray-500 dark:text-gray-400"
             >
               {searchLoad ? (
                 <ArchivePaginate
@@ -296,4 +290,4 @@ const Doc_Appointments = ({ CDNURL, user }) => {
   );
 };
 
-export default Doc_Appointments;
+export default DoctorConsulHistory;

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Online from "./Doc_AppMap";
+import Online from "./ArchiveMap";
 import ReactPaginate from "react-paginate";
 import { Oval } from "react-loader-spinner";
 
-const DocAppPaginated = ({
+const ArchivePaginated = ({
   books,
   CDNURL,
   Loaded,
@@ -15,7 +15,7 @@ const DocAppPaginated = ({
   const [itemOffset, setItemOffset] = useState(0);
   const [pageCount, setpageCount] = useState(0);
   const itemsPerPage = 7;
-  const [currentItems, setcurrentItems] = useState(null);
+  const [currentItems, setcurrentItems] = useState([]);
   useEffect(() => {
     if (books) {
       const endOffset = itemOffset + itemsPerPage;
@@ -52,17 +52,22 @@ const DocAppPaginated = ({
         activeLinkClassName="border-2 border-green-700 text-xl rounded"
       />
       {Loaded ? (
-        currentItems &&
-        currentItems.map((ol) => (
-          <div key={ol.book_id} className="w-full">
-            <Online
-              ol={ol}
-              CDNURL={CDNURL}
-              setResched={setResched}
-              setBookID={setBookID}
-            />
-          </div>
-        ))
+        currentItems.length === 0 ? (
+          "No Completed Appointments yet"
+        ) : (
+          <>
+            {currentItems.map((ol) => (
+              <div key={ol.book_id} className="w-full">
+                <Online
+                  ol={ol}
+                  CDNURL={CDNURL}
+                  setResched={setResched}
+                  setBookID={setBookID}
+                />
+              </div>
+            ))}
+          </>
+        )
       ) : (
         <Oval
           height={80}
@@ -81,4 +86,4 @@ const DocAppPaginated = ({
   );
 };
 
-export default DocAppPaginated;
+export default ArchivePaginated;

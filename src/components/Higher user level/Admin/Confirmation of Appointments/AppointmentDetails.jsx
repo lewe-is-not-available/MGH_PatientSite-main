@@ -11,7 +11,7 @@ import ReschedConfirm from "./ReschedConfirm";
 import CancelConfirm from "./CancelConfirm";
 import ImageModal from "./ImageModal";
 
-const AppointmentDetails = () => {
+const AppointmentDetails = ({ user }) => {
   const CDNURL =
     "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
   const [imgName, setimgName] = useState([]);
@@ -216,7 +216,9 @@ const AppointmentDetails = () => {
             setImageModal={setImageModal}
           />
         )}
-        {resched && <ReschedConfirm setResched={setResched} id={id} />}
+        {resched && (
+          <ReschedConfirm user={user} setResched={setResched} id={id} />
+        )}
         {reject && (
           <CancelConfirm
             setReject={setReject}

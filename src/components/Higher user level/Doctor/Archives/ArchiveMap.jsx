@@ -11,7 +11,7 @@ import { BiDetail } from "react-icons/bi";
 import { TbCalendarTime } from "react-icons/tb";
 import { RiMessageFill } from "react-icons/ri";
 
-const Doc_AppMap = ({ ol, CDNURL, setResched, setBookID }) => {
+const ArchiveMap = ({ ol, CDNURL, setResched, setBookID }) => {
   //TODO fix scroll animation
   //*expand details
   const [expand, setExpand] = useState(false);
@@ -167,13 +167,6 @@ const Doc_AppMap = ({ ol, CDNURL, setResched, setBookID }) => {
                   <span>Appointment Details</span>
                 </button>
               </Link>
-              <button
-                onClick={(e) => setResched(true) || setBookID(ol.book_id) || e.stopPropagation()}
-                className="text-lg flex items-center space-x-1 px-12  transition duration-100 text-white hover:bg-red-700 bg-red-500 rounded-md"
-              >
-                <TbCalendarTime className="text-2xl" />
-                <span>Reschedule Appointment</span>
-              </button>
             </div>
           </div>
         </section>
@@ -182,4 +175,4 @@ const Doc_AppMap = ({ ol, CDNURL, setResched, setBookID }) => {
   );
 };
 
-export default Doc_AppMap;
+export default ArchiveMap;

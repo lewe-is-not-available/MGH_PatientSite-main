@@ -391,7 +391,7 @@ const Sidebar = ({
               >
                 <MdOutlineFeedback className="text-2xl mr-2 group-hover/os:invisible" />
                 <MdFeedback className="text-2xl mr-2 -translate-x-8 invisible group-hover/os:visible" />
-                <p className="-translate-x-8">Message</p>
+                <p className="-translate-x-8">Feedbacks</p>
               </Link>
             </>
           )}

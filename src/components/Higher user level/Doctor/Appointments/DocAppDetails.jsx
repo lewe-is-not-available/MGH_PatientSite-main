@@ -3,13 +3,12 @@ import { useParams } from "react-router-dom";
 import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
 import { Oval } from "react-loader-spinner";
-import { useNavigate } from "react-router-dom";
 import { TbCalendarTime } from "react-icons/tb";
-import { LuCalendarCheck2, LuCalendarX2 } from "react-icons/lu";
 import ReschedConfirm from "../../Admin/Confirmation of Appointments/ReschedConfirm";
 import ImageModal from "../../Admin/Confirmation of Appointments/ImageModal";
+import moment from "moment";
 
-const DocAppDetails = () => {
+const DocAppDetails = ({ user }) => {
   const CDNURL =
     "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
   const [imgName, setimgName] = useState([]);
@@ -188,7 +187,9 @@ const DocAppDetails = () => {
             setImageModal={setImageModal}
           />
         )}
-        {resched && <ReschedConfirm setResched={setResched} id={id} />}
+        {resched && (
+          <ReschedConfirm setResched={setResched} id={id} user={user} />
+        )}
       </div>
 
       <div className="back flex flex-col items-center h-auto pb-14 min-h-screen w-full">
@@ -242,25 +243,25 @@ const DocAppDetails = () => {
                 </div>
               </div>
               <div className="flex flex-col text-left items-left mt-10 space-y-5 row-span-2">
-                <p>
+                <div>
                   <span className="font-semibold">Booking Reference id:</span>
                   <br />
-                  {data.book_id}
-                </p>
+                  <p className="flex-wrap flex w-[17rem]">{data.book_id}</p>
+                </div>
                 <p>
                   <span className="font-semibold">Patient Birthdate:</span>
                   <br />
-                  {data.bday}
+                  {moment(new Date(data.bday)).format("LL")}
                 </p>
                 <p>
                   <span className="font-semibold">Booked at:</span>
                   <br />
-                  {formateDateTime(date)}
+                  {moment(new Date(data.created_at)).calendar()}
                 </p>
                 <p>
                   <span className="font-semibold">Appointment day:</span>
                   <br />
-                  {data.date}
+                  {moment(new Date(data.date)).format("LL")}
                 </p>
 
                 <p>
@@ -347,18 +348,19 @@ const DocAppDetails = () => {
                   )}
                 </div>
               </div>
-              <div className="flex items-center space-x-6 col-span-4 mt-3 justify-end">
-                <div>
-                  <button
-                    onClick={(e) => setResched(true) || e.preventDefault()}
-                    className="transition flex px-7 py-2 text-white duration-100 hover:bg-primary-700 bg-primary-500 rounded-full "
-                  >
-                    <TbCalendarTime className="text-2xl mr-1" />
-
-                    <span>Reschedule Appointment</span>
-                  </button>
+              {data.status !== "Completed" && (
+                <div className="flex items-center space-x-6 col-span-4 mt-3 justify-end">
+                  <div>
+                    <button
+                      onClick={(e) => setResched(true) || e.preventDefault()}
+                      className="transition flex px-7 py-2 text-white duration-100 hover:bg-red-700 bg-red-500 rounded-full "
+                    >
+                      <TbCalendarTime className="text-2xl mr-1" />
+                      <span>Reschedule Appointment</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </section>

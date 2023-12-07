@@ -28,7 +28,7 @@ import WaitVerify from "./components/patient/Appointment Process/After Submittin
 import PatientDetails from "./components/Higher user level/Admin/Edit Patients/PatientDetails";
 
 //Doctor
-import DoctorConsultHistory from "./components/Higher user level/Doctor/DoctorConsulHistory";
+import DoctorConsultHistory from "./components/Higher user level/Doctor/Archives/DoctorConsulHistory";
 import DocAppointments from "./components/Higher user level/Doctor/Appointments/Doc_Appointments";
 
 //admin
@@ -263,15 +263,17 @@ function App() {
                 <>
                   <Route
                     path="/DoctorConsultHistory"
-                    element={<DoctorConsultHistory />}
+                    element={
+                      <DoctorConsultHistory CDNURL={CDNURL} user={user} />
+                    }
                   />
                   <Route
                     path="/Doctor/Appointments"
-                    element={<DocAppointments CDNURL={CDNURL} />}
+                    element={<DocAppointments CDNURL={CDNURL} user={user} />}
                   />
                   <Route
                     path="/Doctor/Appointments/Details/:id"
-                    element={<DocAppDetails />}
+                    element={<DocAppDetails user={user} />}
                   />
                 </>
               )}
@@ -294,7 +296,7 @@ function App() {
                 <>
                   <Route
                     path="/Appointment/Admin/Details/:id"
-                    element={<AppointmentDetails />}
+                    element={<AppointmentDetails user={user} />}
                   />
                   <Route
                     path="/User_feedbacks"

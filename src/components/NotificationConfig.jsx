@@ -36,31 +36,36 @@ function NotificationConfig({ data }) {
   }, []);
 
   return (
-    <div className="abs bg-white w-[800px] p-2 flex gap-2 mt-2 rounded-md">
-      <div className="flex items-end">
-        {/* Image */}
-        <img
-          className="object-cover rounded-full w-[5rem] h-[5rem]"
-          src={`${
-            isImgEmpty
-              ? CDNURL + data.email + "/profile/" + img
-              : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
-          }`}
-          alt="/"
-        />
-        {data.status === "rescheduled" && (
-          <IoCalendar className="bg-red-500 px-1 text-[30px] rounded-full -ml-7 text-white" />
-        )}
-        {data.status === "booked" && (
-          <BsBell className="bg-green-500 px-1 text-[30px] rounded-full -ml-7 text-white" />
-        )}
+    <Link
+      to={"/Appointment/Admin/Details/" + data.book_id}
+      className="abs bg-white w-[800px] py-2 px-5 flex gap-2 mt-2 rounded-md"
+    >
+      <div className="flex items-center">
+        <div className="flex items-end">
+          {/* Image */}
+          <img
+            className="object-cover rounded-full w-[4rem] h-[4rem]"
+            src={`${
+              isImgEmpty
+                ? CDNURL + data.email + "/profile/" + img
+                : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
+            }`}
+            alt="/"
+          />
+          {data.status === "rescheduled" && (
+            <IoCalendar className="bg-red-500 px-1 text-[30px] rounded-full -ml-7 text-white" />
+          )}
+          {data.status === "booked" && (
+            <BsBell className="bg-green-500 px-1 text-[30px] rounded-full -ml-7 text-white" />
+          )}
 
-        {data.status === "reminder" && (
-          <LuClock4 className="bg-blue-500 px-1 text-[30px] rounded-full -ml-7 text-white" />
-        )}
+          {data.status === "reminder" && (
+            <LuClock4 className="bg-blue-500 px-1 text-[30px] rounded-full -ml-7 text-white" />
+          )}
+        </div>
       </div>
 
-      <Link to={"/Appointment/Admin/Details/" + data.book_id} className="grid">
+      <div className="grid">
         <label className="text-[#41843F] font-bold text-[20px] hover:underline cursor-pointer">
           {/* Set Name */}
           {data.fname} {data.lname}
@@ -81,8 +86,8 @@ function NotificationConfig({ data }) {
             <label>Contact patient to remind the appointment</label>
           )}
         </label>
-      </Link>
-    </div>
+      </div>
+    </Link>
   );
 }
 

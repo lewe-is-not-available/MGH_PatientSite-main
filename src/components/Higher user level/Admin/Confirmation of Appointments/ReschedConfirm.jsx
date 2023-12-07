@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 cardio.register();
 
-const AcceptConfirm = ({ setResched, id }) => {
+const AcceptConfirm = ({ setResched, id, user }) => {
   const nav = useNavigate();
   const [date, setDate] = useState();
   async function handleSubmit(e) {
@@ -21,7 +21,11 @@ const AcceptConfirm = ({ setResched, id }) => {
       if (error) throw error;
       else {
         toast.success("Appointment Succesfully Rescheduled");
-        nav("/Confirm_Appointments");
+        if (user.role && user.role === "doctor") {
+          nav("/Doctor/Appointments");
+        } else {
+          nav("/Confirm_Appointments");
+        }
       }
     } catch (error) {
       toast.error(error.message);
@@ -52,9 +56,7 @@ const AcceptConfirm = ({ setResched, id }) => {
               <p className="mb-4">
                 Are you sure you want to reschedule this appointment?
               </p>
-              <p>
-               Select a date to reshedule:
-              </p>
+              <p>Select a date to reshedule:</p>
               <input
                 required
                 onChange={(e) => setDate(e.target.value)}
