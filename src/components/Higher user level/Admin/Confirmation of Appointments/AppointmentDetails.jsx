@@ -48,6 +48,7 @@ const AppointmentDetails = ({ user }) => {
     fetchData();
   }, [id]);
   //*getting image
+  const [StatusVisible, setStatusVisible] = useState(true);
   useEffect(() => {
     if (Email) {
       async function getImages() {
@@ -69,6 +70,9 @@ const AppointmentDetails = ({ user }) => {
         }
       }
       getImages();
+    }
+    if (data.status === "rejected" || data.status === "completed") {
+      setStatusVisible(false)
     }
   }, [setimgName, Email, setImgEmpty]);
   //*Get doctor details
@@ -131,7 +135,7 @@ const AppointmentDetails = ({ user }) => {
       }
       getImageDoc();
     }
-  }, [Doc.Email]);
+  }, [Doc]);
 
   //*get payment
   const [payImg, setPayImg] = useState([]);
@@ -335,13 +339,35 @@ const AppointmentDetails = ({ user }) => {
               <div className="flex flex-col mt-10 space-y-4 mx-7">
                 <div className="flex flex-col justify-center space-x-3">
                   <span className="font-semibold">Queuing Number:</span>
-                  <h2 className="text-6xl font-semibold">6</h2>
+                  <h2 className="text-6xl font-semibold">{data.queue}</h2>
                 </div>
-                <div className="flex flex-col">
-                  <span className="font-semibold">Status:</span>
-                  <p className="px-4 text-white rounded-full bg-primary w-fit">
-                    {data.status}
-                  </p>
+                <div className="flex flex-col text-left items-left mt-10 space-y-8">
+                  {data.status === "rejected" ? (
+                    <>
+                      <div className="flex flex-col">
+                        <span className="font-semibold">Status:</span>
+                        <p className="px-3 text-white rounded-full bg-red-500 w-fit">
+                          {data.status}
+                        </p>
+                        <p className="font-semibold mt-2">remark:</p>
+                        <p>{data.remark}</p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex flex-col justify-center space-x-3">
+                        <span className="font-semibold">Queuing Number:</span>
+                        <h2 className="text-6xl font-semibold">6</h2>
+                      </div>
+                      <div>
+                        <span className="font-semibold">Status:</span>
+                        <br />
+                        <p className="px-3 text-white rounded-full bg-primary w-fit">
+                          {data.status}
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="col-span-2 h-full">
@@ -384,36 +410,38 @@ const AppointmentDetails = ({ user }) => {
                   )}
                 </div>
               </div>
-              <div className="flex items-center space-x-6 col-span-4 mt-3 justify-end">
-                <div>
-                  <button
-                    onClick={(e) => setAccept(true) || e.preventDefault()}
-                    className="transition py-2 px-7 flex items-center text-white duration-100 bg-green-600 hover:bg-green-800 rounded-full "
-                  >
-                    <LuCalendarCheck2 className="text-2xl mr-1" />
-                    <span>Accept Appointment</span>
-                  </button>
-                </div>
-                <div>
-                  <button
-                    onClick={(e) => setResched(true) || e.preventDefault()}
-                    className="transition flex px-7 py-2 text-white duration-100 hover:bg-primary-700 bg-primary-500 rounded-full "
-                  >
-                    <TbCalendarTime className="text-2xl mr-1" />
+              {StatusVisible && (
+                <div className="flex items-center space-x-6 col-span-4 mt-3 justify-end">
+                  <div>
+                    <button
+                      onClick={(e) => setAccept(true) || e.preventDefault()}
+                      className="transition py-2 px-7 flex items-center text-white duration-100 bg-green-600 hover:bg-green-800 rounded-full "
+                    >
+                      <LuCalendarCheck2 className="text-2xl mr-1" />
+                      <span>Accept Appointment</span>
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      onClick={(e) => setResched(true) || e.preventDefault()}
+                      className="transition flex px-7 py-2 text-white duration-100 hover:bg-primary-700 bg-primary-500 rounded-full "
+                    >
+                      <TbCalendarTime className="text-2xl mr-1" />
 
-                    <span>Reschedule Appointment</span>
-                  </button>
+                      <span>Reschedule Appointment</span>
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      onClick={(e) => setReject(true) || e.preventDefault()}
+                      className="transition flex items-center px-7 py-2 text-white duration-100 bg-red-600 hover:bg-red-800 rounded-full "
+                    >
+                      <LuCalendarX2 className="text-2xl mr-1" />
+                      <span>Reject Appointment</span>
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <button
-                    onClick={(e) => setReject(true) || e.preventDefault()}
-                    className="transition flex items-center px-7 py-2 text-white duration-100 bg-red-600 hover:bg-red-800 rounded-full "
-                  >
-                    <LuCalendarX2 className="text-2xl mr-1" />
-                    <span>Reject Appointment</span>
-                  </button>
-                </div>
-              </div>
+              )}
             </div>
           )}
         </section>

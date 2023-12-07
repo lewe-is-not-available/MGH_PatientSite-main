@@ -8,7 +8,7 @@ import supabase from "../../../config/Supabase";
 import moment from "moment";
 
 import { BiDetail } from "react-icons/bi";
-import { TbCalendarTime } from "react-icons/tb";
+import { TbCalendarTime, TbNumber } from "react-icons/tb";
 import { RiMessageFill } from "react-icons/ri";
 
 const Doc_AppMap = ({ ol, CDNURL, setResched, setBookID }) => {
@@ -144,10 +144,15 @@ const Doc_AppMap = ({ ol, CDNURL, setResched, setBookID }) => {
               </div>
 
               <div className="flex">
-                {" "}
                 <MdPhone className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
                 <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
                   Phone <p className="text-slate-400">{ol.number}</p>
+                </label>
+              </div>
+              <div className="flex">
+                <TbNumber className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
+                <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
+                  Queue: <p className="text-slate-400">{ol.queue}</p>
                 </label>
               </div>
               <div className="flex">

@@ -58,7 +58,7 @@ const DocUniq = ({ Doctors }) => {
         <img
           src={`${
             isImgEmpty
-              ? "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/doc.jpg"
+              ? CDNURL + Doctors.email + "/profile/" + imgName
               : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/doc.jpg"
           }`}
           alt="/"

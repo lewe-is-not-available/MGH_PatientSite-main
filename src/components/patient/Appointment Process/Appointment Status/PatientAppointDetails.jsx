@@ -122,7 +122,7 @@ const AppointmentDetails = () => {
       }
       getImageDoc();
     }
-  }, [Doc.Email]);
+  }, [Doc]);
   //*Realtime
   useEffect(() => {
     fetchDoc(data.docname);
@@ -177,7 +177,6 @@ const AppointmentDetails = () => {
       minute: "2-digit",
     });
   };
-
   return (
     <>
       <div className="sticky top-1">
@@ -350,7 +349,7 @@ const AppointmentDetails = () => {
                   <>
                     <div className="flex flex-col justify-center space-x-3">
                       <span className="font-semibold">Queuing Number:</span>
-                      <h2 className="text-6xl font-semibold">6</h2>
+                      <h2 className="text-6xl font-semibold">{data.queue}</h2>
                     </div>
                     <div>
                       <span className="font-semibold">Status:</span>

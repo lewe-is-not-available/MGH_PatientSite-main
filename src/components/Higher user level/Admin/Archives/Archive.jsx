@@ -99,11 +99,12 @@ const Archive = ({ CDNURL }) => {
         .filter((item) => {
           const defStat = item.status.includes("Confirmed");
           const defStat1 = item.status.includes("Completed");
+          const defStat2 = item.status.includes("rejected");
           const someone = item.someone.includes(Someone);
           const Time = item.time.toLowerCase().includes(time);
           const type = item.type.toLowerCase().includes(Type);
           const status = item.status.toLowerCase().includes(Status);
-          return (defStat || defStat1) && someone && Time && type && status;
+          return (defStat || defStat1 || defStat2) && someone && Time && type && status;
         })
         .sort((a, b) =>
           isAsc

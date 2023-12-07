@@ -9,6 +9,8 @@ const AppconfirmPaginated = ({
   user,
   Loaded,
   setLoaded,
+  setCancel,
+  setBookID
 }) => {
   //*Pagination
   const [itemOffset, setItemOffset] = useState(0);
@@ -56,6 +58,8 @@ const AppconfirmPaginated = ({
           <div key={ol.book_id} className="w-full">
             <Online
               ol={ol}
+              setBookID={setBookID}
+              setCancel={setCancel}
               user={user}
               CDNURL={CDNURL}
             />

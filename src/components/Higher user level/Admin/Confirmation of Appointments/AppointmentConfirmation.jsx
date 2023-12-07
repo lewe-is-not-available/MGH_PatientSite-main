@@ -7,6 +7,7 @@ import { VscFilter, VscFilterFilled } from "react-icons/vsc";
 import { BsSearch } from "react-icons/bs";
 import { MagnifyingGlass } from "react-loader-spinner";
 import AppconfirmPaginated from "./AppconfirmPaginated";
+import CancelConfirm from "./CancelConfirm";
 
 const AppointmentConfirmation = ({ CDNURL, user }) => {
   //TODO fix scroll animation
@@ -120,12 +121,15 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
       const filterBook = filt
         .filter((item) => {
           const defStat = !item.status.includes("Confirmed");
-          const defStat2= !item.status.includes("Completed");
+          const defStat2 = !item.status.includes("Completed");
+          const defStat3 = !item.status.includes("rejected");
           const someone = item.someone.includes(Someone);
           const Time = item.time.toLowerCase().includes(time);
           const type = item.type.toLowerCase().includes(Type);
           const status = item.status.toLowerCase().includes(Status);
-          return defStat && defStat2 && someone && Time && type && status;
+          return (
+            defStat && defStat2 && defStat3 && someone && Time && type && status
+          );
         })
         .sort((a, b) =>
           isAsc
@@ -166,160 +170,175 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
   useEffect(() => {
     Aos.init({ duration: 500 });
   }, []);
-  return (
-    <div className="back h-full flex justify-center">
-      <div className="w-[70%] ">
-        <p className="text-4xl font-semibold text-[#315E30]"></p>
 
-        {/*search and filter  */}
-        <div className="w-full flex justify-between items-center mt-10 mb-3 ">
-          <div
-            onClick={() => setisFilterOpen(!isFilterOpen)}
-            className="px-4 py-1 items-center select-none hover:cursor-pointer w-fit transition duration-75 
+  const [cancel, setCancel] = useState(false);
+  const [bookID, setBookID] = useState();
+  if (cancel) {
+    document.documentElement.style.overflowY = "hidden";
+  } else {
+    document.documentElement.style.overflowY = "unset";
+  }
+  return (
+    <>
+      <div className="sticky top-1 z-50">
+        {cancel && <CancelConfirm setReject={setCancel} id={bookID} />}
+      </div>
+      <div className="back h-full flex justify-center">
+        <div className="w-[70%] ">
+          <p className="text-4xl font-semibold text-[#315E30]"></p>
+
+          {/*search and filter  */}
+          <div className="w-full flex justify-between items-center mt-10 mb-3 ">
+            <div
+              onClick={() => setisFilterOpen(!isFilterOpen)}
+              className="px-4 py-1 items-center select-none hover:cursor-pointer w-fit transition duration-75 
                        ease-in hover:bg-[#78b673f8] bg-[#98dd93c4] text-[#295f34] mx-4  rounded-full hover:text-white flex"
-          >
-            {isFilterOpen ? (
-              <>
-                {" "}
-                <VscFilterFilled className="text-2xl mr-2" />
-                <p className="">Close Filter</p>
-              </>
-            ) : (
-              <>
-                {" "}
-                <VscFilter className="text-2xl mr-2" />
-                <p className="">Filter</p>
-              </>
-            )}
+            >
+              {isFilterOpen ? (
+                <>
+                  {" "}
+                  <VscFilterFilled className="text-2xl mr-2" />
+                  <p className="">Close Filter</p>
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <VscFilter className="text-2xl mr-2" />
+                  <p className="">Filter</p>
+                </>
+              )}
+            </div>
           </div>
-        </div>
-        <div
-          className={`${
-            isFilterOpen
-              ? "transition-all duration-300 ease-in overflow-y-visible max-h-[20rem]"
-              : "transition-all duration-300 ease-out overflow-y-hidden max-h-0"
-          }`}
-        >
-          <div className="bg-[#98dd93c4] px-5 pt-5 pb-8 mb-2 rounded-lg items-center gap-x-7 gap-y-4 grid grid-cols-3">
-            <div className="flex flex-col">
-              <label className="mb-1">Search by name</label>
-              <div className="flex h-6 text-slate-500">
-                {!Search && (
-                  <div
-                    className={`${
-                      isFilterOpen
-                        ? "absolute flex space-x-1 items-center translate-x-4"
-                        : "hidden"
-                    }`}
-                  >
-                    <BsSearch className="w-4" />
-                    <p>Type here</p>
-                  </div>
-                )}
-                <div className="flex items-center w-full">
-                  <input
-                    type="text"
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="pl-3 rounded-l-md h-8 w-full text-black border-slate-400 border-2"
-                  />
-                  <button
-                    onClick={handleSearch}
-                    className="bg-[#60af5ac4] h-8 border-l-0 hover:bg-[#84d17fc4] hover:text-[#388332c4]
+          <div
+            className={`${
+              isFilterOpen
+                ? "transition-all duration-300 ease-in overflow-y-visible max-h-[20rem]"
+                : "transition-all duration-300 ease-out overflow-y-hidden max-h-0"
+            }`}
+          >
+            <div className="bg-[#98dd93c4] px-5 pt-5 pb-8 mb-2 rounded-lg items-center gap-x-7 gap-y-4 grid grid-cols-3">
+              <div className="flex flex-col">
+                <label className="mb-1">Search by name</label>
+                <div className="flex h-6 text-slate-500">
+                  {!Search && (
+                    <div
+                      className={`${
+                        isFilterOpen
+                          ? "absolute flex space-x-1 items-center translate-x-4"
+                          : "hidden"
+                      }`}
+                    >
+                      <BsSearch className="w-4" />
+                      <p>Type here</p>
+                    </div>
+                  )}
+                  <div className="flex items-center w-full">
+                    <input
+                      type="text"
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="pl-3 rounded-l-md h-8 w-full text-black border-slate-400 border-2"
+                    />
+                    <button
+                      onClick={handleSearch}
+                      className="bg-[#60af5ac4] h-8 border-l-0 hover:bg-[#84d17fc4] hover:text-[#388332c4]
                    text-white border-[#388332c4] border-2 px-2 rounded-r-md relative"
-                  >
-                    Search
-                  </button>
+                    >
+                      Search
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="flex flex-col">
-              <label>Appointment type</label>
-              <select
-                className="w-full rounded-md h-8 border-slate-400 border-2"
-                onChange={(e) => setType(e.target.value)}
-              >
-                <option key="1">Show all</option>
-                <option key="2">Online Consult</option>
-                <option key="3">Face to face Consult</option>
-              </select>
-            </div>
-            <div className="flex flex-col">
-              <label>sort created book date by</label>
-              <select
-                className="w-full rounded-md h-8 border-slate-400 border-2"
-                onChange={(e) => setCreated(e.target.value)}
-              >
-                <option key="1">descending</option>
-                <option key="2">ascending</option>
-              </select>
-            </div>
-            <div className="flex flex-col">
-              <label>Appointment time</label>
-              <select
-                className="w-full rounded-md h-8 border-slate-400 border-2"
-                onChange={(e) => settime(e.target.value)}
-              >
-                <option key="1">all</option>
-                <option key="2">morning</option>
-                <option key="3">afternoon</option>
-              </select>
-            </div>
-            <div className="flex flex-col">
-              <label>status</label>
-              <select
-                className="w-full rounded-md h-8 border-slate-400 border-2"
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <option key="1">Show all</option>
-                <option key="2">pending</option>
-                <option key="3">rescheduled</option>
-              </select>
-            </div>
-            <div className="flex flex-col">
-              <label>Booked by someone</label>
-              <select
-                className="w-full rounded-md h-8 border-slate-400 border-2"
-                onChange={(e) => setSomeone(e.target.value)}
-              >
-                <option key="1">Show all</option>
-                <option key="2">Yes</option>
-                <option key="3">No</option>
-              </select>
+              <div className="flex flex-col">
+                <label>Appointment type</label>
+                <select
+                  className="w-full rounded-md h-8 border-slate-400 border-2"
+                  onChange={(e) => setType(e.target.value)}
+                >
+                  <option key="1">Show all</option>
+                  <option key="2">Online Consult</option>
+                  <option key="3">Face to face Consult</option>
+                </select>
+              </div>
+              <div className="flex flex-col">
+                <label>sort created book date by</label>
+                <select
+                  className="w-full rounded-md h-8 border-slate-400 border-2"
+                  onChange={(e) => setCreated(e.target.value)}
+                >
+                  <option key="1">descending</option>
+                  <option key="2">ascending</option>
+                </select>
+              </div>
+              <div className="flex flex-col">
+                <label>Appointment time</label>
+                <select
+                  className="w-full rounded-md h-8 border-slate-400 border-2"
+                  onChange={(e) => settime(e.target.value)}
+                >
+                  <option key="1">all</option>
+                  <option key="2">morning</option>
+                  <option key="3">afternoon</option>
+                </select>
+              </div>
+              <div className="flex flex-col">
+                <label>status</label>
+                <select
+                  className="w-full rounded-md h-8 border-slate-400 border-2"
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option key="1">Show all</option>
+                  <option key="2">pending</option>
+                  <option key="3">rescheduled</option>
+                </select>
+              </div>
+              <div className="flex flex-col">
+                <label>Booked by someone</label>
+                <select
+                  className="w-full rounded-md h-8 border-slate-400 border-2"
+                  onChange={(e) => setSomeone(e.target.value)}
+                >
+                  <option key="1">Show all</option>
+                  <option key="2">Yes</option>
+                  <option key="3">No</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
-        <div className=" flex justify-center">
-          <div
-            className="w-full h-auto min-h-screen text-sm flex mt-3 mb-10 flex-wrap justify-between
+          <div className=" flex justify-center">
+            <div
+              className="w-full h-auto min-h-screen text-sm flex mt-3 mb-10 flex-wrap justify-between
            rounded-lg text-gray-500 dark:text-gray-400"
-          >
-            {searchLoad ? (
-              <AppconfirmPaginated
-                books={books}
-                user={user}
-                CDNURL={CDNURL}
-                setLoaded={setLoaded}
-                Loaded={Loaded}
-              />
-            ) : (
-              <div className="w-full flex justify-center mt-20">
-                <MagnifyingGlass
-                  visible={true}
-                  width="50"
-                  ariaLabel="MagnifyingGlass-loading"
-                  wrapperStyle={{}}
-                  wrapperClass="MagnifyingGlass-wrapper"
-                  glassColor="#c0efffb7"
-                  color="#388332c4"
+            >
+              {searchLoad ? (
+                <AppconfirmPaginated
+                  books={books}
+                  user={user}
+                  setBookID={setBookID}
+                  CDNURL={CDNURL}
+                  setLoaded={setLoaded}
+                  Loaded={Loaded}
+                  setCancel={setCancel}
                 />
-                <p className="text-2xl text-slate-600">Searching</p>
-              </div>
-            )}
+              ) : (
+                <div className="w-full flex justify-center mt-20">
+                  <MagnifyingGlass
+                    visible={true}
+                    width="50"
+                    ariaLabel="MagnifyingGlass-loading"
+                    wrapperStyle={{}}
+                    wrapperClass="MagnifyingGlass-wrapper"
+                    glassColor="#c0efffb7"
+                    color="#388332c4"
+                  />
+                  <p className="text-2xl text-slate-600">Searching</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

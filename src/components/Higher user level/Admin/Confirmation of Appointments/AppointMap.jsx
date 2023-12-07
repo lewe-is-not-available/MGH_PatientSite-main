@@ -6,8 +6,10 @@ import { AiOutlineDown } from "react-icons/ai";
 import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
 import supabase from "../../../config/Supabase";
+import { LuCalendarX2 } from "react-icons/lu";
+import { BiDetail } from "react-icons/bi";
 
-const Online = ({ ol, CDNURL }) => {
+const Online = ({ ol, CDNURL, setCancel, setBookID }) => {
   //TODO fix scroll animation
   //*expand details
   const [expand, setExpand] = useState(false);
@@ -67,7 +69,7 @@ const Online = ({ ol, CDNURL }) => {
       console.log(error);
     }
   }
-  
+
   useEffect(() => {
     if (ol) {
       getImages(id, setimgName, setImgEmpty);
@@ -80,121 +82,135 @@ const Online = ({ ol, CDNURL }) => {
     Aos.refresh();
   }, []);
 
+
   return (
-    <div key={ol.user_id} className="text-base flex w-full select-none">
-      <section
-        data-aos="fade-right"
-        data-aos-anchor="#trigger-next"
-        ref={detailsRef}
-        onClick={handleExpand}
-        className="group/pu bg-white abs mb-3 cursor-pointer text-gray-900 w-full rounded-xl transition duration-75 ease-in hover:bg-slate-100 text-center  "
-      >
-        <div
-          id="trigger-next"
-          scope="row"
-          className=" py-3 mx-6 flex font-medium whitespace-nowrap justify-between"
+    <>
+      <div key={ol.user_id} className="text-base flex w-full select-none">
+        <section
+          data-aos="fade-right"
+          data-aos-anchor="#trigger-next"
+          ref={detailsRef}
+          onClick={handleExpand}
+          className="group/pu bg-white abs mb-3 cursor-pointer text-gray-900 w-full rounded-xl transition duration-75 ease-in hover:bg-slate-100 text-center  "
         >
-          <div className="flex">
-            <img
-              className="object-cover rounded-full w-[4rem] h-[4rem]"
-              src={`${
-                isImgEmpty
-                  ? CDNURL + ol.email + "/profile/" + imgName
-                  : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
-              }`}
-              alt="/"
-            />
-            <div className="ml-4 flex-col text-left text-sm">
-              <p className="text-base uppercase font-semibold text-green-800">
-                {ol.lname} {ol.fname}
-              </p>
-              <p className="">
-                <span className="font-semibold text-green-950">
-                  Booked at:{" "}
-                </span>
-                {formateDateTime(date)}
-              </p>
-              <p>
-                <span className="font-semibold text-green-950">
-                  Doctor Name:{" "}
-                </span>
-                {ol.docname}
-              </p>
-            </div>
-          </div>
-          <div className="flex self-start mt-2">
-            <p className="bg-primary-500 text-center w-fit px-3 h-fit self-center mr-3 text-white rounded-full">
-              {ol.status}
-            </p>
-            <button className=" mr-2 text-lg transition duration-200 group-hover/pu:bg-slate-400 p-3 rounded-lg">
-              <div>
-                <AiOutlineDown
-                  className={`${
-                    expand
-                      ? "rotate-180 transition duration-300"
-                      : "rotate-0 transition duration-300"
-                  }`}
-                />
+          <div
+            id="trigger-next"
+            scope="row"
+            className=" py-3 mx-6 flex font-medium whitespace-nowrap justify-between"
+          >
+            <div className="flex">
+              <img
+                className="object-cover rounded-full w-[4rem] h-[4rem]"
+                src={`${
+                  isImgEmpty
+                    ? CDNURL + ol.email + "/profile/" + imgName
+                    : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
+                }`}
+                alt="/"
+              />
+              <div className="ml-4 flex-col text-left text-sm">
+                <p className="text-base uppercase font-semibold text-green-800">
+                  {ol.lname} {ol.fname}
+                </p>
+                <p className="">
+                  <span className="font-semibold text-green-950">
+                    Booked at:{" "}
+                  </span>
+                  {formateDateTime(date)}
+                </p>
+                <p>
+                  <span className="font-semibold text-green-950">
+                    Doctor Name:{" "}
+                  </span>
+                  {ol.docname}
+                </p>
               </div>
-            </button>
-          </div>
-        </div>
-        <div
-          className={`${
-            expand
-              ? "transition-all duration-300 ease-in overflow-y-visible opacity-100 max-h-[20rem]"
-              : "transition-all duration-300 ease-out overflow-y-hidden opacity-0 max-h-0"
-          }`}
-        >
-          <div className={`flex flex-col items-start mx-[6.4rem] mt-3 gap-y-3`}>
-            <div className="flex">
-              <BsFillCalendarCheckFill className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[24px]  text-green-600" />
-              <label className="w-fit ml-4 text-left text-base text-black">
-                Scheduled at <p className="text-slate-400">{ol.date}</p>
-              </label>
             </div>
-            <div className="flex">
-              <MdAccessTimeFilled className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
-              <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                Time <p className="text-slate-400">{ol.time}</p>
-              </label>
-            </div>
-
-            <div className="flex">
-              {" "}
-              <MdEmail className="text-lg pr-[2px]pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
-              <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                Email <p className="text-slate-400">{ol.email}</p>
-              </label>
-            </div>
-
-            <div className="flex">
-              {" "}
-              <MdPhone className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
-              <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                Phone <p className="text-slate-400">{ol.number}</p>
-              </label>
-            </div>
-          </div>
-          <div className="max-w-full mb-5 flex justify-center space-x-10">
-            <Link
-              to={"/Appointment/Admin/Details/" + ol.book_id}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button className="text-lg px-14 py-1 transition duration-100 hover:bg-[#377532] bg-[#3dbb34] text-white rounded-md">
-                Appointment Details
+            <div className="flex self-start mt-2">
+              {ol.status === "rejected" && (
+                <p className="bg-red-500 text-center w-fit px-3 h-fit self-center mr-3 text-white rounded-full">
+                  {ol.status}
+                </p>
+              )}
+              {ol.status !== "rejected" && (
+                <p className="bg-primary-500 text-center w-fit px-3 h-fit self-center mr-3 text-white rounded-full">
+                  {ol.status}
+                </p>
+              )}
+              <button className=" mr-2 text-lg transition duration-200 group-hover/pu:bg-slate-400 p-3 rounded-lg">
+                <div>
+                  <AiOutlineDown
+                    className={`${
+                      expand
+                        ? "rotate-180 transition duration-300"
+                        : "rotate-0 transition duration-300"
+                    }`}
+                  />
+                </div>
               </button>
-            </Link>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="text-lg px-14  transition duration-100 text-white hover:bg-red-700 bg-red-500 rounded-md"
-            >
-              Cancel
-            </button>
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+          <div
+            className={`${
+              expand
+                ? "transition-all duration-300 ease-in overflow-y-visible opacity-100 max-h-[20rem]"
+                : "transition-all duration-300 ease-out overflow-y-hidden opacity-0 max-h-0"
+            }`}
+          >
+            <div
+              className={`flex flex-col items-start mx-[6.4rem] mt-3 gap-y-3`}
+            >
+              <div className="flex">
+                <BsFillCalendarCheckFill className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[24px]  text-green-600" />
+                <label className="w-fit ml-4 text-left text-base text-black">
+                  Scheduled at <p className="text-slate-400">{ol.date}</p>
+                </label>
+              </div>
+              <div className="flex">
+                <MdAccessTimeFilled className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
+                <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
+                  Time <p className="text-slate-400">{ol.time}</p>
+                </label>
+              </div>
+
+              <div className="flex">
+                {" "}
+                <MdEmail className="text-lg pr-[2px]pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
+                <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
+                  Email <p className="text-slate-400">{ol.email}</p>
+                </label>
+              </div>
+
+              <div className="flex">
+                {" "}
+                <MdPhone className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
+                <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
+                  Phone <p className="text-slate-400">{ol.number}</p>
+                </label>
+              </div>
+            </div>
+            <div className="max-w-full mb-5 flex justify-center space-x-10">
+              <Link
+                to={"/Appointment/Admin/Details/" + ol.book_id}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button className="text-lg flex items-center space-x-1 px-12 py-1 transition duration-100 hover:bg-[#377532] bg-[#3dbb34] text-white rounded-md">
+                  <BiDetail className="text-2xl" />
+                  <span>Appointment Details</span>
+                </button>
+              </Link>
+              <button
+                onClick={(e) => setCancel(true) || setBookID(ol.book_id) || e.stopPropagation()}
+                className="text-lg flex items-center space-x-1 px-12 transition duration-100 text-white hover:bg-red-700 bg-red-500 rounded-md"
+              >
+                <LuCalendarX2 className="text-2xl" />
+                <span>Cancel Appointment</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </>
   );
 };
 

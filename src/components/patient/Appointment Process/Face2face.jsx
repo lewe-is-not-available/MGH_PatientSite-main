@@ -105,7 +105,6 @@ const Face2face = ({ token, openTerms }) => {
       return {
         ...prevFormData,
         [event.target.name]: event.target.value,
-        Number: event.target.value.slice(0, 11)
       };
     });
   }
@@ -171,100 +170,35 @@ const Face2face = ({ token, openTerms }) => {
       return;
     }
     //*If there is no screenshot uploaded
-    if (!isSelected) {
+    else if (!isSelected) {
       toast.error("Please finish the payment first", {
         toastId: "imageErr",
       });
       return;
     }
-    //*Compare pass and confirm pass if similar
-    if (!token) {
-      if (formData.Pass !== formData.Confirm_pass) {
-        toast.error("Your password doesn't match", {
-          toastId: "dataError",
-        });
-        return;
-      }
-    }
     setSubLoad(true);
     uploadImage();
-    //*if user is logged in
-    if (token) {
-      const { error } = await supabase.from("patient_Appointments").insert([
-        {
-          book_id: bookID,
-          user_id: userID,
-          appointee: isSomeone ? Representative : "",
-          docname: doc.name,
-          fname: formData.Fname,
-          lname: formData.Lname,
-          mname: formData.Mname,
-          email: formData.Gmail,
-          number: formData.Number,
-          date: formData.Date,
-          time: formData.Time,
-          reason: formData.Reason,
-          relation: formData.Relation,
-          age: formData.PatientAge,
-          bday: formData.PatientBday,
-          someone: checkedSomeone,
-          honorific: doc.honorific,
-          type: "f2f",
-          status: "pending",
-        },
-      ]);
-      if (error) {
-        console.log(error);
-        toast.error(error, {
-          toastId: "dataError",
-        });
-        setSubLoad(true);
-      } else {
-        navigate("/Appointment/Success");
-      }
-    }
-    //*if user is not logged in
-    else if (!token) {
-      setSubLoad(true);
-      //*Compare pass and confirm pass if similar
-      if (formData.Pass !== formData.Confirm_pass) {
-        toast.error("Your password doesn't match", {
-          toastId: "dataError",
-        });
-        setSubLoad(false);
-        return;
-      }
-      const { error: errSignUp } = await supabase.auth.signUp({
-        email: formData.Gmail,
-        password: formData.Pass,
-        sendOtp: true,
-        options: {
-          emailRedirectTo:
-            "https://leweprojects.github.io/MGHsite/#/Appointment/Success/" +
-            bookID,
-          data: {
-            username: formData.Mname + formData.Lname,
-            first_name: formData.Fname,
-            last_name: formData.Lname,
-            middle_name: formData.Mname,
-            phone: formData.Number,
-            birth_date: formData.PatientBday,
-            role: "patient",
-            address: formData.Address,
-          },
-        },
+
+    const { data: queNum, error: queErr } = await supabase
+      .from("patient_Appointments")
+      .select()
+      .match({
+        doc_id: doc.id,
+        date: formData.Date,
       });
-      if (errSignUp) {
-        toast.error(errSignUp);
-        console.log(errSignUp);
-        setSubLoad(false);
-      } else {
-        navigate("/Appointment/Verifying");
-        const { error: ErrApp } = await supabase
-          .from("patient_Appointments")
-          .insert([
+    try {
+      if (queErr) throw queErr;
+      else {
+        //* if user is logged in
+        if (token) {
+          e.preventDefault();
+          const { error } = await supabase.from("patient_Appointments").insert([
             {
-              appointee: isSomeone ? Representative : null,
+              book_id: bookID,
+              user_id: userID,
+              queue: queNum.length + 1,
+              doc_id: doc.id,
+              appointee: isSomeone ? Representative : "",
               docname: doc.name,
               fname: formData.Fname,
               lname: formData.Lname,
@@ -273,6 +207,7 @@ const Face2face = ({ token, openTerms }) => {
               number: formData.Number,
               date: formData.Date,
               time: formData.Time,
+              address: formData.Address,
               reason: formData.Reason,
               relation: formData.Relation,
               age: formData.PatientAge,
@@ -283,18 +218,100 @@ const Face2face = ({ token, openTerms }) => {
               status: "pending",
             },
           ]);
-        if (ErrApp) {
-          console.log(ErrApp);
-          toast.error(ErrApp, {
-            toastId: "dataError",
+          if (error) {
+            console.log(error);
+            toast.error(error, {
+              toastId: "dataError",
+            });
+            setSubLoad(true);
+          } else {
+            navigate("/Appointment/Success/" + bookID);
+          }
+        }
+
+        //*if user is not logged in
+        else if (!token) {
+          setSubLoad(true);
+          //*Compare pass and confirm pass if similar
+          if (formData.Pass !== formData.Confirm_pass) {
+            toast.error("Your password doesn't match", {
+              toastId: "dataError",
+            });
+            setSubLoad(false);
+            return;
+          }
+          const { error: errSignUp } = await supabase.auth.signUp({
+            queue: queNum.length + 1,
+            doc_id: doc.id,
+            email: formData.Gmail,
+            password: formData.Pass,
+            sendOtp: true,
+            options: {
+              emailRedirectTo:
+                "https://leweprojects.github.io/MGHsite/#/Appointment/Success/" +
+                bookID,
+              data: {
+                username: formData.Mname + formData.Lname,
+                first_name: formData.Fname,
+                last_name: formData.Lname,
+                middle_name: formData.Mname,
+                phone: formData.Number,
+                birth_date: formData.PatientBday,
+                role: "patient",
+                address: formData.Address,
+              },
+            },
           });
-        } else {
-          toast.success("Succesfully appointed", {
-            toastId: "success",
-          });
-          toast.info("Please wait for booking and scheduling confirmation.");
+          if (errSignUp) {
+            toast.error(errSignUp);
+            console.log(errSignUp);
+            setSubLoad(false);
+          } else {
+            navigate("/Appointment/Verifying/" + bookID);
+            const { error: ErrApp } = await supabase
+              .from("patient_Appointments")
+              .insert([
+                {
+                  book_id: bookID,
+                  doc_id: doc.id,
+                  appointee: isSomeone ? Representative : "",
+                  docname: doc.name,
+                  fname: formData.Fname,
+                  lname: formData.Lname,
+                  mname: formData.Mname,
+                  email: formData.Gmail,
+                  number: formData.Number,
+                  date: formData.Date,
+                  time: formData.Time,
+                  reason: formData.Reason,
+                  relation: formData.Relation,
+                  age: formData.PatientAge,
+                  bday: formData.PatientBday,
+                  someone: checkedSomeone,
+                  honorific: doc.honorific,
+                  type: "f2f",
+                  status: "pending",
+                },
+              ]);
+            if (ErrApp) {
+              console.log(ErrApp);
+              toast.error(ErrApp, {
+                toastId: "dataError",
+              });
+              setSubLoad(false);
+            } else {
+              toast.success("Succesfully appointed", {
+                toastId: "success",
+              });
+              toast.info(
+                "Please wait for booking and scheduling confirmation."
+              );
+            }
+          }
         }
       }
+    } catch (queErr) {
+      console.log(queErr);
     }
   };
 

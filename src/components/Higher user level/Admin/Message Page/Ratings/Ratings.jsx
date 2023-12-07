@@ -38,6 +38,25 @@ const Ratings = () => {
       setStar(mess);
     }
   };
+  useEffect(() => {
+    //*Realtime data.
+    fetchRatings();
+    const realtime = supabase
+      .channel("room1")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "ratings" },
+        (payload) => {
+          fetchRatings(payload.new.data);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.getChannels(realtime);
+    };
+  }, []);
+
   const [sortInput, setSortInput] = useState();
   const getSortedData = (data, sortBy) => {
     switch (sortBy) {
@@ -58,53 +77,46 @@ const Ratings = () => {
   }, [sortInput, star]);
 
   useEffect(() => {
-    const sOne = star.filter((item) => {
-      return item.rate.includes("1");
-    });
-    const sTwo = star.filter((item) => {
-      return item.rate.includes("2");
-    });
-    const sThree = star.filter((item) => {
-      return item.rate.includes("3");
-    });
-    const sFour = star.filter((item) => {
-      return item.rate.includes("4");
-    });
-    const sFive = star.filter((item) => {
-      return item.rate.includes("5");
-    });
+    if (star) {
+      const sOne = star.filter((item) => {
+        return item.rate.includes("1");
+      });
+      const sTwo = star.filter((item) => {
+        return item.rate.includes("2");
+      });
+      const sThree = star.filter((item) => {
+        return item.rate.includes("3");
+      });
+      const sFour = star.filter((item) => {
+        return item.rate.includes("4");
+      });
+      const sFive = star.filter((item) => {
+        return item.rate.includes("5");
+      });
 
-    setStarCount((prev) => ({
-      ...prev,
-      one: sOne.length,
-      two: sTwo.length,
-      three: sThree.length,
-      four: sFour.length,
-      five: sFive.length,
-      midTotal:
-        sOne.length +
-        sTwo.length +
-        sThree.length +
-        sFour.length +
-        sFive.length / 5,
-      total:
-        sOne.length + sTwo.length + sThree.length + sFour.length + sFive.length,
-    }));
-  }, [star]);
-  //*Realtime data
-  useEffect(() => {
-    fetchRatings();
-    supabase
-      .channel("custom-all-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "ratings" },
-        () => {
-          fetchRatings();
-        }
-      )
-      .subscribe();
-  }, []);
+      setStarCount((prev) => ({
+        ...prev,
+        one: sOne.length,
+        two: sTwo.length,
+        three: sThree.length,
+        four: sFour.length,
+        five: sFive.length,
+        midTotal:
+          sOne.length +
+          sTwo.length +
+          sThree.length +
+          sFour.length +
+          sFive.length / 5,
+        total:
+          sOne.length +
+          sTwo.length +
+          sThree.length +
+          sFour.length +
+          sFive.length,
+      }));
+    }
+  }, [star, sortInput]);
+
   return (
     <div className="flex flex-col space-y-3">
       <h1 className="font-semibold mt-7 text-xl">

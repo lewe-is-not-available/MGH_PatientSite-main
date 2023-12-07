@@ -180,12 +180,7 @@ const Doc_Appointments = ({ CDNURL, user }) => {
                 </>
               )}
             </div>
-            <div className="px-3 py-1 rounded-full bg-primary-300 text-primary-700">
-              <div className="flex items-center">
-                <IoNotificationsCircleOutline className="mr-1 text-2xl" />
-                <span>notify</span>
-              </div>
-            </div>
+           
           </div>
           <div
             className={`${

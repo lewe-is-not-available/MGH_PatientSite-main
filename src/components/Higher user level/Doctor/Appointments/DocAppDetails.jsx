@@ -7,6 +7,8 @@ import { TbCalendarTime } from "react-icons/tb";
 import ReschedConfirm from "../../Admin/Confirmation of Appointments/ReschedConfirm";
 import ImageModal from "../../Admin/Confirmation of Appointments/ImageModal";
 import moment from "moment";
+import { IoNotificationsCircleOutline } from "react-icons/io5";
+import Notif from "./Notif";
 
 const DocAppDetails = ({ user }) => {
   const CDNURL =
@@ -167,6 +169,7 @@ const DocAppDetails = ({ user }) => {
 
   //*Modal States
   const [resched, setResched] = useState(false);
+  const [notif, setNotif] = useState(false);
   const [imageModal, setImageModal] = useState(false);
 
   if (resched || imageModal) {
@@ -177,6 +180,9 @@ const DocAppDetails = ({ user }) => {
 
   return (
     <>
+      <div className="sticky top-1">
+        {notif && <Notif setReject={setNotif} id={data.book_id} />}
+      </div>
       <div className="sticky top-1">
         {imageModal && (
           <ImageModal
@@ -193,9 +199,22 @@ const DocAppDetails = ({ user }) => {
       </div>
 
       <div className="back flex flex-col items-center h-auto pb-14 min-h-screen w-full">
-        <h1 className="w-full text-3xl mt-10 text-center font-semibold text-[#256e2b] uppercase">
-          Appointment details
-        </h1>
+        <div className="grid grid-cols-3 w-full items-center justify-center">
+          <div className=""></div>
+          <h1 className="w-full text-3xl mt-10 text-center font-semibold text-[#256e2b] uppercase">
+            Appointment details
+          </h1>
+          {/* <div className="px-3 py-1 mt-7 rounded-full h-fit w-fit bg-primary-300 text-primary-700">
+            <button
+              onClick={(e) => setNotif(true) || e.preventDefault()}
+              className="flex items-center"
+            >
+              <IoNotificationsCircleOutline className="mr-1 text-2xl" />
+              <span>notify</span>
+            </button>
+          </div> */}
+        </div>
+          
         <section className="flex flex-col px-12 py-10 mt-10 rounded-xl bg-white w-[80%] abs">
           {loading ? (
             <div className="flex justify-center w-full ">
@@ -299,7 +318,7 @@ const DocAppDetails = ({ user }) => {
               <div className="flex flex-col mt-10 space-y-4 mx-7">
                 <div className="flex flex-col justify-center space-x-3">
                   <span className="font-semibold">Queuing Number:</span>
-                  <h2 className="text-6xl font-semibold">6</h2>
+                  <h2 className="text-6xl font-semibold">{data.queue}</h2>
                 </div>
                 <div className="flex flex-col">
                   <span className="font-semibold">Status:</span>
@@ -349,17 +368,19 @@ const DocAppDetails = ({ user }) => {
                 </div>
               </div>
               {data.status !== "Completed" && (
-                <div className="flex items-center space-x-6 col-span-4 mt-3 justify-end">
-                  <div>
-                    <button
-                      onClick={(e) => setResched(true) || e.preventDefault()}
-                      className="transition flex px-7 py-2 text-white duration-100 hover:bg-red-700 bg-red-500 rounded-full "
-                    >
-                      <TbCalendarTime className="text-2xl mr-1" />
-                      <span>Reschedule Appointment</span>
-                    </button>
+                <>
+                  <div className="flex items-center space-x-6 col-span-4 mt-3 justify-end">
+                    <div>
+                      <button
+                        onClick={(e) => setResched(true) || e.preventDefault()}
+                        className="transition flex px-7 py-2 text-white duration-100 hover:bg-red-700 bg-red-500 rounded-full "
+                      >
+                        <TbCalendarTime className="text-2xl mr-1" />
+                        <span>Reschedule Appointment</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
           )}

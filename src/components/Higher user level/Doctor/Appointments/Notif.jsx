@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { cardio } from "ldrs";
 import { useNavigate } from "react-router-dom";
-import { LuCalendarCheck2 } from "react-icons/lu";
 import { LuCalendarX2 } from "react-icons/lu";
 import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
+import { IoNotificationsOutline } from "react-icons/io5";
 
-cardio.register();
-
-const AcceptConfirm = ({ setReject, id }) => {
+const Notif = ({ setReject, id }) => {
   const nav = useNavigate();
   const [remark, setRemark] = useState();
 
@@ -17,7 +15,7 @@ const AcceptConfirm = ({ setReject, id }) => {
     setReject(false);
     const { error } = await supabase
       .from("patient_Appointments")
-      .update({ status: "rejected", remark })
+      .update({ remark })
       .eq("book_id", id);
     if (error) {
       toast.error(error.message, { autoClose: false });
@@ -27,22 +25,20 @@ const AcceptConfirm = ({ setReject, id }) => {
 
   return (
     <div className="absolute bg-black bg-opacity-40 backdrop-blur-sm w-full h-screen z-50 flex items-center justify-center">
-      <div className="bg-white sticky -mt-[8rem] flex w-[29rem] flex-col items-center abs rounded-lg p-6">
+      <div className="bg-white sticky -mt-[8rem] flex w-[full flex-col items-center abs rounded-lg p-6">
         <>
           <div className="flex">
             <div className="h-full">
-              <LuCalendarX2 className="text-4xl mr-3 mt-2 text-red-500" />
+              <IoNotificationsOutline className="text-4xl mr-3 mt-2 text-primary-500" />
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col items-start">
               <h1 className="mb-2 font-semibold text-xl flex items-end">
-                <span>Accept Appointment</span>
+                <span>Notify Admin</span>
               </h1>
               <p className="mb-2">
-                Are you sure you want reject this appointment?
+                Reason
               </p>
-
-              <p className="mt-3">Reason for rejecting:</p>
               <input
                 required
                 onChange={(e) => setRemark(e.target.value)}
@@ -56,7 +52,7 @@ const AcceptConfirm = ({ setReject, id }) => {
                 >
                   Cancel
                 </button>
-                <button className="px-9 py-1 bg-red-600 transition duration-100 hover:bg-red-800 text-white rounded-md">
+                <button className="px-9 py-1 bg-primary-600 transition duration-100 hover:bg-primary-800 text-white rounded-md">
                   Confirm
                 </button>
               </div>
@@ -68,4 +64,4 @@ const AcceptConfirm = ({ setReject, id }) => {
   );
 };
 
-export default AcceptConfirm;
+export default Notif;

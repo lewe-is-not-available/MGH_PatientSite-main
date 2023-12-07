@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 import Admin from "../Higher user level/Admin/AdminDashboard";
 import DocDash from "../Higher user level/Doctor/DoctorPage";
 
-const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
+const Dashboard = ({ token, showLogin, patient, admin, doctor, user }) => {
   const [Loaded, setLoaded] = useState(true);
   //TODO: Show dashboard even if logged out but link them to open modal
   //*For Search window drop function
@@ -405,7 +405,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor }) => {
         ""
       )}
       {admin && <Admin />}
-      {doctor && <DocDash />}
+      {doctor && <DocDash user={user} token={token}/>}
     </section>
   );
 };

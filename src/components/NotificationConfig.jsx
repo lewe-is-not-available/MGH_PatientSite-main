@@ -55,7 +55,7 @@ function NotificationConfig({ data }) {
           {data.status === "rescheduled" && (
             <IoCalendar className="bg-red-500 px-1 text-[30px] rounded-full -ml-7 text-white" />
           )}
-          {data.status === "booked" && (
+          {data.status === "pending" && (
             <BsBell className="bg-green-500 px-1 text-[30px] rounded-full -ml-7 text-white" />
           )}
 
@@ -79,7 +79,7 @@ function NotificationConfig({ data }) {
           {data.status === "rescheduled" && (
             <label> An appointment has been rescheduled</label>
           )}
-          {data.status === "booked" && (
+          {data.status === "pending" && (
             <label>Patient booked an appointment</label>
           )}
           {data.status === "reminder" && (
@@ -88,7 +88,7 @@ function NotificationConfig({ data }) {
         </label>
       </div>
     </Link>
-  );
+  )
 }
 
 export default NotificationConfig;

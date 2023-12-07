@@ -35,6 +35,11 @@
   text-sm text-center flex flex-col items-center bg-white rounded-xl transition 
   duration-200 hover:shadow-none;
 }
+.Docboxes {
+  @apply abs py-4 px-6 w-[30rem] cursor-pointer border-[1px] text-sm 
+  text-left flex flex-col items-start bg-white rounded-xl transition duration-200 
+  hover:shadow-none;
+}
 .Adminboxes {
   @apply abs py-4 px-6 w-[17rem] cursor-pointer border-[1px] text-sm 
   text-left flex flex-col items-start bg-white rounded-xl transition duration-200 

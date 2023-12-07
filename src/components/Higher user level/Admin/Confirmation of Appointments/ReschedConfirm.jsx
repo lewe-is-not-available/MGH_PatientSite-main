@@ -10,12 +10,13 @@ cardio.register();
 const AcceptConfirm = ({ setResched, id, user }) => {
   const nav = useNavigate();
   const [date, setDate] = useState();
+  const [remark, setRemark] = useState();
   async function handleSubmit(e) {
     e.preventDefault();
     setResched(false);
     const { error } = await supabase
       .from("patient_Appointments")
-      .update({ status: "rescheduled", date })
+      .update({ status: "rescheduled", date, remark })
       .eq("book_id", id);
     try {
       if (error) throw error;
@@ -62,6 +63,13 @@ const AcceptConfirm = ({ setResched, id, user }) => {
                 onChange={(e) => setDate(e.target.value)}
                 type="date"
                 min={disablePastDate()}
+                className="mb-4 bg-slate-200 px-3 py-1 w-[60%] focus:border-2 border-b-2 border-slate-400"
+              />
+              <p>Reason for rescheduling:</p>
+              <input
+                required
+                onChange={(e) => setRemark(e.target.value)}
+                type="text"
                 className="mb-4 bg-slate-200 px-3 py-1 w-[60%] focus:border-2 border-b-2 border-slate-400"
               />
               <div className="flex items-center justify-end w-full space-x-2 mt-3">

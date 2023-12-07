@@ -19,10 +19,10 @@ const Notification = () => {
     var holder = [];
     for (let i = 0; i < appoint.length; i++) {
       if (
-        appoint[i].status === "cancel" ||
+        appoint[i].status === "rejected" ||
         appoint[i].status === "reminder" ||
         appoint[i].status === "rescheduled" ||
-        appoint[i].status === "booked"
+        appoint[i].status === "pending"
       ) {
         holder = holder.concat(...isolated_data, appoint[i]);
       }

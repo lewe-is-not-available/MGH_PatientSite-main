@@ -253,6 +253,7 @@ function App() {
                 admin={isAdmin}
                 doctor={isDoctor}
                 patient={isPatient}
+                user={user}
               />
             }
           />
