@@ -22,30 +22,58 @@ const DocAppDetails = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [Email, setEmail] = useState("");
   const [isSomeone, setisSomeone] = useState();
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data: book, error: bookErr } = await supabase
-        .from("patient_Appointments")
-        .select()
-        .eq("book_id", id)
-        .single();
 
-      if (bookErr) {
-        toast.error(bookErr.message, {
-          toastId: "error",
-        });
-      }
-      if (book.someone === "Yes") {
-        setisSomeone(true);
-      } else {
-        setisSomeone(false);
-      }
-      setEmail(book.email);
-      setData(book);
-      setLoading(false);
+  const fetchData = async () => {
+    const { data: book, error: bookErr } = await supabase
+      .from("patient_Appointments")
+      .select()
+      .eq("book_id", id)
+      .single();
+
+    if (bookErr) {
+      toast.error(bookErr.message, {
+        toastId: "error",
+      });
+    }
+    if (book.someone === "Yes") {
+      setisSomeone(true);
+    } else {
+      setisSomeone(false);
+    }
+    setEmail(book.email);
+    setData(book);
+    setLoading(false);
+  };
+
+  //*realtime for fetching last queue number
+  useEffect(() => {
+    const fetchAndSubscribe = async () => {
+      await fetchData();
+
+      const realtime = supabase
+        .channel("room13")
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "patient_Appointments",
+            filter: `book_id=eq.${id}`,
+          },
+          (payload) => {
+            fetchData(payload.new.data);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(realtime);
+        realtime.unsubscribe();
+      };
     };
-    fetchData();
-  }, [id]);
+    fetchAndSubscribe();
+  }, []);
+
   //*getting image
   useEffect(() => {
     if (Email) {
@@ -103,35 +131,6 @@ const DocAppDetails = ({ user }) => {
       .subscribe();
   }, [data.docname]);
 
-  //*getting image for doctor
-  const [docImg, setDocImg] = useState();
-  const [isDocImgEmpty, setisDocImgEmpty] = useState(false);
-  useEffect(() => {
-    if (Doc.email) {
-      async function getImageDoc() {
-        const { data: DocPic, error: DocPicErr } = await supabase.storage
-          .from("images")
-          .list(Doc.email + "/profile/", {
-            limit: 10,
-            offset: 0,
-            sortBy: { column: "created_at", order: "asc" },
-          });
-
-        if (DocPic[0]) {
-          setisDocImgEmpty(true);
-          setDocImg(DocPic[0].name);
-        }
-
-        if (DocPicErr) {
-          setisDocImgEmpty(false);
-          toast.error(DocPicErr.message, { autoClose: false });
-          console.log(DocPicErr);
-        }
-      }
-      getImageDoc();
-    }
-  }, [Doc.Email]);
-
   //*get payment
   const [payImg, setPayImg] = useState([]);
   const [PayName, setPayName] = useState();
@@ -154,18 +153,6 @@ const DocAppDetails = ({ user }) => {
   useEffect(() => {
     getPayment();
   }, [data.email]);
-  //*date format
-  const date = new Date(data.created_at);
-  function formateDateTime(date) {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    const hours = date.getHours() % 12 || 12;
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    const ampm = date.getHours() >= 12 ? "pm" : "am";
-
-    return `${year}/${month}/${day} ${hours}:${minutes}${ampm}`;
-  }
 
   //*Modal States
   const [resched, setResched] = useState(false);
@@ -204,17 +191,8 @@ const DocAppDetails = ({ user }) => {
           <h1 className="w-full text-3xl mt-10 text-center font-semibold text-[#256e2b] uppercase">
             Appointment details
           </h1>
-          {/* <div className="px-3 py-1 mt-7 rounded-full h-fit w-fit bg-primary-300 text-primary-700">
-            <button
-              onClick={(e) => setNotif(true) || e.preventDefault()}
-              className="flex items-center"
-            >
-              <IoNotificationsCircleOutline className="mr-1 text-2xl" />
-              <span>notify</span>
-            </button>
-          </div> */}
         </div>
-          
+
         <section className="flex flex-col px-12 py-10 mt-10 rounded-xl bg-white w-[80%] abs">
           {loading ? (
             <div className="flex justify-center w-full ">
@@ -247,7 +225,8 @@ const DocAppDetails = ({ user }) => {
                   <p>
                     <span className="font-semibold">Patient Name:</span>
                     <br />
-                    {data.fname} {data.lname}
+                    {data.fname}
+                    {data.lname}
                   </p>
                   <p>
                     <span className="font-semibold">Patient Email:</span>
@@ -322,9 +301,31 @@ const DocAppDetails = ({ user }) => {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-semibold">Status:</span>
-                  <p className="px-4 text-white rounded-full bg-primary w-fit">
-                    {data.status}
-                  </p>
+                  {data.status === "Consultation Ongoing" && (
+                    <p className="px-4 py-1 text-white rounded-full bg-green-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "pending" && (
+                    <p className="px-4 py-1 text-white rounded-full bg-primary w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "Confirmed" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-emerald-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "rescheduled" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-rose-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "rejected" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-red-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="col-span-2 h-full">

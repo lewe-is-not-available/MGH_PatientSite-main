@@ -14,7 +14,7 @@ import Status from "./components/patient/Appointment Process/Appointment Status/
 import Notification from "./components/Notification";
 
 //patient
-import Online from "./components/patient/Appointment Process/OnlineConsult";
+import FillupForm from "./components/patient/Appointment Process/FillupForm";
 import Appointment from "./components/patient/Appointment Process/Appointment";
 import AppointDetails from "./components/patient/Appointment Process/Appointment Status/PatientAppointDetails";
 import DocInfo from "./components/Doctor read/DoctorInfo";
@@ -130,7 +130,7 @@ function App() {
       setToken(data);
     }
   }, []);
-
+  
   return (
     <div className=" flex flex-col ">
       <header className="sticky top-0 z-50">
@@ -216,13 +216,9 @@ function App() {
           />
           <Route path="/DoctorInfo/:id" element={<DocInfo />} />
           <Route
-            path="/Face-to-face/:id"
-            element={<F2f token={token} openTerms={openTerms} />}
-          />
-          <Route
-            path="/Online/:id"
+            path="/FillupForm/:id"
             element={
-              <Online token={token} openTerms={openTerms} setToken={setToken} />
+              <FillupForm token={token} openTerms={openTerms} setToken={setToken} />
             }
           />
           <Route

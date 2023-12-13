@@ -86,7 +86,8 @@ const SomeoneF2f = ({
         />
       </p>
       <p>
-        Patient's Middle Name: <br />
+        Patient's Middle Name: <span className="font-thin">(optional)</span>{" "}
+        <br />
         <input
           name="Mname"
           autoComplete="on"
@@ -94,6 +95,42 @@ const SomeoneF2f = ({
           className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full"
         />
       </p>
+      {!token && (
+        <>
+          <p>
+            Your First Name: <br />
+            <input
+              type="text"
+              name="yourFname"
+              autoComplete="on"
+              onChange={handleChange}
+              required
+              className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full"
+            />
+          </p>
+          <p>
+            Your Last Name: <br />
+            <input
+              name="yourLname"
+              autoComplete="on"
+              onChange={handleChange}
+              required
+              className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full"
+            />
+          </p>
+          <p>
+            Your Middle Name:<span className="font-thin">(optional)</span>{" "}
+            <br />
+            <input
+              name="yourMname"
+              autoComplete="on"
+              onChange={handleChange}
+              className="outline-none rounded-md font-thin border-2 px-2 border-slate-300 focus:border-[#71b967d3] w-full"
+            />
+          </p>
+        </>
+      )}
+
       <p>
         Contact Number:
         <span className="lowercase font-thin text-sm text-green-800">

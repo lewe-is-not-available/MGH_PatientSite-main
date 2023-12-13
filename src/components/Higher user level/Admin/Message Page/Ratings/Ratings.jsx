@@ -120,7 +120,7 @@ const Ratings = () => {
   return (
     <div className="flex flex-col space-y-3">
       <h1 className="font-semibold mt-7 text-xl">
-        {starCount.total} Book Ratings
+        {starCount.total} Reviews
       </h1>
       <div className="flex flex-col ml-5 space-y-4 text-green-600">
         <div className="flex items-center space-x-4">

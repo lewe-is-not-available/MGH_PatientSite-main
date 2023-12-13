@@ -14,6 +14,7 @@ const Signup = ({ Closereg, open }) => {
 
   //*getting inputs
   const [date, setDate] = useState(null);
+  const [number, setNumber] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -21,7 +22,6 @@ const Signup = ({ Closereg, open }) => {
     Fname: "",
     Lname: "",
     Mname: "",
-    Phone: "",
     confirmEmail: "",
     confrimPass: "",
     Address: "",
@@ -32,8 +32,7 @@ const Signup = ({ Closereg, open }) => {
     setFormData((prevFormData) => {
       return {
         ...prevFormData,
-        [event.target.name]: event.target.value,
-        Phone: event.target.value.slice(0, 11)
+        [event.target.name]: event.target.value
       };
     });
   }
@@ -60,7 +59,7 @@ const Signup = ({ Closereg, open }) => {
           first_name: formData.Fname,
           last_name: formData.Lname,
           middle_name: formData.Mname,
-          phone: formData.Phone,
+          phone: number,
           birth_date: date,
           role: "patient",
           address: formData.Address,
@@ -187,8 +186,9 @@ const Signup = ({ Closereg, open }) => {
                         <div className="">
                           <p>Contact Number: </p>
                           <input
-                            name="Phone"
-                            onChange={handleChange}
+                            type="number"
+                            value={number}
+                            onChange={(e) => setNumber(e.target.value.slice(0, 11))}
                             autoComplete="on"
                             required
                             className="px-2 w-full text-slate-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:outline-none focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"

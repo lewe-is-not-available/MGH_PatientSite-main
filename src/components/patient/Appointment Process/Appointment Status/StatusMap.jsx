@@ -127,12 +127,14 @@ const StatusMap = ({ ol, imgName, isImgEmpty }) => {
                 Scheduled at <p className="text-slate-400">{ol.date}</p>
               </label>
             </div>
-            <div className="flex">
-              <AiOutlineFieldNumber className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
-              <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                Queue no. <p className="text-slate-400 text-xl">{ol.queue}</p>
-              </label>
-            </div>
+            {(ol.status === "Confirmed" || ol.status === "rescheduled") && (
+              <div className="flex">
+                <AiOutlineFieldNumber className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
+                <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
+                  Queue no. <p className="text-slate-400 text-xl">{ol.queue}</p>
+                </label>
+              </div>
+            )}
 
             <div className="flex">
               {" "}

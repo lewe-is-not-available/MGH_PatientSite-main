@@ -13,7 +13,6 @@ const DocUniq = ({ Doctors }) => {
   const id = Doctors.email;
   const [imgName, setimgName] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(false);
-
   async function getImages() {
     const { data, error } = await supabase.storage
       .from("images")
@@ -98,10 +97,7 @@ const DocUniq = ({ Doctors }) => {
         </div>
 
         <Link
-          to={
-            Doctors.type === "f2f"
-              ? "/Face-to-face/" + Doctors.id
-              : "/Online/" + Doctors.id
+          to={ "/FillupForm/" + Doctors.id
           }
           className="text-base max-sm:text-[11px] Docbtn max-sm:px-1 max-sm:py-0 whitespace-nowrap bg-[#418D3F] max-[941px]:text-sm p-2 rounded-md text-white font-bold ring-[#418D3F] ring-2 transition duration-75 ease-in hover:bg-[#A5DD9D] hover:text-[#267124]"
         >

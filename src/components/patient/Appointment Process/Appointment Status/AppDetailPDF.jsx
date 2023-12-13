@@ -12,12 +12,10 @@ const AppDetailPDF = ({
   Doc,
   isDocImgEmpty,
   docImg,
-  AppPrint
+  AppPrint,
 }) => {
   return (
-    <div 
-    ref={AppPrint}
-    className="flex flex-col items-center w-full">
+    <div ref={AppPrint} className="flex flex-col items-center w-full">
       <h1 className="text-3xl font-semibold w-full flex justify-center text-center">
         Appointment Details
       </h1>
@@ -41,7 +39,7 @@ const AppDetailPDF = ({
             <p>
               <span className="font-semibold">Patient Email:</span>
               <br />
-              {data.email}{" "}
+              {data.email}
             </p>
             <p>
               <span className="font-semibold">Contact Number:</span>
@@ -82,7 +80,7 @@ const AppDetailPDF = ({
           <p>
             <span className="font-semibold">Booked for someone?</span>
             <br />
-            {data.someone}{" "}
+            {data.someone}
           </p>
 
           {isSomeone && (
@@ -117,10 +115,12 @@ const AppDetailPDF = ({
               </>
             ) : (
               <>
-                <div className="flex flex-col justify-start h-full space-x-3">
-                  <span className="font-semibold">Queuing Number:</span>
-                  <h2 className="text-6xl font-semibold">6</h2>
-                </div>
+                {data.status === "Confirmed" && (
+                  <div className="flex flex-col justify-start h-full space-x-3">
+                    <span className="font-semibold">Queuing Number:</span>
+                    <h2 className="text-6xl font-semibold">{data.queue}</h2>
+                  </div>
+                )}
                 <div>
                   <span className="font-semibold">Status:</span>
                   <br />
@@ -132,7 +132,7 @@ const AppDetailPDF = ({
         </div>
 
         <div className="col-span-3 w-full h-full mt-6"></div>
-        <div className="flex flex-col space-x-3">
+        <div className="flex flex-col space-x-3 mb-10">
           <h1 className="font-semibold">Payment Screenshot/s:</h1>
           {payImg ? (
             <>
@@ -223,8 +223,10 @@ const AppDetailPDF = ({
             <p className="text-center">Check Out</p>
           </div>
           {Doc.schedule &&
-            Doc.schedule.map((item) => (
-              <div className="col-span-3 bg-slate-200 py-2 grid grid-cols-4 w-full my-3 px-10">
+            Doc.schedule.map((item, i) => (
+              <div 
+              key={i}
+              className="col-span-3 bg-slate-200 py-2 grid grid-cols-4 w-full my-3 px-10">
                 <div className="col-span-2 ">{item.day}</div>
                 <div className="text-center">
                   {moment(new Date(`2000-01-01T${item.startTime}`)).format(

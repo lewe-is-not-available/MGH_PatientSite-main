@@ -207,25 +207,25 @@ const Status = ({ user }) => {
           <div className="bg-[#98dd93c4] px-5 pt-5 pb-8 mb-2 rounded-lg items-center gap-x-7 gap-y-4 grid grid-cols-3">
             <div className="flex flex-col">
               <label className="mb-1">Search by name</label>
-              <div className="flex h-6 text-slate-500 select-none">
+              <div className="flex h-6 text-slate-500">
+                {!Search && (
+                  <div
+                    className={`${
+                      isFilterOpen
+                        ? "absolute flex space-x-1 items-center translate-x-4"
+                        : "hidden"
+                    }`}
+                  >
+                    <BsSearch className="w-4" />
+                    <p>Type here</p>
+                  </div>
+                )}
                 <div className="flex items-center w-full">
                   <input
                     type="text"
                     onChange={(e) => setSearch(e.target.value)}
                     className="pl-3 rounded-l-md h-8 w-full text-black border-slate-400 border-2"
                   />
-                  {!Search && (
-                    <div
-                      className={`${
-                        isFilterOpen
-                          ? "absolute flex space-x-1 items-center translate-x-4"
-                          : "hidden"
-                      }`}
-                    >
-                      <BsSearch className="w-4" />
-                      <p>Type here</p>
-                    </div>
-                  )}
                   <button
                     onClick={handleSearch}
                     className="bg-[#60af5ac4] h-8 border-l-0 hover:bg-[#84d17fc4] hover:text-[#388332c4]
@@ -259,15 +259,22 @@ const Status = ({ user }) => {
               </select>
             </div>
             <div className="flex flex-col">
-              <label>Appointment time</label>
-              <select
-                className="w-full rounded-md h-8 border-slate-400 border-2"
-                onChange={(e) => settime(e.target.value)}
-              >
-                <option key="1">all</option>
-                <option key="2">morning</option>
-                <option key="3">afternoon</option>
-              </select>
+              <label>Search by Scheduled Date</label>
+              <div className="flex items-center">
+                <input
+                  type="date"
+                  value={time}
+                  className="w-fit px-3 rounded-md border-slate-400 border-2"
+                  onChange={(e) => settime(e.target.value)}
+                />
+                <button
+                  onClick={() => settime("")}
+                  className="bg-[#60af5ac4] ml-1 hover:bg-[#84d17fc4] hover:text-[#388332c4]
+                   text-white border-[#388332c4] border-2 px-2 rounded-md "
+                >
+                  reset date
+                </button>
+              </div>
             </div>
             <div className="flex flex-col">
               <label>status</label>
@@ -277,7 +284,8 @@ const Status = ({ user }) => {
               >
                 <option key="1">Show all</option>
                 <option key="2">pending</option>
-                <option key="3">rescheduled</option>
+                <option key="3">Confirmed</option>
+                <option key="4">rescheduled</option>
               </select>
             </div>
             <div className="flex flex-col">

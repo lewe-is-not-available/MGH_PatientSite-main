@@ -161,6 +161,7 @@ const Face2face = ({ token, openTerms }) => {
   const [SubmitLoad, setSubLoad] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
+    uploadImage();
     setConfirm(false);
     //*If captcha is not confirmed
     if (!Valid) {
@@ -177,7 +178,6 @@ const Face2face = ({ token, openTerms }) => {
       return;
     }
     setSubLoad(true);
-    uploadImage();
 
     const { data: queNum, error: queErr } = await supabase
       .from("patient_Appointments")

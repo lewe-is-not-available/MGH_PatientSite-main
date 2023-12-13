@@ -10,6 +10,7 @@ import AcceptConfirm from "./AcceptConfirm";
 import ReschedConfirm from "./ReschedConfirm";
 import CancelConfirm from "./CancelConfirm";
 import ImageModal from "./ImageModal";
+import moment from "moment";
 
 const AppointmentDetails = ({ user }) => {
   const CDNURL =
@@ -23,30 +24,57 @@ const AppointmentDetails = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [Email, setEmail] = useState("");
   const [isSomeone, setisSomeone] = useState();
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data: book, error: bookErr } = await supabase
-        .from("patient_Appointments")
-        .select()
-        .eq("book_id", id)
-        .single();
 
-      if (bookErr) {
-        toast.error(bookErr.message, {
-          toastId: "error",
-        });
-      }
-      if (book.someone === "Yes") {
-        setisSomeone(true);
-      } else {
-        setisSomeone(false);
-      }
-      setEmail(book.email);
-      setData(book);
-      setLoading(false);
+  const fetchData = async () => {
+    const { data: book, error: bookErr } = await supabase
+      .from("patient_Appointments")
+      .select()
+      .eq("book_id", id)
+      .single();
+
+    if (bookErr) {
+      toast.error(bookErr.message, {
+        toastId: "error",
+      });
+    }
+    if (book.someone === "Yes") {
+      setisSomeone(true);
+    } else {
+      setisSomeone(false);
+    }
+    setEmail(book.email);
+    setData(book);
+    setLoading(false);
+  };
+
+  //*realtime for fetching last queue number
+  useEffect(() => {
+    const fetchAndSubscribe = async () => {
+      await fetchData();
+      const realtime = supabase
+        .channel("room20")
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "patient_Appointments",
+            filter: `book_id=eq.${id}`,
+          },
+          (payload) => {
+            fetchData(payload.new.data);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(realtime);
+        realtime.unsubscribe();
+      };
     };
-    fetchData();
-  }, [id]);
+    fetchAndSubscribe();
+  }, []);
+
   //*getting image
   const [StatusVisible, setStatusVisible] = useState(true);
   useEffect(() => {
@@ -72,9 +100,10 @@ const AppointmentDetails = ({ user }) => {
       getImages();
     }
     if (data.status === "rejected" || data.status === "completed") {
-      setStatusVisible(false)
+      setStatusVisible(false);
     }
   }, [setimgName, Email, setImgEmpty]);
+
   //*Get doctor details
   const [Doc, setDoc] = useState([]);
   async function fetchDoc() {
@@ -159,30 +188,130 @@ const AppointmentDetails = ({ user }) => {
   useEffect(() => {
     getPayment();
   }, [data.email]);
-  //*date format
-  const date = new Date(data.created_at);
-  function formateDateTime(date) {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    const hours = date.getHours() % 12 || 12;
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    const ampm = date.getHours() >= 12 ? "pm" : "am";
 
-    return `${year}/${month}/${day} ${hours}:${minutes}${ampm}`;
+  //*Get last queue number
+  const [lastQue, setLastQue] = useState();
+  const [lastReschedQue, setLastReschedQue] = useState();
+  async function fetchQue() {
+    try {
+      if (Doc && data) {
+        const { data: queNum, error: queErr } = await supabase
+          .from("patient_Appointments")
+          .select("queue")
+          .match({
+            doc_id: Doc?.id,
+            date: data?.date,
+            status: "Confirmed",
+          })
+          .order("queue", { ascending: false })
+          .limit(10);
+
+        if (queNum) {
+          setLastQue(queNum[0]);
+        }
+        if (queErr) {
+          throw Error(queErr.message + "184");
+        }
+
+        const { data: ResQueNum, error: ResQueErr } = await supabase
+          .from("patient_Appointments")
+          .select("queue")
+          .match({
+            doc_id: Doc?.id,
+            date: data?.date,
+            status: "rescheduled",
+          })
+          .order("queue", { ascending: false })
+          .limit(1);
+
+        if (ResQueNum) {
+          console.log(ResQueNum);
+          setLastReschedQue(ResQueNum[0]);
+        }
+
+        if (ResQueErr) {
+          throw Error(ResQueErr.message + "206");
+        }
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   }
+  //*realtime for fetching last queue number
+  useEffect(() => {
+    const fetchAndSubscribe = async () => {
+      await fetchQue();
+
+      const realtime = supabase
+        .channel("room13")
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "patient_Appointments",
+            filter: `doc_id=eq.${Doc.id}`,
+          },
+          (payload) => {
+            fetchQue(payload.new.data);
+          }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "patient_Appointments",
+            filter: `date=eq.${data.date}`,
+          },
+          (payload) => {
+            fetchQue(payload.new.data);
+          }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "patient_Appointments",
+            filter: `status=eq.Confirmed`,
+          },
+          (payload) => {
+            fetchQue(payload.new.data);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(realtime);
+        realtime.unsubscribe();
+      };
+    };
+    fetchAndSubscribe();
+  }, [Doc, data]);
+
   //*accepting the appointment
-  const navigate = useNavigate();
   async function handleAccept(e) {
     e.preventDefault();
-    const { error } = await supabase
-      .from("patient_Appointments")
-      .update({ status: "Confirmed" })
-      .eq("book_id", id);
-    if (error) {
+    try {
+      const { error } = await supabase
+        .from("patient_Appointments")
+        .update({
+          status: "Confirmed",
+          queue: lastQue?.queue ? lastQue.queue + 1 : 200 + 1,
+        })
+        .eq("book_id", id);
+      if (error) throw error;
+      else {
+        setAccept(false);
+        window.location.reload();
+      }
+    } catch (error) {
+      toast.error(error.message);
       console.log(error);
     }
-    navigate("/Confirm_Appointments");
+
+    //navigate("/Confirm_Appointments");
   }
 
   //*Modal States
@@ -196,14 +325,6 @@ const AppointmentDetails = ({ user }) => {
   } else {
     document.documentElement.style.overflowY = "unset";
   }
-
-  //*Convert to am/pm time
-  const convertToAMPM = (time) => {
-    return new Date(`2000-01-01T${time}`).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   return (
     <>
@@ -221,7 +342,12 @@ const AppointmentDetails = ({ user }) => {
           />
         )}
         {resched && (
-          <ReschedConfirm user={user} setResched={setResched} id={id} />
+          <ReschedConfirm
+            user={user}
+            lastReschedQue={lastReschedQue}
+            setResched={setResched}
+            id={id}
+          />
         )}
         {reject && (
           <CancelConfirm
@@ -253,7 +379,7 @@ const AppointmentDetails = ({ user }) => {
               />
             </div>
           ) : (
-            <div className="grid grid-cols-4 row-span-2">
+            <div className="grid grid-cols-4 gap-x-4 row-span-2">
               <div className="flex flex-col text-center items-center row-span-2">
                 <img
                   className="object-cover rounded-full shadow-xl w-[13rem] mb-5 h-[13rem]"
@@ -282,7 +408,7 @@ const AppointmentDetails = ({ user }) => {
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col text-left items-left mt-10 space-y-3 row-span-2">
+              <div className="flex flex-col text-left items-left mt-12 space-y-6 row-span-2">
                 <p>
                   <span className="font-semibold">Booking Reference id:</span>
                   <br />
@@ -291,17 +417,17 @@ const AppointmentDetails = ({ user }) => {
                 <p>
                   <span className="font-semibold">Patient Birthdate:</span>
                   <br />
-                  {data.bday}
+                  {moment(new Date(data.bday)).format("LL")}
                 </p>
                 <p>
-                  <span className="font-semibold">Booked at:</span>
+                  <span className="font-semibold">Booked:</span>
                   <br />
-                  {formateDateTime(date)}
+                  {moment(new Date(data.created_at)).calendar()}
                 </p>
                 <p>
                   <span className="font-semibold">Appointment day:</span>
                   <br />
-                  {data.date}
+                  {moment(new Date(data.date)).format("LL")}
                 </p>
 
                 <p>
@@ -337,36 +463,45 @@ const AppointmentDetails = ({ user }) => {
                 )}
               </div>
               <div className="flex flex-col mt-10 space-y-4 mx-7">
-                <div className="flex flex-col justify-center space-x-3">
-                  <span className="font-semibold">Queuing Number:</span>
-                  <h2 className="text-6xl font-semibold">{data.queue}</h2>
-                </div>
-                <div className="flex flex-col text-left items-left mt-10 space-y-8">
-                  {data.status === "rejected" ? (
-                    <>
-                      <div className="flex flex-col">
-                        <span className="font-semibold">Status:</span>
-                        <p className="px-3 text-white rounded-full bg-red-500 w-fit">
-                          {data.status}
-                        </p>
-                        <p className="font-semibold mt-2">remark:</p>
-                        <p>{data.remark}</p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex flex-col justify-center space-x-3">
-                        <span className="font-semibold">Queuing Number:</span>
-                        <h2 className="text-6xl font-semibold">6</h2>
-                      </div>
-                      <div>
-                        <span className="font-semibold">Status:</span>
-                        <br />
-                        <p className="px-3 text-white rounded-full bg-primary w-fit">
-                          {data.status}
-                        </p>
-                      </div>
-                    </>
+                {(data?.status === "Confirmed" ||
+                  data?.status === "rescheduled") && (
+                  <div className="flex flex-col justify-center mb-10 space-x-3">
+                    <span className="font-semibold">Queuing Number:</span>
+                    <h2 className="text-6xl font-semibold">{data.queue}</h2>
+                  </div>
+                )}
+
+                <div className="flex flex-col text-left items-left">
+                  <span className="font-semibold">Status:</span>
+                  {data.status === "Consultation Ongoing" && (
+                    <p className="px-4 py-1 text-white rounded-full bg-green-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "pending" && (
+                    <p className="px-4 py-1 text-white rounded-full bg-primary w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "Confirmed" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-emerald-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "rescheduled" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-rose-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "rejected" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-red-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "Completed" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-green-500 w-fit">
+                      {data.status}
+                    </p>
                   )}
                 </div>
               </div>
@@ -412,15 +547,18 @@ const AppointmentDetails = ({ user }) => {
               </div>
               {StatusVisible && (
                 <div className="flex items-center space-x-6 col-span-4 mt-3 justify-end">
-                  <div>
-                    <button
-                      onClick={(e) => setAccept(true) || e.preventDefault()}
-                      className="transition py-2 px-7 flex items-center text-white duration-100 bg-green-600 hover:bg-green-800 rounded-full "
-                    >
-                      <LuCalendarCheck2 className="text-2xl mr-1" />
-                      <span>Accept Appointment</span>
-                    </button>
-                  </div>
+                  {data.status === "pending" && (
+                    <div>
+                      <button
+                        onClick={(e) => setAccept(true) || e.preventDefault()}
+                        className="transition py-2 px-7 flex items-center text-white duration-100 bg-green-600 hover:bg-green-800 rounded-full "
+                      >
+                        <LuCalendarCheck2 className="text-2xl mr-1" />
+                        <span>Accept Appointment</span>
+                      </button>
+                    </div>
+                  )}
+
                   <div>
                     <button
                       onClick={(e) => setResched(true) || e.preventDefault()}
@@ -523,14 +661,21 @@ const AppointmentDetails = ({ user }) => {
                   <p className="text-center">Check Out</p>
                 </div>
                 {Doc.schedule &&
-                  Doc.schedule.map((item) => (
-                    <div className="col-span-3 bg-slate-200 py-2 grid grid-cols-4 w-full my-3 px-10">
+                  Doc.schedule.map((item, i) => (
+                    <div
+                      key={i}
+                      className="col-span-3 bg-slate-200 py-2 grid grid-cols-4 w-full my-3 px-10"
+                    >
                       <div className="col-span-2 ">{item.day}</div>
                       <div className="text-center">
-                        {convertToAMPM(item.startTime)}
+                        {moment(
+                          new Date(`2000-01-01T${item.startTime}`)
+                        ).format("LT")}
                       </div>
                       <div className="text-center">
-                        {convertToAMPM(item.endTime)}
+                        {moment(
+                          new Date(`2000-01-01T${item.startTime}`)
+                        ).format("LT")}
                       </div>
                     </div>
                   ))}

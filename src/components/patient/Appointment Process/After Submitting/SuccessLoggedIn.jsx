@@ -4,6 +4,8 @@ import { Link, useParams } from "react-router-dom";
 import { IoStar } from "react-icons/io5";
 import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
+import { MdCheckCircleOutline } from "react-icons/md";
+import { FaCheckCircle } from "react-icons/fa";
 
 cardio.register();
 
@@ -13,7 +15,7 @@ const SuccessLoggedIn = ({ user }) => {
   const [message, setMessage] = useState();
   const [Load, setLoad] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const id = useParams()
+  const id = useParams();
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -40,7 +42,6 @@ const SuccessLoggedIn = ({ user }) => {
       setLoad(false);
     }
   }
-  console.log(rating);
   return (
     <div className="w-full flex flex-col text-center items-center justify-center">
       <h2 className="text-3xl font-semibold text-green-600">
@@ -62,11 +63,14 @@ const SuccessLoggedIn = ({ user }) => {
       </Link>
       <div className="w-full border-b-2 border-slate-300 mt-9 mb-3"></div>
       {Load ? (
-        <>asd</>
+        <>Loading</>
       ) : (
         <>
           {submitted ? (
-            "submitted"
+            <div className="text-center mt-10">
+              <p className="text-3xl flex items-center text-green-600"><FaCheckCircle className="text-3xl mr-1"/> <span>Review Submitted Succesfully!</span></p>
+              <p className="text-xl mt-2">Thank you for your response</p>
+            </div>
           ) : (
             <form onSubmit={onSubmit} className="w-full">
               <label className="text-lg">How was your booking?</label>
@@ -74,8 +78,9 @@ const SuccessLoggedIn = ({ user }) => {
                 {[...Array(5)].map((star, i) => {
                   const currentRating = i + 1;
                   return (
-                    <label>
+                    <label key={i}>
                       <input
+                        required
                         type="radio"
                         className="hidden"
                         value={currentRating}
@@ -95,6 +100,7 @@ const SuccessLoggedIn = ({ user }) => {
                 })}
               </div>
               <textarea
+                required
                 placeholder="Tell us something more about your experience"
                 type="text"
                 className="w-full p-2 border-2 border-slate-400 mt-3 mb-6"

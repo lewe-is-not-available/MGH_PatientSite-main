@@ -10,6 +10,8 @@ import { BiMenu } from "react-icons/bi";
 import "react-toastify/dist/ReactToastify.css";
 import DragandDrop from "./Sidebar/Drag_and_Drop";
 import Consent from "./patient/Appointment Process/Consent";
+import moment from "moment";
+import CurrentModal from "./CurrentModal";
 
 const Navbar = ({
   token,
@@ -32,12 +34,6 @@ const Navbar = ({
   isRead,
   setRead,
 }) => {
-  // if (Show) {
-  //   disableBodyScroll("root");
-  // } else {
-  //   enableBodyScroll("root");
-  // }
-
   //*Function to show/hide registration and login
   const [doctor, setDoctor] = useState(false);
   const [admin, setAdmin] = useState(false);
@@ -59,11 +55,74 @@ const Navbar = ({
   const Closereg = () => {
     setRegOpen(false);
   };
-  if (Show || regOpen || isRead) {
+
+  //*Modal that opens automatically when appointment day arrives
+  const [currentQueue, setcurrentQueue] = useState();
+  const [currModal, setCurrModal] = useState(false);
+  async function fetchCurrent() {
+    try {
+      const { data: queNum, error: queErr } = await supabase
+        .from("patient_Appointments")
+        .select()
+        .match({
+          email: user?.email,
+          date: moment(new Date()).format("yyyy-M-19"),
+          status: "Consultation Ongoing",
+        });
+      if (queErr) {
+        throw queErr;
+      }
+      if (queNum) {
+        setcurrentQueue(queNum[0]);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+  useEffect(() => {
+    if (currentQueue !== undefined) {
+      setCurrModal(true);
+    } else {
+      setCurrModal(false);
+    }
+  }, [currentQueue]);
+
+  //*Disable scroll when modal is open
+  if (Show || regOpen || isRead || currModal) {
     document.documentElement.style.overflowY = "hidden";
   } else {
     document.documentElement.style.overflowY = "unset";
   }
+
+  //*Realtime function
+  useEffect(() => {
+    const fetchAndSubscribe = async () => {
+      await fetchCurrent();
+
+      const realtime = supabase
+        .channel("room14")
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "patient_Appointments",
+            filter: `email=eq.${user?.email}`,
+          },
+          (payload) => {
+            fetchCurrent(payload.new.data);
+           // console.log(payload.new.data)
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(realtime);
+        realtime.unsubscribe();
+      };
+    };
+    fetchAndSubscribe();
+  }, [user]);
 
   useEffect(() => {
     if (token) {
@@ -77,7 +136,7 @@ const Navbar = ({
         setPatient(true);
       }
     }
-  }, [token, isAdmin, isDoctor, isPatient]);
+  }, [token, isDoctor, isAdmin, isPatient]);
 
   //*Logout Function
   //const navigate = useNavigate();
@@ -145,7 +204,7 @@ const Navbar = ({
           {token ? (
             <div className="flex space-x-4 -mt-2 max-[320px]:-translate-x-8 max-[320px]:w-[10rem] items-center">
               <p className="text-white text-right max-sm:hidden font-medium uppercase">
-                {token.user.user_metadata.username}
+                {token.user.user_metadata.first_name}
                 <br />
                 <span className="text-sm font-light lowercase">
                   {user.email}
@@ -191,7 +250,7 @@ const Navbar = ({
           }`}
         >
           <div className="bg-white abs p-4 w-fit flex flex-col space-y-2">
-            <h1>{token.user.user_metadata.username}</h1>
+            <h1>{token.user.user_metadata.first_name}</h1>
             <p>{user.email}</p>
             <button
               onClick={handleLogout}
@@ -236,6 +295,7 @@ const Navbar = ({
           token={token}
         />
       )}
+      {currModal && <CurrentModal data={currentQueue}/>}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { cardio } from "ldrs";
 import { useNavigate } from "react-router-dom";
 import { TbCalendarTime } from "react-icons/tb";
@@ -11,26 +11,115 @@ const AcceptConfirm = ({ setResched, id, user }) => {
   const nav = useNavigate();
   const [date, setDate] = useState();
   const [remark, setRemark] = useState();
+  const [lastReschedQue, setLastReschedQue] = useState();
+  const [data, setData] = useState();
+  console.log(lastReschedQue)
+  async function fetchBook() {
+    const { data: book, error: failDoc } = await supabase
+      .from("patient_Appointments")
+      .select()
+      .eq("book_id", id)
+      .single();
+    if (failDoc) throw failDoc;
+    setData(book);
+  }
+  async function fetchQue() {
+    try {
+      const { data: ResQueNum, error: ResQueErr } = await supabase
+        .from("patient_Appointments")
+        .select("queue")
+        .match({
+          doc_id: data?.doc_id,
+          date: date,
+          status: "rescheduled",
+        })
+        .order("queue", { ascending: false })
+        .limit(1);
+      if (ResQueNum) {
+        setLastReschedQue(ResQueNum[0]);
+      }
+      if (ResQueErr) {
+        throw Error(ResQueErr.message + "206");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+  //*realtime for fetching last queue number
+  useEffect(() => {
+    fetchBook()
+    const fetchAndSubscribe = async () => {
+      await fetchQue();
+      await fetchBook();
+      const realtime = supabase
+        .channel("room13")
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "patient_Appointments",
+            filter: `doc_id=eq.${data?.doc_id}`,
+          },
+          (payload) => {
+            fetchQue(payload.new.data);
+          }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "patient_Appointments",
+            filter: `date=eq.${date}`,
+          },
+          (payload) => {
+            fetchQue(payload.new.data);
+          }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "patient_Appointments",
+            filter: `status=eq.rescheduled`,
+          },
+          (payload) => {
+            fetchQue(payload.new.data);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(realtime);
+        realtime.unsubscribe();
+      };
+    };
+    fetchAndSubscribe();
+  }, [date]);
+
   async function handleSubmit(e) {
     e.preventDefault();
     setResched(false);
-    const { error } = await supabase
-      .from("patient_Appointments")
-      .update({ status: "rescheduled", date, remark })
-      .eq("book_id", id);
     try {
+      const { error } = await supabase
+        .from("patient_Appointments")
+        .update({
+          status: "rescheduled",
+          date,
+          remark,
+          queue: lastReschedQue?.queue ? lastReschedQue.queue + 1 : 100 + 1,
+        })
+        .eq("book_id", id);
       if (error) throw error;
       else {
         toast.success("Appointment Succesfully Rescheduled");
-        if (user.role && user.role === "doctor") {
-          nav("/Doctor/Appointments");
-        } else {
-          nav("/Confirm_Appointments");
-        }
+        window.location.reload();
       }
     } catch (error) {
       toast.error(error.message);
-      console.log(error);
+      console.log(error.message);
     }
   }
   //*To prevent user inputting past dates

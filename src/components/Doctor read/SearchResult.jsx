@@ -42,6 +42,7 @@ const SearchResult = ({ Doctors }) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
+  
   return (
     <div key={Doctors.id} className="Doc_Uniq">
       <div

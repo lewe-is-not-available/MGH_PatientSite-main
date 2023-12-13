@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { Oval } from "react-loader-spinner";
 import ImageModal from "../../../Higher user level/Admin/Confirmation of Appointments/ImageModal";
 import moment from "moment/moment";
-import { IoAdd } from "react-icons/io5";
+import { IoAdd, IoStar } from "react-icons/io5";
 import AddModal from "./AddModal";
 import ReactToPrint from "react-to-print";
 import { TfiPrinter } from "react-icons/tfi";
@@ -27,30 +27,57 @@ const AppointmentDetails = () => {
   const [loading, setLoading] = useState(true);
   const [Email, setEmail] = useState("");
   const [isSomeone, setisSomeone] = useState();
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data, error } = await supabase
-        .from("patient_Appointments")
-        .select()
-        .eq("book_id", id)
-        .single();
 
-      if (error) {
-        toast.error(error + " error", {
-          toastId: "error",
-        });
-      }
-      if (data.someone === "Yes") {
-        setisSomeone(true);
-      } else {
-        setisSomeone(false);
-      }
-      setEmail(data.email);
-      setData(data);
-      setLoading(false);
+  const fetchData = async () => {
+    const { data, error } = await supabase
+      .from("patient_Appointments")
+      .select()
+      .eq("book_id", id)
+      .single();
+
+    if (error) {
+      toast.error(error + " error", {
+        toastId: "error",
+      });
+    }
+    if (data.someone === "Yes") {
+      setisSomeone(true);
+    } else {
+      setisSomeone(false);
+    }
+    setEmail(data.email);
+    setData(data);
+    setLoading(false);
+  };
+
+  //*realtime for fetching last queue number
+  useEffect(() => {
+    const fetchAndSubscribe = async () => {
+      await fetchData();
+      const realtime = supabase
+        .channel("room20")
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "patient_Appointments",
+            filter: `book_id=eq.${id}`,
+          },
+          (payload) => {
+            fetchData(payload.new.data);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(realtime);
+        realtime.unsubscribe();
+      };
     };
-    fetchData();
-  }, [id]);
+    fetchAndSubscribe();
+  }, []);
+
   //*getting image for patient
   useEffect(() => {
     if (Email) {
@@ -89,7 +116,6 @@ const AppointmentDetails = () => {
       try {
         if (failDoc) throw failDoc;
         setDoc(DocDetails);
-        console.log(DocDetails);
       } catch (failDoc) {
         console.log(failDoc);
       }
@@ -125,17 +151,29 @@ const AppointmentDetails = () => {
   }, [Doc]);
   //*Realtime
   useEffect(() => {
-    fetchDoc(data.docname);
-    supabase
-      .channel("custom-all-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "dr_information" },
-        () => {
-          fetchDoc();
-        }
-      )
-      .subscribe();
+    const fetchAndSubscribe = async () => {
+      await fetchDoc();
+      const realtime = supabase
+        .channel("custom-all-channel")
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "dr_information",
+            filter: `name=eq.${data.docname}`,
+          },
+          (payload) => {
+            fetchDoc(payload.new.data);
+          }
+        )
+        .subscribe();
+      return () => {
+        supabase.removeChannel(realtime);
+        realtime.unsubscribe();
+      };
+    };
+    fetchAndSubscribe();
   }, [data.docname]);
 
   //*get payment
@@ -159,6 +197,7 @@ const AppointmentDetails = () => {
       console.log(DocPicErr);
     }
   }
+
   useEffect(() => {
     getPayment();
   }, [data.email]);
@@ -170,13 +209,41 @@ const AppointmentDetails = () => {
     document.documentElement.style.overflowY = "unset";
   }
 
-  //*Convert to am/pm time
-  const convertToAMPM = (time) => {
-    return new Date(`2000-01-01T${time}`).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
+  //*Rating function
+  const [rating, setRating] = useState(null);
+  const [hover, setHover] = useState();
+  const [message, setMessage] = useState();
+  const [Load, setLoad] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    setLoad(true);
+    if (rating === null) {
+      toast.error("Please give us a rating before submitting", {
+        autoClose: false,
+        id: "error",
+      });
+      setLoad(false);
+      return;
+    }
+    const { error } = await supabase.from("ratings").insert({
+      user_id: data.user_id,
+      message,
+      rate: rating,
+      isconsult: "yes",
     });
-  };
+    try {
+      if (error) throw error;
+      else {
+        setSubmitted(true);
+        setLoad(false);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      setLoad(false);
+    }
+  }
   return (
     <>
       <div className="sticky top-1">
@@ -217,19 +284,21 @@ const AppointmentDetails = () => {
           </h1>
 
           <div className="w-full flex justify-center items-center mt-5 -ml-6">
-            <ReactToPrint
-              trigger={() => {
-                return (
-                  <button className="flex items-center bg-primary-300 hover:text-white py-1 transition duration-100 hover:bg-primary-600 px-3 rounded-full">
-                    <TfiPrinter className="text-lg mr-1" />
-                    Print
-                  </button>
-                );
-              }}
-              content={() => AppPrint.current}
-              documentTitle="Appointment Details"
-              pageStyle="print"
-            />
+            {(data.status !== "pending" || data.status !== "rejected") && (
+              <ReactToPrint
+                trigger={() => {
+                  return (
+                    <button className="flex items-center bg-primary-300 hover:text-white py-1 transition duration-100 hover:bg-primary-600 px-3 rounded-full">
+                      <TfiPrinter className="text-lg mr-1" />
+                      Print
+                    </button>
+                  );
+                }}
+                content={() => AppPrint.current}
+                documentTitle="Appointment Details"
+                pageStyle="print"
+              />
+            )}
           </div>
         </div>
 
@@ -270,7 +339,7 @@ const AppointmentDetails = () => {
                   <p>
                     <span className="font-semibold">Patient Email:</span>
                     <br />
-                    {data.email}{" "}
+                    {data.email}
                   </p>
                   <p>
                     <span className="font-semibold">Contact Number:</span>
@@ -279,7 +348,7 @@ const AppointmentDetails = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col text-left items-left mt-12 space-y-3 row-span-2">
+              <div className="flex flex-col text-left items-left mt-12 space-y-6 row-span-2">
                 <p>
                   <span className="font-semibold">Booking Reference id:</span>
                   <br />
@@ -333,87 +402,156 @@ const AppointmentDetails = () => {
                   </>
                 )}
               </div>
-              <div className="flex flex-col text-left items-left mt-10 space-y-8">
-                {data.status === "rejected" ? (
-                  <>
-                    <div className="flex flex-col">
-                      <span className="font-semibold">Status:</span>
-                      <p className="px-3 text-white rounded-full bg-red-500 w-fit">
-                        {data.status}
-                      </p>
-                      <p className="font-semibold mt-2">remark:</p>
-                      <p>{data.remark}</p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex flex-col justify-center space-x-3">
-                      <span className="font-semibold">Queuing Number:</span>
-                      <h2 className="text-6xl font-semibold">{data.queue}</h2>
-                    </div>
-                    <div>
-                      <span className="font-semibold">Status:</span>
-                      <br />
-                      <p className="px-3 text-white rounded-full bg-primary w-fit">
-                        {data.status}
-                      </p>
-                    </div>
-                  </>
+              <div className="flex flex-col mt-10 space-y-4 mx-3">
+                {(data?.status === "Confirmed" ||
+                  data?.status === "rescheduled") && (
+                  <div className="flex flex-col justify-center mb-10 space-x-3">
+                    <span className="font-semibold">Queuing Number:</span>
+                    <h2 className="text-6xl font-semibold">{data.queue}</h2>
+                  </div>
                 )}
-              </div>
-              <div className="col-span-2 h-full mt-6">
-                <h1 className="font-semibold">Payment</h1>
-                <div className="flex space-x-3 items-center">
-                  {payImg ? (
-                    <>
-                      {payImg.map((item, i) => (
-                        <div
-                          key={i}
-                          className="flex flex-col text-left items-center"
-                        >
-                          <p className="w-full">
-                            {i === 0 && "1st attempt"}
-                            {i === 1 && "2nd attempt"}
-                            {i === 2 && "last attempt"}
-                          </p>
-                          <img
-                            onClick={(e) =>
-                              setImageModal(true) ||
-                              e.preventDefault() ||
-                              setPayName(item.name)
-                            }
-                            className="object-cover cursor-pointer shadow-xl w-[13rem] mb-5 h-[13rem]"
-                            src={
-                              CDNURL +
-                              data.email +
-                              "/payment/" +
-                              data.book_id +
-                              "/" +
-                              item.name
-                            }
-                            alt="/"
-                          />
-                        </div>
-                      ))}
-                    </>
-                  ) : (
-                    <p>No Payment Sent</p>
+                <div>
+                  <span className="font-semibold">Status:</span>
+                  {data.status === "Consultation Ongoing" && (
+                    <p className="px-4 py-1 text-white rounded-full bg-green-500 w-fit">
+                      {data.status}
+                    </p>
                   )}
-
-                  {payImg.length !== 3 && (
-                    <div
-                      onClick={() => setAddImg(true)}
-                      className="w-[13rem] h-[13rem] transition duration-100 border-2 border-dashed 
-                  border-slate-400 hover:bg-slate-300 cursor-pointer justify-center text-center bg-slate-200 flex flex-col items-center"
-                    >
-                      <IoAdd className="text-5xl" />
-                      <p className="text-sm w-full whitespace-nowrap">
-                        add another screenshot
-                      </p>
-                    </div>
+                  {data.status === "pending" && (
+                    <p className="px-4 py-1 text-white rounded-full bg-primary w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "Confirmed" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-emerald-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "rescheduled" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-rose-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "rejected" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-red-500 w-fit">
+                      {data.status}
+                    </p>
                   )}
                 </div>
+                {(data.status === "rejected" ||
+                  data.status === "rescheduled") && (
+                  <div><span className="font-semibold">remarks: <br /></span>{data.remark}</div>
+                )}
               </div>
+
+              {data.status !== "Completed" ? (
+                <div className="col-span-2 h-full mt-6">
+                  <h1 className="font-semibold">Payment</h1>
+                  <div className="flex space-x-3 items-center">
+                    {payImg ? (
+                      <>
+                        {payImg.map((item, i) => (
+                          <div
+                            key={i}
+                            className="flex flex-col text-left items-center"
+                          >
+                            <p className="w-full">
+                              {i === 0 && "1st attempt"}
+                              {i === 1 && "2nd attempt"}
+                              {i === 2 && "last attempt"}
+                            </p>
+                            <img
+                              onClick={(e) =>
+                                setImageModal(true) ||
+                                e.preventDefault() ||
+                                setPayName(item.name)
+                              }
+                              className="object-cover cursor-pointer shadow-xl w-[13rem] mb-5 h-[13rem]"
+                              src={
+                                CDNURL +
+                                data.email +
+                                "/payment/" +
+                                data.book_id +
+                                "/" +
+                                item.name
+                              }
+                              alt="/"
+                            />
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <p>No Payment Sent</p>
+                    )}
+                    {data.status !== "rejected" && payImg.length !== 3 && (
+                      <div
+                        onClick={() => setAddImg(true)}
+                        className="w-[13rem] h-[13rem] transition duration-100 border-2 border-dashed 
+                  border-slate-400 hover:bg-slate-300 cursor-pointer justify-center text-center bg-slate-200 flex flex-col items-center"
+                      >
+                        <IoAdd className="text-5xl" />
+                        <p className="text-sm w-full whitespace-nowrap">
+                          add another screenshot
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {Load ? (
+                    <>Loading</>
+                  ) : (
+                    <>
+                      {submitted ? (
+                        "submitted"
+                      ) : (
+                        <form onSubmit={onSubmit} className="w-full">
+                          <label className="text-lg">
+                            How was your consultation?
+                          </label>
+                          <div className="flex items-center justify-center mt-2 space-x-3 text-5xl text-slate-500">
+                            {[...Array(5)].map((star, i) => {
+                              const currentRating = i + 1;
+                              return (
+                                <label>
+                                  <input
+                                    type="radio"
+                                    className="hidden"
+                                    value={currentRating}
+                                    onClick={() => setRating(currentRating)}
+                                  />
+                                  <IoStar
+                                    className={
+                                      currentRating <= (hover || rating)
+                                        ? "text-[#ffc107]"
+                                        : "text-[#c4e5e9]"
+                                    }
+                                    onMouseEnter={() => setHover(currentRating)}
+                                    onMouseLeave={() => setHover(null)}
+                                  />
+                                </label>
+                              );
+                            })}
+                          </div>
+                          <textarea
+                            placeholder="Tell us something more about your experience"
+                            type="text"
+                            className="w-full p-2 border-2 border-slate-400 mt-3 mb-6"
+                            onChange={(e) => setMessage(e.target.value)}
+                          />
+                          <button
+                            type="submit"
+                            className="px-8 py-2 rounded-md transition duration-100 border-[#16891d] border-[2px] hover:bg-[#16891d] hover:text-white bg-[#a5e5a9] text-[#106716]"
+                          >
+                            Submit Feedback
+                          </button>
+                        </form>
+                      )}
+                    </>
+                  )}
+                </>
+              )}
             </div>
           )}
         </section>
@@ -495,14 +633,21 @@ const AppointmentDetails = () => {
                   <p className="text-center">Check Out</p>
                 </div>
                 {Doc.schedule &&
-                  Doc.schedule.map((item) => (
-                    <div className="col-span-3 bg-slate-200 py-2 grid grid-cols-4 w-full my-3 px-10">
+                  Doc.schedule.map((item, i) => (
+                    <div
+                      key={i}
+                      className="col-span-3 bg-slate-200 py-2 grid grid-cols-4 w-full my-3 px-10"
+                    >
                       <div className="col-span-2 ">{item.day}</div>
                       <div className="text-center">
-                        {convertToAMPM(item.startTime)}
+                        {moment(
+                          new Date(`2000-01-01T${item.startTime}`)
+                        ).format("LT")}
                       </div>
                       <div className="text-center">
-                        {convertToAMPM(item.endTime)}
+                        {moment(
+                          new Date(`2000-01-01T${item.startTime}`)
+                        ).format("LT")}
                       </div>
                     </div>
                   ))}

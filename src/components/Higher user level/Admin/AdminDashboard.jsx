@@ -66,7 +66,6 @@ const Admin = () => {
       }, 1000);
     }
   }, [filt, setarchive]);
-  console.log(archive);
 
   //*Realtime data for bookings
   useEffect(() => {

@@ -22,7 +22,9 @@ const AcceptConfirm = ({ setReject, id }) => {
     if (error) {
       toast.error(error.message, { autoClose: false });
     }
-    nav("/Confirm_Appointments");
+   else{
+    window.location.reload()
+   }
   }
 
   return (

@@ -2,7 +2,7 @@ import React from "react";
 import { cardio } from "ldrs";
 import { LuCalendarCheck2 } from "react-icons/lu";
 cardio.register();
-const ConfirmSubmit = ({ setConfirm, handleSubmit, doc }) => {
+const ConfirmSubmit = ({ setConfirm, handleSubmit, doc, SubmitLoad }) => {
   return (
     <div className="absolute bg-black bg-opacity-40 backdrop-blur-sm w-full h-screen z-50 flex items-center justify-center">
       <div className="bg-white sticky -mt-[8rem] flex w-[33rem] flex-col items-center abs rounded-lg p-6">
@@ -17,13 +17,15 @@ const ConfirmSubmit = ({ setConfirm, handleSubmit, doc }) => {
                 <span>Confirm Booking</span>
               </h1>
               <p className="mb-6">
-                Are you sure you wish to book an appointment for {" "}
+                Are you sure you wish to book an appointment for{" "}
                 {doc.type === "ol"
                   ? "Online Consultation"
-                  : "Face to Face Consultation"} to {doc.honorific} {doc.name}
-                ?
+                  : "Face to Face Consultation"}{" "}
+                to {doc.honorific} {doc.name}?
               </p>
-              <p>By clicking the confirm button, your book will be submitted.</p>
+              <p>
+                By clicking the confirm button, your book will be submitted.
+              </p>
               <div className="flex items-center justify-end w-full space-x-2 mt-3">
                 <button
                   onClick={(e) => setConfirm(false) || e.preventDefault()}
@@ -31,12 +33,29 @@ const ConfirmSubmit = ({ setConfirm, handleSubmit, doc }) => {
                 >
                   Cancel
                 </button>
-                <button
-                  onClick={handleSubmit}
-                  className="px-9 py-1 bg-green-600 transition duration-100 hover:bg-green-800 text-white rounded-md"
-                >
-                  Confirm
-                </button>
+                {SubmitLoad ? (
+                  <button
+                    disabled
+                    className="bg-[#A5DD9D] w-full py-1  font-semibold whitespace-nowrap px-2 text-[#267124] rounded-md transition duration-10 ease-in-out 
+                        ring-[#418D3F] ring-[1.5px]"
+                  >
+                    <div className="flex items-center justify-center">
+                      <p className="mr-3">Submitting please wait </p>
+                      <l-dot-pulse
+                        size="20"
+                        speed="0.7"
+                        color="#418D3F"
+                      ></l-dot-pulse>
+                    </div>
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSubmit}
+                    className="px-9 py-1 bg-green-600 transition duration-100 hover:bg-green-800 text-white rounded-md"
+                  >
+                    Confirm
+                  </button>
+                )}
               </div>
             </div>
           </div>

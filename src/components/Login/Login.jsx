@@ -53,7 +53,6 @@ const Login = ({ close, openReg, setToken, patient, token }) => {
 
       //*successful sign-in
       nav("/Dashboard");
-
       setToken(data);
       setSuccess(true);
 

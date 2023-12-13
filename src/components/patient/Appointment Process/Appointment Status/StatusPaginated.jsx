@@ -54,8 +54,8 @@ const StatusPaginated = ({
       />
       {Loaded ? (
         currentItems &&
-        currentItems.map((ol) => (
-          <>
+        currentItems.map((ol, i) => (
+          <div className="w-full" key={i}>
             <StatusMap
               imgName={imgName}
               isImgEmpty={isImgEmpty}
@@ -63,7 +63,7 @@ const StatusPaginated = ({
               ol={ol}
               user={user}
             />
-          </>
+          </div>
         ))
       ) : (
         <Oval

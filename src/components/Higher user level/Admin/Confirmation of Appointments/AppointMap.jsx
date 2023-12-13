@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import { Link } from "react-router-dom";
-import { AiOutlineDown } from "react-icons/ai";
+import { AiOutlineDown, AiOutlineFieldNumber } from "react-icons/ai";
 import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
 import supabase from "../../../config/Supabase";
 import { LuCalendarX2 } from "react-icons/lu";
 import { BiDetail } from "react-icons/bi";
+import moment from "moment";
 
 const Online = ({ ol, CDNURL, setCancel, setBookID }) => {
   //TODO fix scroll animation
@@ -23,7 +24,7 @@ const Online = ({ ol, CDNURL, setCancel, setBookID }) => {
   useEffect(() => {
     if (ol) {
       let handler = (e) => {
-        if (!detailsRef.current.contains(e.target)) {
+        if (!detailsRef.current?.contains(e.target)) {
           setExpand(false);
         }
       };
@@ -82,10 +83,9 @@ const Online = ({ ol, CDNURL, setCancel, setBookID }) => {
     Aos.refresh();
   }, []);
 
-
   return (
     <>
-      <div key={ol.user_id} className="text-base flex w-full select-none">
+      <div key={ol.book_id} className="text-base flex w-full select-none">
         <section
           data-aos="fade-right"
           data-aos-anchor="#trigger-next"
@@ -116,7 +116,7 @@ const Online = ({ ol, CDNURL, setCancel, setBookID }) => {
                   <span className="font-semibold text-green-950">
                     Booked at:{" "}
                   </span>
-                  {formateDateTime(date)}
+                  {moment(new Date(new Date(ol.created_at))).calendar()}
                 </p>
                 <p>
                   <span className="font-semibold text-green-950">
@@ -163,18 +163,23 @@ const Online = ({ ol, CDNURL, setCancel, setBookID }) => {
               <div className="flex">
                 <BsFillCalendarCheckFill className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[24px]  text-green-600" />
                 <label className="w-fit ml-4 text-left text-base text-black">
-                  Scheduled at <p className="text-slate-400">{ol.date}</p>
+                  Scheduled at
+                  <p className="text-slate-400">
+                    {moment(new Date(new Date(ol.date))).format("LL")}
+                  </p>
                 </label>
               </div>
-              <div className="flex">
-                <MdAccessTimeFilled className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
-                <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                  Time <p className="text-slate-400">{ol.time}</p>
-                </label>
-              </div>
+              {(ol.status === "Confirmed" || ol.status === "rescheduled") && (
+                <div className="flex">
+                  <AiOutlineFieldNumber className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
+                  <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
+                    Queue no.{" "}
+                    <p className="text-slate-400 text-xl">{ol.queue}</p>
+                  </label>
+                </div>
+              )}
 
               <div className="flex">
-                {" "}
                 <MdEmail className="text-lg pr-[2px]pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
                 <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
                   Email <p className="text-slate-400">{ol.email}</p>
@@ -182,7 +187,6 @@ const Online = ({ ol, CDNURL, setCancel, setBookID }) => {
               </div>
 
               <div className="flex">
-                {" "}
                 <MdPhone className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
                 <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
                   Phone <p className="text-slate-400">{ol.number}</p>
@@ -200,7 +204,11 @@ const Online = ({ ol, CDNURL, setCancel, setBookID }) => {
                 </button>
               </Link>
               <button
-                onClick={(e) => setCancel(true) || setBookID(ol.book_id) || e.stopPropagation()}
+                onClick={(e) =>
+                  setCancel(true) ||
+                  setBookID(ol.book_id) ||
+                  e.stopPropagation()
+                }
                 className="text-lg flex items-center space-x-1 px-12 transition duration-100 text-white hover:bg-red-700 bg-red-500 rounded-md"
               >
                 <LuCalendarX2 className="text-2xl" />

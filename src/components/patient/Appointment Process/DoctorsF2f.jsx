@@ -94,7 +94,7 @@ const DoctorsF2f = ({ Doctors }) => {
         </div>
 
         <Link
-          to={"/Face-to-face/" + Doctors.id}
+          to={"/FillupForm/" + Doctors.id}
           className="text-base max-sm:text-[11px] max-sm:px-1 max-sm:py-0 whitespace-nowrap bg-[#418D3F] max-[941px]:text-sm p-2 rounded-md text-white font-bold ring-[#418D3F] ring-2 transition duration-75 ease-in hover:bg-[#A5DD9D] hover:text-[#267124]"
         >
           BOOK AN APPOINTMENT

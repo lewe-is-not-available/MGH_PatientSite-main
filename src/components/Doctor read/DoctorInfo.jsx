@@ -16,7 +16,6 @@ const DoctorInfo = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [getId, setId] = useState("");
-  console.log(id)
   const [Name, setName] = useState("");
   const [Special, setSpecial] = useState("");
   const [Sub, setSub] = useState("");
@@ -47,7 +46,6 @@ const DoctorInfo = () => {
     };
     fetchDoctor();
   }, [id, navigate, setName, setSpecial, setHmo, setHonor, setId]);
-
   return (
     <div className="back p-24 flex justify-evenly space-x-14">
       <img src={doc} alt="" className="w-72 h-full rounded-3xl" />
@@ -91,7 +89,7 @@ const DoctorInfo = () => {
         </div>
         <div className="flex justify-end">
           <Link
-            to={`/ChooseType/` + getId}
+            to={`/FillupForm/` + id}
             className="justify-center align-middle flex w-[40%] text-3xl bg-[#418D3F] rounded-md px-3 py-1 text-white
            font-semibold ring-[#418D3F] ring-[3px] transition duration-75 ease-in hover:bg-[#A5DD9D]
             hover:text-[#267124]"

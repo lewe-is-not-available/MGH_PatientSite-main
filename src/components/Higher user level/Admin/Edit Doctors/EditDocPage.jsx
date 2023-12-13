@@ -48,7 +48,7 @@ const EditDocPage = ({ books, Loaded, setLoaded }) => {
       {Loaded ? (
         currentItems &&
         currentItems.map((ol) => (
-          <div key={ol.book_id} className="w-full">
+          <div key={ol.id} className="w-full">
             <Online ol={ol} />
           </div>
         ))

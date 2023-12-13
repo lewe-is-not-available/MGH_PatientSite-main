@@ -54,8 +54,8 @@ const AppconfirmPaginated = ({
       />
       {Loaded ? (
         currentItems &&
-        currentItems.map((ol) => (
-          <div key={ol.book_id} className="w-full">
+        currentItems.map((ol, i) => (
+          <div key={i} className="w-full">
             <Online
               ol={ol}
               setBookID={setBookID}

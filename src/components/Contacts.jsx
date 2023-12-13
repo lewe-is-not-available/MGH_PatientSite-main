@@ -17,12 +17,12 @@ const Contacts = ({ user, token }) => {
   }, []);
   //*getting inputs
   const [Name, setName] = useState();
+  const [number, setNumber] = useState("");
   const [formData, setFormData] = useState({
     fname: "",
     lname: "",
     mname: "",
     email: "",
-    phone: "",
     type: "",
     message: "",
   });
@@ -32,24 +32,22 @@ const Contacts = ({ user, token }) => {
       return {
         ...prev,
         [e.target.name]: e.target.value,
-        phone: e.target.value.slice(0, 11),
       };
     });
   }
   //*autofill value
   useEffect(() => {
     if (user) {
+      setNumber(user.phone)
       setFormData((prev) => ({
         ...prev,
         fname: user.first_name,
         mname: user.middle_name,
         lname: user.last_name,
         email: user.email,
-        phone: user.phone,
       }));
     }
   }, [user]);
-
   //*Combining first last and middle name
   useEffect(() => {
     setName(
@@ -59,7 +57,6 @@ const Contacts = ({ user, token }) => {
         formData.lname
     );
   }, [formData]);
-
   //*Onsubmit function
   const [load, setLoad] = useState(false);
   const [submit, setSubmit] = useState(false);
@@ -73,7 +70,7 @@ const Contacts = ({ user, token }) => {
       mname: formData.mname,
       lname: formData.lname,
       email: formData.email,
-      phone: formData.phone,
+      phone: number,
       type: formData.type,
       message: formData.message,
     });
@@ -180,10 +177,10 @@ const Contacts = ({ user, token }) => {
                     Contact Number: <br />
                     <input
                       required
-                      value={formData.phone}
+                      value={number}
                       name="phone"
                       type="number"
-                      onChange={handleChange}
+                      onChange={(e) => setNumber(e.target.value.slice(0, 11))}
                       className="outline-none border-2 font-light border-slate-300 focus:border-[#71b967d3] w-full"
                     />
                   </p>

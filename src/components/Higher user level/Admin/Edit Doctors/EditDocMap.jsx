@@ -157,8 +157,10 @@ const EditDocMap = ({ ol }) => {
                 Schedules{" "}
                 <label className="text-slate-400 flex">
                   {ol.schedule &&
-                    ol.schedule.map((sched) => (
-                      <p className="p-2 rounded-sm mr-2 bg-opacity-20 text-slate-400 bg-green-600">
+                    ol.schedule.map((sched, i) => (
+                      <p 
+                      key={i}
+                      className="p-2 rounded-sm mr-2 bg-opacity-20 text-slate-400 bg-green-600">
                         {sched.day === "Thursday" ? "Th" : sched.day[0] + " "}
                       </p>
                     ))}

@@ -11,13 +11,14 @@ import { BiDetail } from "react-icons/bi";
 import { TbCalendarTime, TbNumber } from "react-icons/tb";
 import { RiMessageFill } from "react-icons/ri";
 
-const Doc_AppMap = ({ ol, CDNURL, setResched, setBookID }) => {
+const Doc_AppMap = ({ ol, setResched, setBookID }) => {
   //TODO fix scroll animation
   //*expand details
   const [expand, setExpand] = useState(false);
-
+  const CDNURL =
+    "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
   function handleExpand(e) {
-    e.preventDefault(); // Prevent the event from propagating to the parent Link component
+    e.preventDefault();
     setExpand(!expand);
   }
   //*close expan when clicked outside
@@ -173,7 +174,11 @@ const Doc_AppMap = ({ ol, CDNURL, setResched, setBookID }) => {
                 </button>
               </Link>
               <button
-                onClick={(e) => setResched(true) || setBookID(ol.book_id) || e.stopPropagation()}
+                onClick={(e) =>
+                  setResched(true) ||
+                  setBookID(ol.book_id) ||
+                  e.stopPropagation()
+                }
                 className="text-lg flex items-center space-x-1 px-12  transition duration-100 text-white hover:bg-red-700 bg-red-500 rounded-md"
               >
                 <TbCalendarTime className="text-2xl" />

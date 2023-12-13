@@ -73,7 +73,6 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
     settime,
     setType,
   ]);
-
   const [Loaded, setLoaded] = useState(true);
 
   //*get patient appointments
@@ -95,16 +94,17 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
       setfilt(data);
     }
   };
+
   //*search filter
   const [searchLoad, setsearchLoad] = useState(true);
   const handleSearch = () => {
     setsearchLoad(false);
     const search = filt.filter((items) => {
-      const fname = items.fname.toLowerCase().includes(Search.toLowerCase());
-      const lname = items.lname.toLowerCase().includes(Search.toLowerCase());
-      const mname = items.mname.toLowerCase().includes(Search.toLowerCase());
+      const fname = items.fname?.toLowerCase().includes(Search.toLowerCase());
+      const lname = items.lname?.toLowerCase().includes(Search.toLowerCase());
+      const mname = items.mname?.toLowerCase().includes(Search.toLowerCase());
       const docname = items.docname
-        .toLowerCase()
+        ?.toLowerCase()
         .includes(Search.toLowerCase());
       return fname || lname || mname || docname;
     });
@@ -115,21 +115,20 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
       }, 1000);
     }
   };
+
   //*Filter function
   useEffect(() => {
     if (filt) {
       const filterBook = filt
         .filter((item) => {
-          const defStat = !item.status.includes("Confirmed");
-          const defStat2 = !item.status.includes("Completed");
-          const defStat3 = !item.status.includes("rejected");
-          const someone = item.someone.includes(Someone);
-          const Time = item.time.toLowerCase().includes(time);
-          const type = item.type.toLowerCase().includes(Type);
-          const status = item.status.toLowerCase().includes(Status);
-          return (
-            defStat && defStat2 && defStat3 && someone && Time && type && status
-          );
+          //const defStat = !item.status.includes("Confirmed");
+          const defStat2 = !item.status?.includes("Completed");
+          const defStat3 = !item.status?.includes("rejected");
+          const someone = item.someone?.includes(Someone);
+          const Time = item.date?.toLowerCase().includes(time);
+          const type = item.type?.toLowerCase().includes(Type);
+          const status = item.status?.toLowerCase().includes(Status.toLowerCase());
+          return defStat2 && defStat3 && someone && Time && type && status;
         })
         .sort((a, b) =>
           isAsc
@@ -271,15 +270,19 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
                 </select>
               </div>
               <div className="flex flex-col">
-                <label>Appointment time</label>
-                <select
-                  className="w-full rounded-md h-8 border-slate-400 border-2"
-                  onChange={(e) => settime(e.target.value)}
-                >
-                  <option key="1">all</option>
-                  <option key="2">morning</option>
-                  <option key="3">afternoon</option>
-                </select>
+                <label>Search by Scheduled Date</label>
+                <div className="flex items-center">
+                  <input
+                    type="date"
+                    value={time}
+                    className="w-fit px-3 rounded-md border-slate-400 border-2"
+                    onChange={(e) => settime(e.target.value)}
+                  />
+                  <button 
+                  onClick={() => settime("")}
+                  className="bg-[#60af5ac4] ml-1 hover:bg-[#84d17fc4] hover:text-[#388332c4]
+                   text-white border-[#388332c4] border-2 px-2 rounded-md ">reset date</button>
+                </div>
               </div>
               <div className="flex flex-col">
                 <label>status</label>
@@ -289,7 +292,9 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
                 >
                   <option key="1">Show all</option>
                   <option key="2">pending</option>
-                  <option key="3">rescheduled</option>
+                  <option key="3">Confirmed</option>
+                  <option key="4">rescheduled</option>
+                  <option key="5">rejected</option>
                 </select>
               </div>
               <div className="flex flex-col">

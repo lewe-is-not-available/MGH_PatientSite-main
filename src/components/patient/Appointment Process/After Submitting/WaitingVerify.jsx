@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { dotWave } from "ldrs";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import supabase from "../../../config/Supabase";
 import { useEffect } from "react";
+import supabaseAdmin from "../../../config/SupabaseAdmin";
+import SuccessAppointment from "./SuccessAppointment";
 
 dotWave.register();
 
 const WaitingVerify = () => {
   const id = useParams();
+
   const [email, setEmail] = useState();
   async function getUser() {
     const { data, error: userErr } = await supabase
@@ -23,7 +26,7 @@ const WaitingVerify = () => {
       }
     } catch (userErr) {
       toast.error(userErr.message);
-      console.log(userErr)
+      console.log(userErr);
     }
   }
   useEffect(() => {
@@ -49,6 +52,65 @@ const WaitingVerify = () => {
     } catch (error) {
       toast.error(error.message);
     }
+  }
+  const [isVerified, setIsVerified] = useState();
+  const fetchVerify = async () => {
+    try {
+      if (email) {
+        const { data: userID, error: idErr } = await supabase
+          .from("profile")
+          .select()
+          .eq("email", email)
+          .single();
+        if (idErr) throw idErr;
+
+        if (userID) {
+          const { data: user, error: userErr } =
+            await supabaseAdmin.auth.admin.getUserById(userID.id);
+          if (userErr) throw userErr;
+          if (user) {
+            setIsVerified(user.user.email_confirmed_at);
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    //*Realtime data.
+    const fetchAndSubscribe = async () => {
+      await fetchVerify();
+      if (email) {
+        const realtime = supabaseAdmin
+          .channel("room4")
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "auth",
+              table: "users",
+            },
+            (payload) => {
+              fetchVerify(payload.new.data);
+            }
+          )
+          .subscribe();
+
+        return () => {
+          supabase.removeChannel(realtime);
+          realtime.unsubscribe();
+        };
+      }
+    };
+    fetchAndSubscribe();
+  }, [email, isVerified]);
+
+  const nav = useNavigate();
+  if (isVerified) {
+    nav("/Appointment/Success/" + id.bookID);
   }
 
   return (
