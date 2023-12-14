@@ -22,9 +22,6 @@ const AcceptConfirm = ({ setReject, id }) => {
     if (error) {
       toast.error(error.message, { autoClose: false });
     }
-   else{
-    window.location.reload()
-   }
   }
 
   return (

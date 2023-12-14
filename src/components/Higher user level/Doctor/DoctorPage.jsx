@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import supabase from "../../config/Supabase";
 import { Link } from "react-router-dom";
 import Aos from "aos";
@@ -8,6 +8,9 @@ import moment from "moment";
 import AcceptConfirm from "./NextConfirm";
 import _ from "lodash";
 import TodayAppModal from "./TodayAppModal";
+import { CgEnter } from "react-icons/cg";
+import DocCurrentModal from "./DocCurrentModal";
+import LastConfirm from "./LastConfirm";
 
 const Doc_Dash = ({ user }) => {
   useEffect(() => {
@@ -133,6 +136,7 @@ const Doc_Dash = ({ user }) => {
 
   const [nextQueue, setNextQueue] = useState();
   const [currentQueue, setcurrentQueue] = useState();
+  const [nextSched, setNextSched] = useState();
   //*fetch current queue
   async function fetchQue() {
     try {
@@ -142,7 +146,7 @@ const Doc_Dash = ({ user }) => {
           .select()
           .match({
             doc_id: doctor?.id,
-            date: moment(new Date()).format("yyyy-M-19"),
+            date: moment(new Date()).format("yyyy-M-D"),
           })
           .or("status.eq.Confirmed,status.eq.rescheduled")
           .order("queue", { ascending: true });
@@ -158,14 +162,28 @@ const Doc_Dash = ({ user }) => {
           .select()
           .match({
             doc_id: doctor?.id,
-            date: moment(new Date())?.format("yyyy-M-19"),
+            date: moment(new Date())?.format("yyyy-M-D"),
             status: "Consultation Ongoing",
           });
         if (currErr) {
           throw Error(currErr.message);
         }
         if (currentQue) {
-          setcurrentQueue(currentQue);
+          setcurrentQueue(currentQue[0]);
+        }
+
+        const { data: nxtSched, error: nxtErr } = await supabase
+          .from("patient_Appointments")
+          .select()
+          .eq("doc_id", doctor?.id)
+          .or("status.eq.Confirmed,status.eq.rescheduled")
+          .order("date", { ascending: true });
+        if (nxtErr) {
+          throw nxtErr;
+        }
+        if (queNum) {
+          const nxtDate = _.filter(nxtSched, ["date", nxtSched[0]?.date]);
+          setNextSched(_.orderBy(nxtDate, ["queue", "asc"]));
         }
       }
     } catch (error) {
@@ -176,25 +194,41 @@ const Doc_Dash = ({ user }) => {
   //console.log(currentQueue);
   //*Get current patient's profile
   const [imgName, setimgName] = useState([]);
+  const [imgName1, setimgName1] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(false);
   const CDNURL =
     "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
 
   async function getImages() {
-    const { data, error } = await supabase.storage
-      .from("images")
-      .list(currentQueue[0]?.email + "/profile/", {
-        limit: 100,
-        offset: 0,
-        sortBy: { column: "created_at", order: "asc" },
-      });
+    try {
+      const { data, error } = await supabase.storage
+        .from("images")
+        .list(currentQueue?.email + "/profile/", {
+          limit: 100,
+          offset: 0,
+          sortBy: { column: "created_at", order: "asc" },
+        });
+      if (error) throw error;
+      else {
+        setImgEmpty(true);
+        setimgName(data[0]?.name);
+      }
+      const { data: img, error: imgErr } = await supabase.storage
+        .from("images")
+        .list(nextSched?.email + "/profile/", {
+          limit: 100,
+          offset: 0,
+          sortBy: { column: "created_at", order: "asc" },
+        });
 
-    setImgEmpty(true);
-    setimgName(data[0]?.name);
-
-    if (error) {
+      if (imgErr) throw imgErr;
+      else {
+        setImgEmpty(true);
+        setimgName1(img[0]?.name);
+      }
+    } catch (error) {
+      console.log(error.message);
       setImgEmpty(false);
-      console.log(error);
     }
   }
 
@@ -220,8 +254,8 @@ const Doc_Dash = ({ user }) => {
             table: "patient_Appointments",
             filter: `doc_id=eq.${doctor.id}`,
           },
-          (payload) => {
-            fetchQue(payload.new);
+          () => {
+            fetchQue();
           }
         )
         .subscribe();
@@ -236,14 +270,16 @@ const Doc_Dash = ({ user }) => {
 
   //*Handle next consultation
   const [next, setNext] = useState(false);
+  const [load, setLoad] = useState(false);
   async function handleAccept(e) {
     e.preventDefault();
     setNext(true);
+    setLoad(true);
     try {
       const { error: nextErr } = await supabase
         .from("patient_Appointments")
         .update({ status: "Completed" })
-        .eq("book_id", currentQueue[0]?.book_id);
+        .eq("book_id", currentQueue?.book_id);
       if (nextErr) throw nextErr;
 
       const { error: nextCurrentErr } = await supabase
@@ -251,19 +287,24 @@ const Doc_Dash = ({ user }) => {
         .update({ current: nextQueue[0].queue })
         .match({
           doc_id: doctor.id,
-          date: moment(new Date()).format("yyyy-M-19"),
-          status: "Confirmed",
-        });
-
+          date: moment(new Date()).format("yyyy-M-D"),
+        })
+        .or("status.eq.Confirmed,status.eq.rescheduled");
       if (nextCurrentErr) throw nextCurrentErr;
       const { error: CurrentErr } = await supabase
         .from("patient_Appointments")
         .update({ status: "Consultation Ongoing" })
         .eq("book_id", nextQueue[0]?.book_id);
       if (CurrentErr) throw CurrentErr;
+      else {
+        setNext(false);
+        setLoad(false);
+      }
     } catch (error) {
       toast.error(error.message);
       console.log(error);
+      setNext(false);
+      setLoad(false);
     }
   }
   //*Get day if Doctor's schedule is today
@@ -296,9 +337,10 @@ const Doc_Dash = ({ user }) => {
     //*Update start of queue
     const StartQueue = async () => {
       try {
-        if (isSchedToday && nextQueue) {
+        if (isSchedToday) {
           const isStarting = _.filter(filt, ["status", "Consultation Ongoing"]);
           if (isStarting.length === 0) {
+            fetchQue();
             const { error: CurrentErr } = await supabase
               .from("patient_Appointments")
               .update({ status: "Consultation Ongoing" })
@@ -313,10 +355,47 @@ const Doc_Dash = ({ user }) => {
     StartQueue();
   }, [isSchedToday]);
 
-  //*Open Modal for appointments today
-  const [todayModal, setTodayModal] = useState(false);
+  //*Update status for the rest of queue if time exceeded
+  const isElapsed = _.lte(checkOut, timeNow);
+  useEffect(() => {
+    //*Update start of queue
+    const StartQueue = async () => {
+      try {
+        if (isElapsed) {
+          const { error: CurrentErr } = await supabase
+            .from("patient_Appointments")
+            .update({ status: "Awaiting Doctor's Confirmation" })
+            .eq("book_id", currentQueue.book_id);
+          if (CurrentErr) throw CurrentErr;
+          
+          if (nextQueue.length !== 0) {
+            fetchQue();
+            const { error: nextErr } = await supabase
+              .from("patient_Appointments")
+              .update({ status: "Requesting for reschedule" })
+              .match({
+                doc_id: doctor.id,
+                date: moment(new Date()).format("yyyy-M-D"),
+              })
+              .or("status.eq.Confirmed,status.eq.rescheduled");
+            if (nextErr) throw nextErr;
 
-  if (next || todayModal) {
+            console.log("success");
+          }
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    StartQueue();
+  }, [isElapsed]);
+  console.log(nextQueue?.book_id);
+  //*Modal states
+  const [todayModal, setTodayModal] = useState(false);
+  const [currModal, setCurrModal] = useState(false);
+  const [last, setLast] = useState(false);
+
+  if (next || todayModal || currModal || last) {
     document.documentElement.style.overflowY = "hidden";
   } else {
     document.documentElement.style.overflowY = "unset";
@@ -325,13 +404,44 @@ const Doc_Dash = ({ user }) => {
     <>
       {next && (
         <div className="absolute z-50 w-full h-full">
-          <AcceptConfirm setAccept={setNext} handleAccept={handleAccept} />
+          <AcceptConfirm
+            setAccept={setNext}
+            load={load}
+            handleAccept={handleAccept}
+          />
+        </div>
+      )}
+      {last && (
+        <div className="absolute z-50 w-full h-full">
+          <LastConfirm
+            setAccept={setLast}
+            data={currentQueue}
+            setCurrModal={setCurrModal}
+          />
         </div>
       )}
 
       {todayModal && (
         <div className="absolute z-50 w-full h-full">
-          <TodayAppModal setAccept={setTodayModal} ol={nextQueue} />
+          <TodayAppModal
+            setAccept={setTodayModal}
+            ol={nextQueue.length === 0 ? nextSched : nextQueue}
+          />
+        </div>
+      )}
+      {currModal && (
+        <div className="absolute z-40 w-full h-full">
+          <DocCurrentModal
+            data={currentQueue}
+            doc={doctor}
+            nextQueue={nextQueue}
+            setCurrModal={setCurrModal}
+            setNext={setNext}
+            next={next}
+            last={last}
+            setLast={setLast}
+            load={load}
+          />
         </div>
       )}
 
@@ -339,12 +449,6 @@ const Doc_Dash = ({ user }) => {
         {/* feautures */}
         <div className="flex justify-center mb-20">
           <div className="grid grid-cols-2 features gap-6 w-full">
-            <button
-              onClick={(e) => setNext(true) || e.preventDefault()}
-              className="px-4 col-span-2 py-1 bg-white abs rounded-md hover:shadow-none"
-            >
-              Start next appointment
-            </button>
             <Link
               to="/Doctor/Appointments"
               className="Docboxes"
@@ -398,7 +502,8 @@ const Doc_Dash = ({ user }) => {
               >
                 {isSchedToday ? (
                   <>
-                    <div className="flex justify-center w-full py-3 items-center bg-green-500 text-white">
+                    <div className="grid grid-cols-3 w-full py-3 items-center bg-green-500 text-white">
+                      <div className=""></div>
                       <div className="flex flex-col items-center">
                         <p className="font-semibold text-xl">
                           Your schedule for Today
@@ -426,69 +531,126 @@ const Doc_Dash = ({ user }) => {
                           </p>
                         </div>
                       </div>
+                      <div className="justify-center flex">
+                        {!currentQueue ? (
+                          <div></div>
+                        ) : (
+                          <button
+                            onClick={() => setCurrModal(true)}
+                            className="px-3 py-1 flex items-center rounded-lg hover:bg-green-600 hover:text-lg transition duration-75 text-base text-white border-2 border-white font-semibold bg-green-500"
+                          >
+                            <CgEnter className="mr-1 text-xl" />
+                            <span>Enter meeting</span>
+                          </button>
+                        )}
+                      </div>
                     </div>
                     <div className="w-full rounded-xl mb-4">
                       <div className="text-3xl font-semibold mt-4">
                         {Loaded ? (
                           <div className="flex">
-                            <img
-                              className="object-cover rounded-full w-[5.6rem] h-fit mr-3"
-                              src={`${
-                                isImgEmpty
-                                  ? CDNURL +
-                                    currentQueue[0]?.email +
-                                    "/profile/" +
-                                    imgName
-                                  : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
-                              }`}
-                              alt="/"
-                            />
-                            <div className="text-xl flex flex-col font-light space-y-3 w-1/2">
-                              <p className="w-full text-lg text-left">
-                                You have an ongoing consultation for patient{" "}
-                                <br />
-                                <span className="font-semibold ml-1">
-                                  {currentQueue[0]?.fname}
-                                </span>
-                                <Link
-                                  to={
-                                    "/Doctor/Appointments/Details/" +
-                                    currentQueue[0]?.book_id
-                                  }
-                                  className="text-base text-primary ml-1"
-                                >
-                                  View Details
-                                </Link>
-                              </p>
-                              <p className="text-base">
-                                Here is your gmeet link:{" "}
-                                <a href={doctor.gmeet} className="text-primary">
-                                  Click here
-                                </a>
-                              </p>
-                              {nextQueue[0] && (
-                                <p className="text-base flex items-center">
-                                  Next Consultation is with{" "}
-                                  <span className="font-semibold ml-1">
-                                    {nextQueue[0]?.fname}
-                                  </span>
-                                </p>
-                              )}
-                            </div>
-                            <div className="text-lg mx-2 w-1/2 font-light flex-col flex items-start">
-                              Your total of confirmed Appointments for today
-                              <div className="text-6xl flex font-semibold my-2">
-                                <h1>{nextQueue.length}</h1>
-                              </div>
-                              <p
-                                onClick={(e) =>
-                                  setTodayModal(true) || e.preventDefault()
-                                }
-                                className="text-lg select-none cursor-pointer font-light text-primary"
-                              >
-                                View all
-                              </p>
-                            </div>
+                            {currentQueue ? (
+                              <>
+                                <img
+                                  className="object-cover rounded-full w-[5.6rem] h-fit mr-3"
+                                  src={`${
+                                    isImgEmpty
+                                      ? CDNURL +
+                                        currentQueue?.email +
+                                        "/profile/" +
+                                        imgName
+                                      : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
+                                  }`}
+                                  alt="/"
+                                />{" "}
+                                <div className="text-xl flex flex-col font-light space-y-3 w-1/2">
+                                  <p className="w-full text-lg text-left">
+                                    You have an ongoing consultation for patient
+                                    <br />
+                                    <span className="font-semibold ml-1">
+                                      {currentQueue?.fname}
+                                    </span>
+                                    <Link
+                                      to={
+                                        "/Doctor/Appointments/Details/" +
+                                        currentQueue?.book_id
+                                      }
+                                      className="text-base text-primary ml-1"
+                                    >
+                                      View Details
+                                    </Link>
+                                  </p>
+                                  {nextQueue[0] && (
+                                    <p className="text-base flex items-center">
+                                      Next Consultation is with{" "}
+                                      <span className="font-semibold ml-1">
+                                        {nextQueue[0]?.fname}
+                                      </span>
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="text-lg mx-2 w-1/2 font-light flex-col flex items-start">
+                                  Your total of confirmed Appointments for today
+                                  <div className="text-6xl flex font-semibold my-2">
+                                    <h1>{nextQueue.length}</h1>
+                                  </div>
+                                  <p
+                                    onClick={(e) =>
+                                      setTodayModal(true) || e.preventDefault()
+                                    }
+                                    className="text-lg select-none cursor-pointer font-light text-primary"
+                                  >
+                                    View all
+                                  </p>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <img
+                                  className="object-cover rounded-full w-[5.6rem] h-fit mr-3"
+                                  src={`${
+                                    isImgEmpty
+                                      ? CDNURL +
+                                        nextSched[0]?.email +
+                                        "/profile/" +
+                                        imgName1
+                                      : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
+                                  }`}
+                                  alt="/"
+                                />{" "}
+                                <div className="text-xl flex flex-col font-light space-y-3 w-1/2">
+                                  <p className="w-full text-lg text-left">
+                                    Your next appointment schedule is with{" "}
+                                    <br />
+                                    <span className="font-semibold mx-1">
+                                      {nextSched[0]?.fname}
+                                    </span>{" "}
+                                    at:
+                                    <br />
+                                    <p className="text-3xl font-semibold mt-3">
+                                      {moment(
+                                        new Date(nextSched[0]?.date)
+                                      ).format("LL")}
+                                    </p>
+                                  </p>
+                                </div>
+                                <div className="text-lg mx-2 w-1/2 font-light flex-col flex items-start">
+                                  Your total of confirmed appointments for the
+                                  next schedule
+                                  <div className="text-6xl flex font-semibold my-2">
+                                    <h1>{nextSched.length}</h1>
+                                  </div>
+                                  <p
+                                    onClick={(e) =>
+                                      setTodayModal(true) || e.preventDefault()
+                                    }
+                                    className="text-lg select-none cursor-pointer font-light text-primary"
+                                  >
+                                    View all
+                                  </p>
+                                </div>
+                              </>
+                            )}
                           </div>
                         ) : (
                           <l-tailspin

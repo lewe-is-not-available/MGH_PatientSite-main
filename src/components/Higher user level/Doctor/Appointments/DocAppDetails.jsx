@@ -316,6 +316,11 @@ const DocAppDetails = ({ user }) => {
                       {data.status}
                     </p>
                   )}
+                  {data.status === "pending request" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-primary w-fit">
+                      {data.status}
+                    </p>
+                  )}
                   {data.status === "rescheduled" && (
                     <p className="px-4 py-1 flex items-center text-white rounded-full bg-rose-500 w-fit">
                       {data.status}
@@ -323,6 +328,11 @@ const DocAppDetails = ({ user }) => {
                   )}
                   {data.status === "rejected" && (
                     <p className="px-4 py-1 flex items-center text-white rounded-full bg-red-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "Awaiting Doctor's Confirmation" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-emerald-500 w-fit">
                       {data.status}
                     </p>
                   )}

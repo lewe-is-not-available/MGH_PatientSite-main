@@ -67,7 +67,6 @@ const TodayModalMap = ({ ol, setResched, setBookID, i }) => {
     Aos.init({ duration: 500 });
     Aos.refresh();
   }, []);
-
   return (
     <>
       <div key={i} className="text-base flex w-full select-none">
@@ -94,7 +93,12 @@ const TodayModalMap = ({ ol, setResched, setBookID, i }) => {
               />
               <div className="ml-4 flex-col text-left text-sm">
                 <p className="text-base uppercase font-semibold text-green-800">
-                  {ol.fname} {ol.lname} <span className="text-green-700 font-light normal-case">{ i === 0 && "(Next in consultation)"}</span>
+                  {ol.fname} {ol.lname}{" "}
+                  {i === 0 && (
+                    <span className="text-green-700 font-light normal-case">
+                      (Next in consultation)
+                    </span>
+                  )}
                 </p>
                 <p className="">
                   {" "}
@@ -104,9 +108,7 @@ const TodayModalMap = ({ ol, setResched, setBookID, i }) => {
                   {ol.queue}
                 </p>
                 <p>
-                  <span className="font-semibold text-green-950">
-                    Reason:{" "}
-                  </span>
+                  <span className="font-semibold text-green-950">Reason: </span>
                   {ol.reason}
                 </p>
               </div>

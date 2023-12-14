@@ -1,10 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import { LuCalendarCheck2 } from "react-icons/lu";
 import { lineSpinner } from "ldrs";
+import { toast } from "react-toastify";
+import supabase from "../../config/Supabase";
 
 lineSpinner.register();
 
-const NextConfirm = ({ setAccept, handleAccept, load }) => {
+const LastConfirm = ({ setAccept, data, setCurrModal }) => {
+  const [load, setLoad] = useState(false);
+
+  async function handleAccept(e) {
+    e.preventDefault();
+    setLoad(true);
+    try {
+      const { error: nextErr } = await supabase
+        .from("patient_Appointments")
+        .update({ status: "Completed" })
+        .eq("book_id", data?.book_id);
+      if (nextErr) throw nextErr;
+      else {
+        setCurrModal(false)
+        setAccept(false);
+        setLoad(false);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error);
+      setAccept(false);
+      setLoad(false);
+    }
+  }
   return (
     <div className="absolute bg-black bg-opacity-40 backdrop-blur-sm w-full h-full z-50 flex items-center justify-center">
       <div className="bg-white sticky -mt-[8rem] flex w-[29rem] flex-col items-center abs rounded-lg p-6">
@@ -59,4 +84,4 @@ const NextConfirm = ({ setAccept, handleAccept, load }) => {
   );
 };
 
-export default NextConfirm;
+export default LastConfirm;

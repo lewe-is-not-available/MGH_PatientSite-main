@@ -159,8 +159,8 @@ function App() {
         <div
           className={`${
             open
-              ? "transition-transform duration-200 ease-in translate-x-0"
-              : "transition-transform duration-200 ease-out -translate-x-80"
+              ? "transition-transform duration-200 ease-in z-30 translate-x-0"
+              : "transition-transform duration-200 ease-out z-30 -translate-x-80"
           }`}
         >
           <Sidebar

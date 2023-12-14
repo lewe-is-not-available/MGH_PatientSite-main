@@ -1,7 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import TodayModalMap from "./TodayModalMap";
 
-const TodayAppModal = ({ setAccept, handleAccept, ol }) => {
+const TodayAppModal = ({ setAccept, ol }) => {
+  //console.log(ol)
+  const isSchedToday = new Date(ol[0]?.date) === new Date()
+
   //*close when clicked outside
   let modelRef = useRef();
   useEffect(() => {
@@ -25,11 +28,12 @@ const TodayAppModal = ({ setAccept, handleAccept, ol }) => {
       >
         <>
           <h1 className="text-3xl font-semibold mb-6 mt-1">
-            Appointments for today
+            {isSchedToday ? ("Appointments for today"):("Appointments for next schedule")}
+         
           </h1>
           <div className="h-[30rem] overflow-y-auto w-full px-3 py-3">
             {ol.map((item, i) => (
-            <TodayModalMap ol={item} key={i} />
+            <TodayModalMap ol={item} key={i} i={i} />
           ))}
           </div>
           

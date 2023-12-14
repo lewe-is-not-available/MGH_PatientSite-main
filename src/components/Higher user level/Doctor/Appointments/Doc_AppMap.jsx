@@ -110,11 +110,43 @@ const Doc_AppMap = ({ ol, setResched, setBookID }) => {
                 </p>
               </div>
             </div>
-            <div className="flex self-start mt-2">
-              <p className="bg-primary-500 text-center w-fit px-3 h-fit self-center mr-3 text-white rounded-full">
-                {ol.status}
-              </p>
-              <button className=" mr-2 text-lg transition duration-200 group-hover/pu:bg-slate-400 p-3 rounded-lg">
+            <div className="flex items-center mt-2">
+              {ol.status === "Consultation Ongoing" && (
+                <p className="px-3 items-center text-white rounded-full h-fit bg-green-500 w-fit">
+                  {ol.status}
+                </p>
+              )}
+              {ol.status === "pending confirmation" && (
+                <p className="px-3 items-center text-white rounded-full h-fit bg-primary w-fit">
+                  {ol.status}
+                </p>
+              )}
+              {ol.status === "Confirmed" && (
+                <p className="px-3 flex items-center text-white rounded-full h-fit bg-emerald-500 w-fit">
+                  {ol.status}
+                </p>
+              )}
+              {ol.status === "pending request" && (
+                <p className="px-3 flex items-center text-white rounded-full h-fit bg-primary w-fit">
+                  {ol.status}
+                </p>
+              )}
+              {ol.status === "rescheduled" && (
+                <p className="px-3 flex items-center text-white rounded-full h-fit bg-rose-500 w-fit">
+                  {ol.status}
+                </p>
+              )}
+              {ol.status === "rejected" && (
+                <p className="px-3 flex items-center text-white rounded-full h-fit bg-red-500 w-fit">
+                  {ol.status}
+                </p>
+              )}
+              {ol.status === "Awaiting Doctor's Confirmation" && (
+                <p className="px-3 flex items-center text-white rounded-full h-fit bg-emerald-500 w-fit">
+                  {ol.status}
+                </p>
+              )}
+              <button className=" mx-2 text-lg transition duration-200 group-hover/pu:bg-slate-400 p-3 rounded-lg">
                 <div>
                   <AiOutlineDown
                     className={`${

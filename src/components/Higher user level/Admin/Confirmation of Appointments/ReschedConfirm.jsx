@@ -115,7 +115,7 @@ const AcceptConfirm = ({ setResched, id, user }) => {
       if (error) throw error;
       else {
         toast.success("Appointment Succesfully Rescheduled");
-        window.location.reload();
+        //window.location.reload();
       }
     } catch (error) {
       toast.error(error.message);
@@ -151,7 +151,7 @@ const AcceptConfirm = ({ setResched, id, user }) => {
                 required
                 onChange={(e) => setDate(e.target.value)}
                 type="date"
-                min={disablePastDate()}
+                //min={disablePastDate()}
                 className="mb-4 bg-slate-200 px-3 py-1 w-[60%] focus:border-2 border-b-2 border-slate-400"
               />
               <p>Reason for rescheduling:</p>

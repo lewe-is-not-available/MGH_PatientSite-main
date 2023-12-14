@@ -470,7 +470,7 @@ const AppointmentDetails = ({ user }) => {
                     <h2 className="text-6xl font-semibold">{data.queue}</h2>
                   </div>
                 )}
-
+                {/* Awaiting Doctor's Confirmation */}
                 <div className="flex flex-col text-left items-left">
                   <span className="font-semibold">Status:</span>
                   {data.status === "Consultation Ongoing" && (
@@ -488,6 +488,11 @@ const AppointmentDetails = ({ user }) => {
                       {data.status}
                     </p>
                   )}
+                  {data.status === "pending request" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-primary w-fit">
+                      {data.status}
+                    </p>
+                  )}
                   {data.status === "rescheduled" && (
                     <p className="px-4 py-1 flex items-center text-white rounded-full bg-rose-500 w-fit">
                       {data.status}
@@ -498,8 +503,8 @@ const AppointmentDetails = ({ user }) => {
                       {data.status}
                     </p>
                   )}
-                  {data.status === "Completed" && (
-                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-green-500 w-fit">
+                  {data.status === "Awaiting Doctor's Confirmation" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-emerald-500 w-fit">
                       {data.status}
                     </p>
                   )}
@@ -660,25 +665,24 @@ const AppointmentDetails = ({ user }) => {
                   <p className="text-center">Check In</p>
                   <p className="text-center">Check Out</p>
                 </div>
-                {Doc.schedule &&
-                  Doc.schedule.map((item, i) => (
-                    <div
-                      key={i}
-                      className="col-span-3 bg-slate-200 py-2 grid grid-cols-4 w-full my-3 px-10"
-                    >
-                      <div className="col-span-2 ">{item.day}</div>
-                      <div className="text-center">
-                        {moment(
-                          new Date(`2000-01-01T${item.startTime}`)
-                        ).format("LT")}
-                      </div>
-                      <div className="text-center">
-                        {moment(
-                          new Date(`2000-01-01T${item.startTime}`)
-                        ).format("LT")}
-                      </div>
+                {Doc.schedule?.map((item, i) => (
+                  <div
+                    key={i}
+                    className="col-span-3 bg-slate-200 py-2 grid grid-cols-4 w-full my-3 px-10"
+                  >
+                    <div className="col-span-2 ">{item.day}</div>
+                    <div className="text-center">
+                      {moment(new Date(`2000-01-01T${item.startTime}`)).format(
+                        "LT"
+                      )}
                     </div>
-                  ))}
+                    <div className="text-center">
+                      {moment(new Date(`2000-01-01T${item.startTime}`)).format(
+                        "LT"
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}

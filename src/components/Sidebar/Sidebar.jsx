@@ -166,7 +166,7 @@ const Sidebar = ({
     }
   }, [user]);
   return (
-    <div className="w-[18.8rem] bg-[#f0fcec] fixed">
+    <div className="w-[18.8rem] bg-[#f0fcec] z-30 fixed">
       <div className=" pt-1 h-screen shadow-2xl">
         {/* close button */}
         <div className="flex justify-end mx-4 mt-4 mb-0">
