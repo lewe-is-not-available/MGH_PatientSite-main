@@ -1,6 +1,6 @@
 import supabase from "./components/config/Supabase";
 import { Routes, Route } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -130,7 +130,7 @@ function App() {
       setToken(data);
     }
   }, []);
-  
+
   return (
     <div className=" flex flex-col ">
       <header className="sticky top-0 z-50">
@@ -198,7 +198,7 @@ function App() {
           />
 
           {/*patient's side */}
-          <Route path="/Notifications" element={<Notification />} />
+          <Route path="/Notifications" element={<Notification user={user} />} />
           <Route path="/Mission-and-Vision" element={<MissonVision />} />
           <Route path="/Feedback-Form" element={<Feedback token={token} />} />
           <Route
@@ -218,7 +218,11 @@ function App() {
           <Route
             path="/FillupForm/:id"
             element={
-              <FillupForm token={token} openTerms={openTerms} setToken={setToken} />
+              <FillupForm
+                token={token}
+                openTerms={openTerms}
+                setToken={setToken}
+              />
             }
           />
           <Route

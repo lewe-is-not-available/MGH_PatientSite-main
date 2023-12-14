@@ -242,6 +242,17 @@ const OnlineConsult = ({ openTerms, token }) => {
           ]);
         if (ErrApp) {
           throw ErrApp;
+        }
+        const { error: notifErr } = await supabase.from("notification").insert([
+          {
+            book_id: bookID,
+            docname: doc.name,
+            email: formData.Gmail,
+            status: "pending confirmation",
+          },
+        ]);
+        if (notifErr) {
+          throw notifErr;
         } else {
           if (token) {
             navigate("/Appointment/Success/" + bookID);

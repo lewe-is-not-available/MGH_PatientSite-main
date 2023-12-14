@@ -23,38 +23,47 @@ const Ratings = () => {
 
   const fetchRatings = async () => {
     setLoaded(false);
-    const { data: mess, error: messErr } = await supabase
-      .from("ratings")
-      .select();
-    if (messErr) {
-      toast.error(messErr.message, {
+    try {
+      const { data: mess, error: messErr } = await supabase
+        .from("ratings")
+        .select();
+      if (mess) {
+        setLoaded(true);
+        setStar(mess);
+      }
+      if (messErr) {
+        throw messErr;
+      }
+    } catch (error) {
+      setLoaded(true);
+      toast.error(error.message, {
         toastId: "dataError",
       });
-      console.error("Failed to fetch", messErr.message);
-    }
-
-    if (mess) {
-      setLoaded(true);
-      setStar(mess);
+      console.error("Failed to fetch", error.message);
     }
   };
   useEffect(() => {
     //*Realtime data.
     fetchRatings();
-    const realtime = supabase
-      .channel("room1")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "ratings" },
-        (payload) => {
-          fetchRatings(payload.new.data);
-        }
-      )
-      .subscribe();
+    const fetchAndSubscribe = async () => {
+      await fetchRatings();
+      const realtime = supabase
+        .channel("room1")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "ratings" },
+          (payload) => {
+            setStar(payload.new);
+          }
+        )
+        .subscribe();
 
-    return () => {
-      supabase.getChannels(realtime);
+      return () => {
+        supabase.removeChannel(realtime);
+        realtime.unsubscribe();
+      };
     };
+    fetchAndSubscribe();
   }, []);
 
   const [sortInput, setSortInput] = useState();
@@ -119,9 +128,7 @@ const Ratings = () => {
 
   return (
     <div className="flex flex-col space-y-3">
-      <h1 className="font-semibold mt-7 text-xl">
-        {starCount.total} Reviews
-      </h1>
+      <h1 className="font-semibold mt-7 text-xl">{starCount.total} Reviews</h1>
       <div className="flex flex-col ml-5 space-y-4 text-green-600">
         <div className="flex items-center space-x-4">
           <p className="flex w-fit whitespace-nowrap">5 Stars</p>

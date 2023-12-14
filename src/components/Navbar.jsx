@@ -98,6 +98,7 @@ const Navbar = ({
       console.log(error.message);
     }
   }
+
   //*Get day if Doctor's schedule is today
   const today = moment(new Date()).format("dddd");
   const docSchedToday = _.filter(doc?.schedule, ["day", today]);
@@ -165,13 +166,44 @@ const Navbar = ({
     }
   }, [currentQueue, isSchedToday]);
 
+  //*update status of f2f to complete
+
+  const isF2fElapsed = _.lte(
+    appDay + checkOut,
+    moment(new Date()).format(`YYYYMD${timeNow}`)
+  );
+  const [f2fData, setF2fData] = useState([]);
+  async function updateF2f() {
+    try {
+      const { data, error } = await supabase
+        .from("patient_Appointments")
+        .select()
+        .eq("type", "f2f");
+
+      if (error) throw error;
+      if (data) {
+        const docId = _.map(data, 'doc_id')
+        const { data:doc, error:err } = await supabase
+        .from("dr_information")
+        .select()
+        .eq("id", docId);
+        if(err) throw err
+        setF2fData(doc);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+//console.log(f2fData)
   //*Realtime function
   useEffect(() => {
     fetchCurrent();
     fetchDoc();
+    updateF2f();
     const fetchAndSubscribe = async () => {
       await fetchCurrent();
       await fetchDoc();
+      await updateF2f();
       const realtime = supabase
         .channel("room14")
         .on(
@@ -225,7 +257,7 @@ const Navbar = ({
   }, [token, isDoctor, isAdmin, isPatient]);
 
   //*Logout Function
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
   async function handleLogout() {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -233,6 +265,7 @@ const Navbar = ({
     } else {
       setToken(false);
       localStorage.removeItem("token");
+      navigate("/");
       window.location.reload();
     }
   }

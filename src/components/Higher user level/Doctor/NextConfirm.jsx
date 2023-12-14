@@ -19,7 +19,7 @@ const NextConfirm = ({ setAccept, handleAccept, load }) => {
                 <span>Proceed to next appointment</span>
               </h1>
               <p className="mb-4">
-                Are finished with your current appointment?
+                Are you finished with your current appointment?
               </p>
               <div className="flex items-center justify-end w-full space-x-2 mt-3">
                 <button

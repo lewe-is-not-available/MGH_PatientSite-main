@@ -2,33 +2,44 @@ import React, { useEffect, useState } from "react";
 import supabase from "./config/Supabase";
 import NotifictionConfig from "./NotificationConfig";
 
-
-const Notification = () => {
+const Notification = ({ user }) => {
+  // user uuid
   const [icon, setIcon] = useState(false);
   const [isolated_data, setIsolate] = useState([]);
   useEffect(() => {
     getAppointments();
-  }, [1]);
+  }, [user]);
+
+  // on site
+  // if doctor accept = confirmed
+  // if doctor recject = patiend reject
+  // if doctor resched = patiend resched
+  // if docotor accept = consultation is true = ongoing consultation
+
+  // online
+  // if gmeet reject = await doctors's confirmation?
 
   const getAppointments = async () => {
-    const { data: appoint } = await supabase
-      .from("patient_Appointments")
-      .select();
+    if (user?.role === "doctor") {
+      var fullname = user.first_name + " " + user.last_name;
 
-    // Isolated data in table patient_Appoint only retrieve cancel,reminder,rescheduled, and booked in status
-    var holder = [];
-    for (let i = 0; i < appoint.length; i++) {
-      if (
-        appoint[i].status === "rejected" ||
-        appoint[i].status === "reminder" ||
-        appoint[i].status === "rescheduled" ||
-        appoint[i].status === "pending"
-      ) {
-        holder = holder.concat(...isolated_data, appoint[i]);
-      }
+      const { data: notif } = await supabase
+        .from("notification")
+        .select()
+        .match({ docname: fullname });
+
+      setIsolate(notif);
+    } else if (user?.role === "patient") {
+      const { data: notif } = await supabase
+        .from("notification")
+        .select()
+        .match({ email: user.email });
+      setIsolate(notif);
+    } else if (user?.role === "admin") {
+      const { data: notif } = await supabase.from("notification").select();
+
+      setIsolate(notif);
     }
-    setIsolate(holder);
-    console.log(isolated_data);
   };
 
   return (
@@ -37,12 +48,14 @@ const Notification = () => {
         Notifications
       </h1>
       <div className="mt-2">
-        {isolated_data && (
+        {isolated_data ? (
           <div>
             {isolated_data.map((data, index) => (
-              <NotifictionConfig key={index} data={data} />
+              <NotifictionConfig key={index} data={data} user={user} />
             ))}
           </div>
+        ) : (
+          "NO DATA"
         )}
       </div>
     </div>

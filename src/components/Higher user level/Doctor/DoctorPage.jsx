@@ -135,9 +135,10 @@ const Doc_Dash = ({ user }) => {
     }
   }, [filt, setarchive]);
 
-  const [nextQueue, setNextQueue] = useState();
+  const [nextQueue, setNextQueue] = useState([]);
   const [currentQueue, setcurrentQueue] = useState();
   const [nextSched, setNextSched] = useState();
+  const [lastQueue, setlastQueue] = useState();
   //*fetch current queue
   async function fetchQue() {
     try {
@@ -156,6 +157,7 @@ const Doc_Dash = ({ user }) => {
         }
         if (queNum) {
           setNextQueue(queNum);
+          console.log(queNum)
         }
 
         const { data: currentQue, error: currErr } = await supabase
@@ -182,9 +184,23 @@ const Doc_Dash = ({ user }) => {
         if (nxtErr) {
           throw nxtErr;
         }
-        if (queNum) {
+        if (nxtSched !== undefined && nxtSched.length !== 0) {
           const nxtDate = _.filter(nxtSched, ["date", nxtSched[0]?.date]);
           setNextSched(_.orderBy(nxtDate, ["queue", "asc"]));
+        }
+
+        const { data: lastQue, error: lastQueErr } = await supabase
+          .from("patient_Appointments")
+          .select()
+          .match({
+            doc_id: doctor?.id,
+            status: "Awaiting Doctor's Confirmation",
+          });
+        if (lastQueErr) {
+          throw Error(lastQueErr.message);
+        }
+        if (lastQue) {
+          setlastQueue(lastQue[0]);
         }
       }
     } catch (error) {
@@ -192,11 +208,11 @@ const Doc_Dash = ({ user }) => {
       console.log(error);
     }
   }
-  //console.log(currentQueue);
   //*Get current patient's profile
   const [imgName, setimgName] = useState([]);
   const [imgName1, setimgName1] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(false);
+  const [isImgEmpty1, setImgEmpty1] = useState(false);
   const CDNURL =
     "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
 
@@ -214,34 +230,38 @@ const Doc_Dash = ({ user }) => {
         setImgEmpty(true);
         setimgName(data[0]?.name);
       }
-      const { data: img, error: imgErr } = await supabase.storage
-        .from("images")
-        .list(nextSched?.email + "/profile/", {
-          limit: 100,
-          offset: 0,
-          sortBy: { column: "created_at", order: "asc" },
-        });
+      if (nextSched) {
+        const { data: img, error: imgErr } = await supabase.storage
+          .from("images")
+          .list(nextSched[0]?.email + "/profile/", {
+            limit: 100,
+            offset: 0,
+            sortBy: { column: "created_at", order: "asc" },
+          });
 
-      if (imgErr) throw imgErr;
-      else {
-        setImgEmpty(true);
-        setimgName1(img[0]?.name);
+        if (imgErr) throw imgErr;
+        else {
+          setImgEmpty1(true);
+          setimgName1(img[0]?.name);
+        }
       }
     } catch (error) {
       console.log(error.message);
       setImgEmpty(false);
+      setImgEmpty1(false);
     }
   }
 
   useEffect(() => {
-    if (currentQueue) {
+    if ((currentQueue, nextSched)) {
       getImages();
     }
-  }, [currentQueue]);
+  }, [currentQueue, nextSched]);
 
   //console.log(nextQueue && nextQueue[1]?.fname);
   //*Realtime function
   useEffect(() => {
+    fetchQue();
     const fetchAndSubscribe = async () => {
       await fetchQue();
 
@@ -333,7 +353,6 @@ const Doc_Dash = ({ user }) => {
   }, [timeNow]);
 
   const isSchedToday = _.inRange(timeNow, checkIn, checkOut);
-
   useEffect(() => {
     //*Update start of queue
     const StartQueue = async () => {
@@ -356,6 +375,11 @@ const Doc_Dash = ({ user }) => {
     StartQueue();
   }, [isSchedToday]);
 
+  const nextSchedDay =
+    nextSched &&
+    _.filter(doctor?.schedule, {
+      day: moment(new Date(nextSched[0]?.date)).format("dddd"),
+    })[0];
   //*Update status for the rest of queue if time exceeded
   const isElapsed = _.lte(checkOut, timeNow);
   useEffect(() => {
@@ -366,14 +390,14 @@ const Doc_Dash = ({ user }) => {
           const { error: CurrentErr } = await supabase
             .from("patient_Appointments")
             .update({ status: "Awaiting Doctor's Confirmation" })
-            .eq("book_id", currentQueue.book_id);
+            .eq("book_id", currentQueue?.book_id);
           if (CurrentErr) throw CurrentErr;
 
           if (nextQueue.length !== 0) {
             fetchQue();
             const { error: nextErr } = await supabase
               .from("patient_Appointments")
-              .update({ status: "Requesting for reschedule" })
+              .update({ status: "pending request" })
               .match({
                 doc_id: doctor.id,
                 date: moment(new Date()).format("yyyy-M-D"),
@@ -390,7 +414,7 @@ const Doc_Dash = ({ user }) => {
     };
     StartQueue();
   }, [isElapsed]);
-  console.log(nextQueue?.book_id);
+
   //*Modal states
   const [todayModal, setTodayModal] = useState(false);
   const [currModal, setCurrModal] = useState(false);
@@ -401,6 +425,7 @@ const Doc_Dash = ({ user }) => {
   } else {
     document.documentElement.style.overflowY = "unset";
   }
+
   return (
     <>
       {next && (
@@ -433,7 +458,7 @@ const Doc_Dash = ({ user }) => {
       {currModal && (
         <div className="absolute z-40 w-full h-full">
           <DocCurrentModal
-            data={currentQueue}
+            data={lastQueue ? lastQueue : currentQueue}
             doc={doctor}
             nextQueue={nextQueue}
             setCurrModal={setCurrModal}
@@ -445,7 +470,6 @@ const Doc_Dash = ({ user }) => {
           />
         </div>
       )}
-
       <div className="text-center h-auto">
         {/* feautures */}
         <div className="flex justify-center mb-20">
@@ -501,193 +525,166 @@ const Doc_Dash = ({ user }) => {
   hover:shadow-none "
                 data-aos="fade-up"
               >
-                {isSchedToday ? (
-                  <>
-                    <div className="grid grid-cols-3 w-full py-3 items-center bg-green-500 text-white">
-                      <div className=""></div>
-                      <div className="flex flex-col items-center">
-                        <p className="font-semibold text-xl">
-                          Your schedule for Today
-                        </p>
-                        <div className="text-xl font-thin flex items-center">
-                          <p className="">{docSchedToday[0]?.day}</p>
-                          <p className="mx-4">|</p>
-                          <p>
-                            {" "}
-                            {moment(
-                              new Date(
-                                `2000-01-01T${
-                                  docSchedToday && docSchedToday[0]?.startTime
-                                }`
-                              )
-                            ).format("LT")}{" "}
-                            -{" "}
-                            {moment(
-                              new Date(
-                                `2000-01-01T${
-                                  docSchedToday && docSchedToday[0]?.endTime
-                                }`
-                              )
-                            ).format("LT")}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="justify-center flex">
-                        {!currentQueue ? (
-                          <div></div>
-                        ) : (
-                          <button
-                            onClick={() => setCurrModal(true)}
-                            className="px-3 py-1 flex items-center rounded-lg hover:bg-green-600 hover:text-lg transition duration-75 text-base text-white border-2 border-white font-semibold bg-green-500"
-                          >
-                            <CgEnter className="mr-1 text-xl" />
-                            <span>Enter meeting</span>
-                          </button>
-                        )}
-                      </div>
+                <div className="grid grid-cols-3 w-full py-3 items-center bg-green-500 text-white">
+                  <div className=""></div>
+                  <div className="flex flex-col items-center">
+                    <p className="font-semibold text-xl">
+                      {isSchedToday
+                        ? "Your schedule for Today"
+                        : "You have no schedule for today"}
+                    </p>
+                    {!isSchedToday && (
+                      <p className="text-xl">next schedule is at:</p>
+                    )}
+                    <div className="text-xl font-thin flex items-center">
+                      <p className="">{nextSchedDay?.day}</p>
+                      <p className="mx-4">|</p>
+                      <p>
+                        {" "}
+                        {moment(
+                          new Date(`2000-01-01T${nextSchedDay?.startTime}`)
+                        ).format("LT")}{" "}
+                        -{" "}
+                        {moment(
+                          new Date(`2000-01-01T${nextSchedDay?.endTime}`)
+                        ).format("LT")}
+                      </p>
                     </div>
-                    <div className="w-full rounded-xl mb-4">
-                      <div className="text-3xl font-semibold mt-4">
-                        {Loaded ? (
-                          <div className="flex">
-                            {currentQueue ? (
-                              <>
-                                <img
-                                  className="object-cover rounded-full w-[5.6rem] h-fit mr-3"
-                                  src={`${
-                                    isImgEmpty
-                                      ? CDNURL +
-                                        currentQueue?.email +
-                                        "/profile/" +
-                                        imgName
-                                      : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
-                                  }`}
-                                  alt="/"
-                                />{" "}
-                                <div className="text-xl flex flex-col font-light space-y-3 w-1/2">
-                                  <p className="w-full text-lg text-left">
-                                    You have an ongoing consultation for patient
-                                    <br />
-                                    <span className="font-semibold ml-1">
-                                      {currentQueue?.fname}
-                                    </span>
-                                    <Link
-                                      to={
-                                        "/Doctor/Appointments/Details/" +
-                                        currentQueue?.book_id
-                                      }
-                                      className="text-base text-primary ml-1"
-                                    >
-                                      View Details
-                                    </Link>
-                                  </p>
-                                  {nextQueue[0] && (
-                                    <p className="text-base flex items-center">
-                                      Next Consultation is with{" "}
-                                      <span className="font-semibold ml-1">
-                                        {nextQueue[0]?.fname}
-                                      </span>
-                                    </p>
-                                  )}
-                                </div>
-                                <div className="text-lg mx-2 w-1/2 font-light flex-col flex items-start">
-                                  Your total of confirmed Appointments for today
-                                  <div className="text-6xl flex font-semibold my-2">
-                                    <h1>{nextQueue.length}</h1>
-                                  </div>
-                                  <p
-                                    onClick={(e) =>
-                                      setTodayModal(true) || e.preventDefault()
-                                    }
-                                    className="text-lg select-none cursor-pointer font-light text-primary"
-                                  >
-                                    View all
-                                  </p>
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                <img
-                                  className="object-cover rounded-full w-[5.6rem] h-fit mr-3"
-                                  src={`${
-                                    isImgEmpty
-                                      ? CDNURL +
-                                        nextSched[0]?.email +
-                                        "/profile/" +
-                                        imgName1
-                                      : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
-                                  }`}
-                                  alt="/"
-                                />{" "}
-                                <div className="text-xl flex flex-col font-light space-y-3 w-1/2">
-                                  <p className="w-full text-lg text-left">
-                                    Your next appointment schedule is with{" "}
-                                    <br />
-                                    <span className="font-semibold mx-1">
-                                      {nextSched[0]?.fname}
-                                    </span>{" "}
-                                    at:
-                                    <br />
-                                    <p className="text-3xl font-semibold mt-3">
-                                      {moment(
-                                        new Date(nextSched[0]?.date)
-                                      ).format("LL")}
-                                    </p>
-                                  </p>
-                                </div>
-                                <div className="text-lg mx-2 w-1/2 font-light flex-col flex items-start">
-                                  Your total of confirmed appointments for the
-                                  next schedule
-                                  <div className="text-6xl flex font-semibold my-2">
-                                    <h1>{nextSched.length}</h1>
-                                  </div>
-                                  <p
-                                    onClick={(e) =>
-                                      setTodayModal(true) || e.preventDefault()
-                                    }
-                                    className="text-lg select-none cursor-pointer font-light text-primary"
-                                  >
-                                    View all
-                                  </p>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        ) : (
-                          <l-tailspin
-                            size="55"
-                            stroke="4"
-                            speed="0.9"
-                            color="black"
-                          ></l-tailspin>
-                        )}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="AdmintitleText">Next Appointment: </div>
-                    <div className="w-full rounded-xl mb-4">
-                      <h1 className="text-3xl font-semibold">
-                        {Loaded ? (
+                  </div>
+                  <div className="justify-center flex">
+                    {!currentQueue && !lastQueue ? (
+                      <div></div>
+                    ) : (
+                      <button
+                        onClick={() => setCurrModal(true)}
+                        className="px-3 py-1 flex items-center rounded-lg hover:bg-green-600 hover:text-lg transition duration-75 text-base text-white border-2 border-white font-semibold bg-green-500"
+                      >
+                        <CgEnter className="mr-1 text-xl" />
+                        <span>Enter meeting</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="w-full rounded-xl mb-4">
+                  <div className="text-3xl font-semibold mt-4">
+                    {nextSched !== undefined &&
+                    nextSched?.length !== 0 &&
+                    Loaded ? (
+                      <div className="flex">
+                        {currentQueue ? (
                           <>
-                            {/* {moment(mostRecentDate).format("LL")} at{" "}
-                            {moment(
-                              new Date(`2000-01-01T${docSched && docSched[0]}`)
-                            ).format("LT")} */}
+                            <img
+                              className="object-cover rounded-full w-[5.6rem] h-fit mr-3"
+                              src={`${
+                                isImgEmpty
+                                  ? CDNURL +
+                                    currentQueue?.email +
+                                    "/profile/" +
+                                    imgName
+                                  : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
+                              }`}
+                              alt="/"
+                            />{" "}
+                            <div className="text-xl flex flex-col font-light space-y-3 w-1/2">
+                              <p className="w-full text-lg text-left">
+                                You have an ongoing consultation for patient
+                                <br />
+                                <span className="font-semibold ml-1">
+                                  {currentQueue?.fname}
+                                </span>
+                                <Link
+                                  to={
+                                    "/Doctor/Appointments/Details/" +
+                                    currentQueue?.book_id
+                                  }
+                                  className="text-base text-primary ml-1"
+                                >
+                                  View Details
+                                </Link>
+                              </p>
+                              {nextQueue[0] && (
+                                <p className="text-base flex items-center">
+                                  Next Consultation is with{" "}
+                                  <span className="font-semibold ml-1">
+                                    {nextQueue[0]?.fname}
+                                  </span>
+                                </p>
+                              )}
+                            </div>
+                            <div className="text-lg mx-2 w-1/2 font-light flex-col flex items-start">
+                              Your total of confirmed Appointments for today
+                              <div className="text-6xl flex font-semibold my-2">
+                                <h1>{nextQueue.length}</h1>
+                              </div>
+                              <p
+                                onClick={(e) =>
+                                  setTodayModal(true) || e.preventDefault()
+                                }
+                                className="text-lg select-none cursor-pointer font-light text-primary"
+                              >
+                                View all
+                              </p>
+                            </div>
                           </>
                         ) : (
-                          <l-tailspin
-                            size="55"
-                            stroke="4"
-                            speed="0.9"
-                            color="black"
-                          ></l-tailspin>
+                          <>
+                            <img
+                              className="object-cover rounded-full w-[5.6rem] h-fit mr-3"
+                              src={`${
+                                isImgEmpty1
+                                  ? CDNURL +
+                                    nextSched[0]?.email +
+                                    "/profile/" +
+                                    imgName1
+                                  : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
+                              }`}
+                              alt="/"
+                            />{" "}
+                            <div className="text-xl flex flex-col font-light space-y-3 w-1/2">
+                              <p className="w-full text-lg text-left">
+                                Your next appointment schedule is with <br />
+                                <span className="font-semibold mx-1">
+                                  {nextSched[0]?.fname}
+                                </span>{" "}
+                                at:
+                                <br />
+                                <p className="text-3xl font-semibold mt-3">
+                                  {moment(new Date(nextSched[0]?.date)).format(
+                                    "LL"
+                                  )}
+                                </p>
+                              </p>
+                            </div>
+                            <div className="text-lg mx-2 w-1/2 font-light flex-col flex items-start">
+                              Your total of confirmed appointments for the next
+                              schedule
+                              <div className="text-6xl flex font-semibold my-2">
+                                <h1>{nextSched?.length}</h1>
+                              </div>
+                              <p
+                                onClick={(e) =>
+                                  setTodayModal(true) || e.preventDefault()
+                                }
+                                className="text-lg select-none cursor-pointer font-light text-primary"
+                              >
+                                View all
+                              </p>
+                            </div>
+                          </>
                         )}
-                      </h1>
-                    </div>
-                  </>
-                )}
+                      </div>
+                    ) : (
+                      <div className="flex w-full justify-center my-9">
+                        <l-tailspin
+                          size="55"
+                          stroke="4"
+                          speed="0.9"
+                          color="black"
+                        ></l-tailspin>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

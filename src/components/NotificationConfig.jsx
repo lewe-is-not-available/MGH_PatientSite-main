@@ -4,16 +4,24 @@ import { Link } from "react-router-dom";
 import { IoCalendar } from "react-icons/io5";
 import { BsBell } from "react-icons/bs";
 import { LuClock4 } from "react-icons/lu";
+import { MdPendingActions } from "react-icons/md";
 
 import moment from "moment/moment";
 import supabase from "./config/Supabase";
 
-function NotificationConfig({ data }) {
+function NotificationConfig({ data, user }) {
   //*get profile image
   const CDNURL =
     "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
   const [img, setImg] = useState();
   const [isImgEmpty, setImgEmpty] = useState(false);
+  const [fullname, setFullname] = useState();
+
+  useEffect(() => {
+    getImages();
+    fetchProfile(data.email);
+  }, [data]);
+
   async function getImages() {
     const { data: image, error } = await supabase.storage
       .from("images")
@@ -31,18 +39,50 @@ function NotificationConfig({ data }) {
       console.log(error);
     }
   }
-  useEffect(() => {
-    getImages();
-  }, []);
+
+  const fetchProfile = async (email) => {
+    const { data } = await supabase
+      .from("profile")
+      .select()
+      .eq("email", email)
+      .single();
+
+    setFullname(
+      data.first_name +
+        `${data.middle_name === null ? " " : ` ${data.middle_name} `}`
+    );
+  };
+
+  const link = (id) => {
+    if (user?.role === "doctor") {
+      return "/Doctor/Appointments/Details/" + id;
+    } else if (user?.role === "patient") {
+      return "/Appointment/Patient/Details/" + id;
+    } else if (user?.role === "admin") {
+      return "/Appointment/Admin/Details/" + id;
+    }
+  };
+
+  const date = (date) => {
+    const yourDate = moment(date);
+    const oneWeekAgo = moment().subtract(1, "week").startOf("day");
+
+    if (yourDate.isSame(oneWeekAgo, "day")) {
+      return moment(yourDate).format("LLL");
+    } else {
+      return moment(yourDate).calendar();
+    }
+  };
 
   return (
     <Link
-      to={"/Appointment/Admin/Details/" + data.book_id}
+      to={link(data.book_id)}
       className="abs bg-white w-[800px] py-2 px-5 flex gap-2 mt-2 rounded-md"
     >
       <div className="flex items-center">
         <div className="flex items-end">
           {/* Image */}
+
           <img
             className="object-cover rounded-full w-[4rem] h-[4rem]"
             src={`${
@@ -58,9 +98,8 @@ function NotificationConfig({ data }) {
           {data.status === "pending" && (
             <BsBell className="bg-green-500 px-1 text-[30px] rounded-full -ml-7 text-white" />
           )}
-
-          {data.status === "reminder" && (
-            <LuClock4 className="bg-blue-500 px-1 text-[30px] rounded-full -ml-7 text-white" />
+          {data.status === "pending confirmation" && (
+            <MdPendingActions className="bg-blue-500 px-1 text-[30px] rounded-full -ml-7 text-white" />
           )}
         </div>
       </div>
@@ -68,11 +107,11 @@ function NotificationConfig({ data }) {
       <div className="grid">
         <label className="text-[#41843F] font-bold text-[20px] hover:underline cursor-pointer">
           {/* Set Name */}
-          {data.fname} {data.lname}
+          {fullname}
         </label>
         <label>
           {/* Set Date */}
-          {moment(new Date(data.created_at)).calendar()}
+          {date(data.created_at)}
         </label>
         <label className="text-blue-500">
           {/* Set Appointment Resched,Cancel,Booked Remind */}
@@ -82,13 +121,13 @@ function NotificationConfig({ data }) {
           {data.status === "pending" && (
             <label>Patient booked an appointment</label>
           )}
-          {data.status === "reminder" && (
-            <label>Contact patient to remind the appointment</label>
+          {data.status === "pending confirmation" && (
+            <label>Waiting for confirmation</label>
           )}
         </label>
       </div>
     </Link>
-  )
+  );
 }
 
 export default NotificationConfig;

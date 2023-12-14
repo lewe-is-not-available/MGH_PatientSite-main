@@ -19,36 +19,50 @@ const RatingsMap = ({ ol }) => {
     e.preventDefault(); // Prevent the event from propagating to the parent Link component
     setExpand(!expand);
   }
-   const [user, setUser] = useState([]);
+  const [user, setUser] = useState([]);
+
   const fetchUser = async () => {
-    const { data: userData, error: userErr } = await supabase
-      .from("profile")
-      .select()
-      .eq("id", ol.user_id);
-    if (userErr) {
-      toast.error(userErr.message, {
+    try {
+      if (ol?.user_id) {
+        const { data: userData, error: userErr } = await supabase
+          .from("profile")
+          .select()
+          .eq("id", ol?.user_id);
+
+        if (userData && userData[0]) {
+          setUser(userData[0]);
+        } else if (userErr) {
+          throw userErr;
+        }
+      }
+    } catch (error) {
+      toast.error(error.message, {
         toastId: "dataError",
       });
-      console.error(userErr);
-    }
-    if (userData[0]) {
-      setUser(userData[0]);
+      console.error(error.message);
     }
   };
   //*Realtime data
   useEffect(() => {
-    fetchUser();
-    supabase
-      .channel("custom-all-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "profile" },
-        () => {
-          fetchUser();
-        }
-      )
-      .subscribe();
-  }, []);
+    const fetchAndSubscribe = async () => {
+      await fetchUser();
+      const realtime = supabase
+        .channel("custom-all-channel")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "profile" },
+          () => {
+            fetchUser();
+          }
+        )
+        .subscribe();
+      return () => {
+        supabase.removeChannel(realtime);
+        realtime.unsubscribe();
+      };
+    };
+    fetchAndSubscribe();
+  }, [ol]);
 
   //*close expan when clicked outside
   let detailsRef = useRef();
@@ -70,7 +84,7 @@ const RatingsMap = ({ ol }) => {
   const [imgName, setimgName] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(false);
   const CDNURL =
-  "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
+    "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/";
 
   async function getImages() {
     const { data, error } = await supabase.storage
@@ -104,7 +118,10 @@ const RatingsMap = ({ ol }) => {
     Aos.refresh();
   }, []);
   return (
-    <div key={ol.id} className="text-base flex w-full justify-center select-none">
+    <div
+      key={ol.id}
+      className="text-base flex w-full justify-center select-none"
+    >
       <section
         data-aos="fade-right"
         data-aos-anchor="#trigger-next"

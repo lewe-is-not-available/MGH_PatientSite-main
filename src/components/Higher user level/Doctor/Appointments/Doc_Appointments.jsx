@@ -106,11 +106,12 @@ const Doc_Appointments = ({ CDNURL, user }) => {
       const filterBook = filt
         .filter((item) => {
           const defStat = !item.status.includes("Completed");
+          const defStat1 = !item.status.includes("rejected");
           const someone = item.someone.includes(Someone);
           const Time = item.date.toLowerCase().includes(time.toLowerCase());
           const type = item.type.toLowerCase().includes(Type);
           const status = item.status.toLowerCase().includes(Status);
-          return defStat && someone && Time && type && status;
+          return defStat1 && defStat && someone && Time && type && status;
         })
         .sort((a, b) =>
           isAsc

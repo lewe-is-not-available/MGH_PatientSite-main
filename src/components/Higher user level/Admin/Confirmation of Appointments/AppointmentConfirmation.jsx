@@ -106,7 +106,9 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
       const docname = items.docname
         ?.toLowerCase()
         .includes(Search.toLowerCase());
-      return fname || lname || mname || docname;
+      const defStat2 = !items.status?.includes("Completed");
+      const defStat3 = !items.status?.includes("rejected");
+      return (fname || lname || mname || docname) && defStat2 && defStat3;
     });
     setBook(search);
     if (filt) {
@@ -127,7 +129,9 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
           const someone = item.someone?.includes(Someone);
           const Time = item.date?.toLowerCase().includes(time);
           const type = item.type?.toLowerCase().includes(Type);
-          const status = item.status?.toLowerCase().includes(Status.toLowerCase());
+          const status = item.status
+            ?.toLowerCase()
+            .includes(Status.toLowerCase());
           return defStat2 && defStat3 && someone && Time && type && status;
         })
         .sort((a, b) =>
@@ -278,10 +282,13 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
                     className="w-fit px-3 rounded-md border-slate-400 border-2"
                     onChange={(e) => settime(e.target.value)}
                   />
-                  <button 
-                  onClick={() => settime("")}
-                  className="bg-[#60af5ac4] ml-1 hover:bg-[#84d17fc4] hover:text-[#388332c4]
-                   text-white border-[#388332c4] border-2 px-2 rounded-md ">reset date</button>
+                  <button
+                    onClick={() => settime("")}
+                    className="bg-[#60af5ac4] ml-1 hover:bg-[#84d17fc4] hover:text-[#388332c4]
+                   text-white border-[#388332c4] border-2 px-2 rounded-md "
+                  >
+                    reset date
+                  </button>
                 </div>
               </div>
               <div className="flex flex-col">
