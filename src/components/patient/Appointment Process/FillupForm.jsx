@@ -237,7 +237,7 @@ const OnlineConsult = ({ openTerms, token }) => {
               someone: checkedSomeone,
               honorific: doc.honorific,
               type: doc.type === "ol" ? "ol" : "f2f",
-              status: "pending",
+              status: "pending confirmation",
             },
           ]);
         if (ErrApp) {

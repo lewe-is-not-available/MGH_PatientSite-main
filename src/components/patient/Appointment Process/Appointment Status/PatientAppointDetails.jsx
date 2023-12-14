@@ -284,7 +284,7 @@ const AppointmentDetails = () => {
           </h1>
 
           <div className="w-full flex justify-center items-center mt-5 -ml-6">
-            {(data.status !== "pending" || data.status !== "rejected") && (
+            {(data.status !== "pending confirmation" || data.status !== "rejected") && (
               <ReactToPrint
                 trigger={() => {
                   return (
@@ -417,7 +417,7 @@ const AppointmentDetails = () => {
                       {data.status}
                     </p>
                   )}
-                  {data.status === "pending" && (
+                  {data.status === "pending confirmation" && (
                     <p className="px-4 py-1 text-white rounded-full bg-primary w-fit">
                       {data.status}
                     </p>

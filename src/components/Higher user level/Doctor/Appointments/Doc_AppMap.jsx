@@ -80,7 +80,8 @@ const Doc_AppMap = ({ ol, setResched, setBookID }) => {
           data-aos-anchor="#trigger-next"
           ref={detailsRef}
           onClick={handleExpand}
-          className="group/pu bg-white abs mb-3 cursor-pointer text-gray-900 w-full rounded-xl transition duration-75 ease-in hover:bg-slate-100 text-center  "
+          className="group/pu bg-white abs mb-3 cursor-pointer text-gray-900 w-full rounded-xl transition duration-75
+           ease-in hover:bg-slate-100 text-center  "
         >
           <div
             id="trigger-next"

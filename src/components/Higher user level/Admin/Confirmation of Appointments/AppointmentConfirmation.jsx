@@ -291,7 +291,7 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
                   onChange={(e) => setStatus(e.target.value)}
                 >
                   <option key="1">Show all</option>
-                  <option key="2">pending</option>
+                  <option key="2">pending confirmation</option>
                   <option key="3">Confirmed</option>
                   <option key="4">rescheduled</option>
                   <option key="5">rejected</option>

@@ -306,7 +306,7 @@ const DocAppDetails = ({ user }) => {
                       {data.status}
                     </p>
                   )}
-                  {data.status === "pending" && (
+                  {data.status === "pending confirmation" && (
                     <p className="px-4 py-1 text-white rounded-full bg-primary w-fit">
                       {data.status}
                     </p>

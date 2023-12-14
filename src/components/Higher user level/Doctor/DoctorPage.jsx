@@ -109,8 +109,9 @@ const Doc_Dash = ({ user }) => {
       });
       setBook(filtered);
       const AllAppfiltered = filt.filter((item) => {
-        const comp = item.status.includes("pending");
-        return comp;
+        const comp = item.status.includes("pending confirmation");
+        const comp1 = item.status.includes("pending request");
+        return comp || comp1;
       });
       setAllApp(AllAppfiltered);
     }
@@ -367,7 +368,7 @@ const Doc_Dash = ({ user }) => {
             .update({ status: "Awaiting Doctor's Confirmation" })
             .eq("book_id", currentQueue.book_id);
           if (CurrentErr) throw CurrentErr;
-          
+
           if (nextQueue.length !== 0) {
             fetchQue();
             const { error: nextErr } = await supabase
