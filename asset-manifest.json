@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/MGHsite/static/css/main.32c958c3.css",
-    "main.js": "/MGHsite/static/js/main.3a274a6c.js",
+    "main.js": "/MGHsite/static/js/main.ca7322b7.js",
     "static/js/200.67a89a02.chunk.js": "/MGHsite/static/js/200.67a89a02.chunk.js",
     "static/js/539.55a50ab6.chunk.js": "/MGHsite/static/js/539.55a50ab6.chunk.js",
     "static/media/mendoza.jpg": "/MGHsite/static/media/mendoza.b920eed05edcb9d2f52f.jpg",
@@ -26,12 +26,12 @@
     "static/media/status.svg": "/MGHsite/static/media/status.9a2dda8e45039f86909e5be62a79b8fd.svg",
     "index.html": "/MGHsite/index.html",
     "main.32c958c3.css.map": "/MGHsite/static/css/main.32c958c3.css.map",
-    "main.3a274a6c.js.map": "/MGHsite/static/js/main.3a274a6c.js.map",
+    "main.ca7322b7.js.map": "/MGHsite/static/js/main.ca7322b7.js.map",
     "200.67a89a02.chunk.js.map": "/MGHsite/static/js/200.67a89a02.chunk.js.map",
     "539.55a50ab6.chunk.js.map": "/MGHsite/static/js/539.55a50ab6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.32c958c3.css",
-    "static/js/main.3a274a6c.js"
+    "static/js/main.ca7322b7.js"
   ]
 }
