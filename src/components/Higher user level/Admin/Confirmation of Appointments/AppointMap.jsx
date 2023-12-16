@@ -126,7 +126,7 @@ const Online = ({ ol, CDNURL, setCancel, setBookID }) => {
                 </p>
               </div>
             </div>
-            <div className="flex self-start mt-2">
+            <div className="flex items-center mt-2">
               {ol.status === "Consultation Ongoing" && (
                 <p className="px-3 items-center text-white rounded-full h-fit bg-green-500 w-fit">
                   {ol.status}
@@ -162,7 +162,7 @@ const Online = ({ ol, CDNURL, setCancel, setBookID }) => {
                   {ol.status}
                 </p>
               )}
-              <button className=" mr-2 text-lg transition duration-200 group-hover/pu:bg-slate-400 p-3 rounded-lg">
+              <button className=" mx-2 text-lg transition duration-200 group-hover/pu:bg-slate-400 p-3 rounded-lg">
                 <div>
                   <AiOutlineDown
                     className={`${
@@ -194,15 +194,16 @@ const Online = ({ ol, CDNURL, setCancel, setBookID }) => {
                   </p>
                 </label>
               </div>
-              {(ol.status === "Confirmed" || ol.status === "rescheduled") && (
-                <div className="flex">
-                  <AiOutlineFieldNumber className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
-                  <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                    Queue no.{" "}
-                    <p className="text-slate-400 text-xl">{ol.queue}</p>
-                  </label>
-                </div>
-              )}
+              {(ol.status === "Confirmed" || ol.status === "rescheduled") &&
+                ol?.type !== "f2f" && (
+                  <div className="flex">
+                    <AiOutlineFieldNumber className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
+                    <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
+                      Queue no.{" "}
+                      <p className="text-slate-400 text-xl">{ol.queue}</p>
+                    </label>
+                  </div>
+                )}
 
               <div className="flex">
                 <MdEmail className="text-lg pr-[2px]pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />

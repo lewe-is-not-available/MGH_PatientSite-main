@@ -159,12 +159,6 @@ const ArchiveMap = ({ ol, CDNURL }) => {
                 Scheduled at <p className="text-slate-400">{ol.date}</p>
               </label>
             </div>
-            <div className="flex">
-              <MdAccessTimeFilled className="text-lg pb-3 pt-2 row-span-2 h-full w-[26px] text-green-600" />
-              <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                Time <p className="text-slate-400">{ol.time}</p>
-              </label>
-            </div>
 
             <div className="flex">
               {" "}
@@ -191,12 +185,6 @@ const ArchiveMap = ({ ol, CDNURL }) => {
                 Appointment Details
               </button>
             </Link>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="text-lg px-14  transition duration-100 text-white hover:bg-red-700 bg-red-500 rounded-md"
-            >
-              Cancel
-            </button>
           </div>
         </div>
       </section>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import SomeoneF2f from "./IsSomeone";
@@ -11,6 +11,8 @@ import ReCAPTCHA from "react-google-recaptcha";
 import moment from "moment/moment";
 import ConfirmSubmit from "./ConfirmSubmit";
 import { dotPulse } from "ldrs";
+import Radar from 'radar-sdk-js';
+import 'radar-sdk-js/dist/radar.css';
 
 dotPulse.register();
 
@@ -359,6 +361,21 @@ const OnlineConsult = ({ openTerms, token }) => {
   useEffect(() => {
     Aos.init({ duration: 500 });
   }, []);
+
+  // //*Auto complete for address
+  // const autoCompleteRef = useRef();
+  // const inputRef = useRef();
+  // const options = {
+  //   componentRestrictions: { country: "ng" },
+  //   fields: ["address_components", "geometry", "icon", "name"],
+  //   types: ["establishment"],
+  // };
+  // useEffect(() => {
+  //   autoCompleteRef.current = new window.google.maps.places.Autocomplete(
+  //     inputRef.current,
+  //     options
+  //   );
+  // }, []);
   return (
     <>
       <div className="sticky top-1 z-50">
@@ -505,6 +522,8 @@ const OnlineConsult = ({ openTerms, token }) => {
                 <div>
                   {isSomeone ? (
                     <SomeoneF2f
+                      number={number}
+                      setNumber={setNumber}
                       onChange={onChange}
                       isSelected={isSelected}
                       image={image}
@@ -676,8 +695,9 @@ const OnlineConsult = ({ openTerms, token }) => {
                         />
                       </div>
                       <p className="col-span-2 row-span-2">
-                        Your Brgy. or Municipality: <br />
+                        <p>Address: </p><br />
                         <textarea
+                          id="autocomplete"
                           name="Address"
                           autoComplete="on"
                           value={formData.Address}

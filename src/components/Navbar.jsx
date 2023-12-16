@@ -13,6 +13,7 @@ import Consent from "./patient/Appointment Process/Consent";
 import moment from "moment";
 import CurrentModal from "./CurrentModal";
 import _ from "lodash";
+import F2fConfig from "./F2fConfig";
 
 const Navbar = ({
   token,
@@ -168,10 +169,6 @@ const Navbar = ({
 
   //*update status of f2f to complete
 
-  const isF2fElapsed = _.lte(
-    appDay + checkOut,
-    moment(new Date()).format(`YYYYMD${timeNow}`)
-  );
   const [f2fData, setF2fData] = useState([]);
   async function updateF2f() {
     try {
@@ -182,19 +179,13 @@ const Navbar = ({
 
       if (error) throw error;
       if (data) {
-        const docId = _.map(data, 'doc_id')
-        const { data:doc, error:err } = await supabase
-        .from("dr_information")
-        .select()
-        .eq("id", docId);
-        if(err) throw err
-        setF2fData(doc);
+        setF2fData(data);
       }
     } catch (error) {
       console.log(error.message);
     }
   }
-//console.log(f2fData)
+
   //*Realtime function
   useEffect(() => {
     fetchCurrent();
@@ -275,6 +266,9 @@ const Navbar = ({
 
   return (
     <>
+      {f2fData?.map((item, i) => (
+        <F2fConfig data={item} i={i} />
+      ))}
       {currModal && (
         <div className="absolute w-full h-screen z-[60]">
           <CurrentModal

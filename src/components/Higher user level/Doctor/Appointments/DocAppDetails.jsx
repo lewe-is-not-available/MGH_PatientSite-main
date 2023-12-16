@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
@@ -9,6 +9,9 @@ import ImageModal from "../../Admin/Confirmation of Appointments/ImageModal";
 import moment from "moment";
 import { IoNotificationsCircleOutline } from "react-icons/io5";
 import Notif from "./Notif";
+import AppDetailPDF from "../../../patient/Appointment Process/Appointment Status/AppDetailPDF";
+import ReactToPrint from "react-to-print";
+import { TfiPrinter } from "react-icons/tfi";
 
 const DocAppDetails = ({ user }) => {
   const CDNURL =
@@ -101,11 +104,11 @@ const DocAppDetails = ({ user }) => {
   //*Get doctor details
   const [Doc, setDoc] = useState([]);
   async function fetchDoc() {
-    if (data.docname) {
+    if (data.doc_id) {
       const { data: DocDetails, error: failDoc } = await supabase
         .from("dr_information")
         .select()
-        .eq("name", data.docname)
+        .eq("id", data.doc_id)
         .single();
       try {
         if (failDoc) throw failDoc;
@@ -130,6 +133,34 @@ const DocAppDetails = ({ user }) => {
       )
       .subscribe();
   }, [data.docname]);
+  //*getting image for doctor
+  const [docImg, setDocImg] = useState();
+  const [isDocImgEmpty, setisDocImgEmpty] = useState(false);
+  useEffect(() => {
+    if (Doc.email) {
+      async function getImageDoc() {
+        const { data: DocPic, error: DocPicErr } = await supabase.storage
+          .from("images")
+          .list(Doc.email + "/profile/", {
+            limit: 10,
+            offset: 0,
+            sortBy: { column: "created_at", order: "asc" },
+          });
+
+        if (DocPic[0]) {
+          setisDocImgEmpty(true);
+          setDocImg(DocPic[0].name);
+        }
+
+        if (DocPicErr) {
+          setisDocImgEmpty(false);
+          toast.error(DocPicErr.message, { autoClose: false });
+          console.log(DocPicErr);
+        }
+      }
+      getImageDoc();
+    }
+  }, [Doc]);
 
   //*get payment
   const [payImg, setPayImg] = useState([]);
@@ -164,6 +195,7 @@ const DocAppDetails = ({ user }) => {
   } else {
     document.documentElement.style.overflowY = "unset";
   }
+  const AppPrint = useRef();
 
   return (
     <>
@@ -186,11 +218,40 @@ const DocAppDetails = ({ user }) => {
       </div>
 
       <div className="back flex flex-col items-center h-auto pb-14 min-h-screen w-full">
+        <div className="hidden">
+          <AppDetailPDF
+            AppPrint={AppPrint}
+            data={data}
+            isImgEmpty={isImgEmpty}
+            CDNURL={CDNURL}
+            imgName={imgName}
+            isSomeone={isSomeone}
+            payImg={payImg}
+            Doc={Doc}
+            isDocImgEmpty={isDocImgEmpty}
+            docImg={docImg}
+          />
+        </div>
         <div className="grid grid-cols-3 w-full items-center justify-center">
           <div className=""></div>
           <h1 className="w-full text-3xl mt-10 text-center font-semibold text-[#256e2b] uppercase">
             Appointment details
           </h1>
+          <div className="w-full flex justify-center items-center mt-5 -ml-6">
+            <ReactToPrint
+              trigger={() => {
+                return (
+                  <button className="flex items-center bg-primary-300 hover:text-white py-1 transition duration-100 hover:bg-primary-600 px-3 rounded-full">
+                    <TfiPrinter className="text-lg mr-1" />
+                    Print
+                  </button>
+                );
+              }}
+              content={() => AppPrint.current}
+              documentTitle="Appointment Details"
+              pageStyle="print"
+            />
+          </div>
         </div>
 
         <section className="flex flex-col px-12 py-10 mt-10 rounded-xl bg-white w-[80%] abs">
@@ -295,10 +356,12 @@ const DocAppDetails = ({ user }) => {
                 )}
               </div>
               <div className="flex flex-col mt-10 space-y-4 mx-7">
-                <div className="flex flex-col justify-center space-x-3">
-                  <span className="font-semibold">Queuing Number:</span>
-                  <h2 className="text-6xl font-semibold">{data.queue}</h2>
-                </div>
+                {data?.type !== "f2f" && (
+                  <div className="flex flex-col justify-center space-x-3">
+                    <span className="font-semibold">Queuing Number:</span>
+                    <h2 className="text-6xl font-semibold">{data.queue}</h2>
+                  </div>
+                )}
                 <div className="flex flex-col">
                   <span className="font-semibold">Status:</span>
                   {data.status === "Consultation Ongoing" && (
@@ -312,6 +375,11 @@ const DocAppDetails = ({ user }) => {
                     </p>
                   )}
                   {data.status === "Confirmed" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-emerald-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "Completed" && (
                     <p className="px-4 py-1 flex items-center text-white rounded-full bg-emerald-500 w-fit">
                       {data.status}
                     </p>

@@ -25,6 +25,8 @@ const SomeoneF2f = ({
   handleFile,
   File,
   onChange,
+  number,
+  setNumber,
 }) => {
   //*If Relation is Other
   const [isOtherRelation, setOtherRelation] = useState(false);
@@ -138,12 +140,12 @@ const SomeoneF2f = ({
         </span>
         <br />
         <input
-          name="Number"
           autoComplete="on"
-          defaultValue={formData.Number}
           type="number"
-          onChange={handleChange}
+          value={number}
+          onChange={(e) => setNumber(e.target.value.slice(0, 11))}
           required
+          disabled={token}
           className="outline-none rounded-md font-thin border-2 px-2 grid- border-slate-300 focus:border-[#71b967d3] w-full"
         />
       </p>

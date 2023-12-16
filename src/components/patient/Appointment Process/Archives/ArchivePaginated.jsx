@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ArchiveMap from "./ArchiveMap";
+import ArchiveMap from "../Appointment Status/StatusMap";
 import ReactPaginate from "react-paginate";
 import { Oval } from "react-loader-spinner";
 

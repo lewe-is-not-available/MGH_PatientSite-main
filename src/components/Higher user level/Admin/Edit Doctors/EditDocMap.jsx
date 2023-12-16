@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import supabase from "../../../config/Supabase";
 import Aos from "aos";
 import "aos/dist/aos.css";
-import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
+import { MdEmail, MdPhone } from "react-icons/md";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { AiOutlineDown } from "react-icons/ai";

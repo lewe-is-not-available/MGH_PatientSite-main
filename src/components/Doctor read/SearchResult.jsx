@@ -42,13 +42,13 @@ const SearchResult = ({ Doctors }) => {
   useEffect(() => {
     Aos.init({ duration: 1000 });
   }, []);
-  
+
   return (
     <div key={Doctors.id} className="Doc_Uniq">
       <div
         data-aos="fade-up"
-        className="docs text-sm bg-[#A5DD9D] px-3 py-5 h-[98%] rounded-xl flex flex-col
-         items-center space-y-3 w-[16rem] transition duration-100 ease-in-out mb-1"
+        className="docs text-sm bg-[#e2ffe3] border-2 border-[#8bc586] px-3 py-5 h-[98%] rounded-xl flex flex-col
+         items-center w-[16rem] transition duration-100 ease-in-out mb-1"
       >
         <img
           src={`${
@@ -77,15 +77,19 @@ const SearchResult = ({ Doctors }) => {
             {Doctors.subspecial}
           </p>
         </div>
-        <div className="flex">
-            <span className="mr-2 font-bold">Schedule: </span>
-            <div className="mb-2 flex flex-wrap">
-              {Doctors.schedule &&
-                Doctors.schedule.map((item) => (
-                  <p className="p-2 rounded-sm mr-2 mb-2 bg-opacity-40 text-slate-900 bg-[#67a76c]">{item.day === "Thursday" ? "Th" : item.day[0]}</p>
-                ))}
-            </div>
+        <div className="flex flex-col w-full items-center">
+          <span className="mr-2 font-semibold text-slate-100 w-full bg-[#51b348] my-2 flex justify-center">
+            Schedule
+          </span>
+          <div className="mb-2 flex">
+            {Doctors.schedule &&
+              Doctors.schedule.map((item) => (
+                <p className="p-2 rounded-sm mr-2 mb-2 bg-opacity-40 text-slate-900 bg-[#67a76c]">
+                  {item.day === "Thursday" ? "Th" : item.day === "Sunday" ? "Su" : item.day[0]}
+                </p>
+              ))}
           </div>
+        </div>
         <Link to={"/DoctorInfo/" + Doctors.id}>
           <button className="flex text-base bg-[#418D3F] Docbtn p-2 rounded-md text-white font-bold ring-[#418D3F] ring-2 transition duration-75 ease-in hover:bg-[#A5DD9D] hover:text-[#267124]">
             <HiOutlineInformationCircle className="mr-1" size={23} /> Check

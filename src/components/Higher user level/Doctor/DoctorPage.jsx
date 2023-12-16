@@ -11,6 +11,7 @@ import TodayAppModal from "./TodayAppModal";
 import { CgEnter } from "react-icons/cg";
 import DocCurrentModal from "./DocCurrentModal";
 import LastConfirm from "./LastConfirm";
+import emailjs from "@emailjs/browser";
 
 const Doc_Dash = ({ user }) => {
   useEffect(() => {
@@ -157,7 +158,6 @@ const Doc_Dash = ({ user }) => {
         }
         if (queNum) {
           setNextQueue(queNum);
-          console.log(queNum)
         }
 
         const { data: currentQue, error: currErr } = await supabase
@@ -320,6 +320,29 @@ const Doc_Dash = ({ user }) => {
       else {
         setNext(false);
         setLoad(false);
+        const templateParams = {
+          from_name: "MGHsite",
+          from_email: "loewiayon12@gmail.com",
+          to_email: nextQueue[0].email,
+          to_name: nextQueue[0]?.fname,
+          message: "Here is your gmeet link " + doctor.gmeet,
+        };
+        
+        emailjs
+          .send(
+            "service_ftpnlnq",
+            "template_smy7g6s",
+            templateParams,
+            "pAzXNFE5xjRINEjRR"
+          )
+          .then(
+            function (response) {
+              console.log("SUCCESS!", response.status, response.text);
+            },
+            function (error) {
+              console.log("FAILED...", error);
+            }
+          );
       }
     } catch (error) {
       toast.error(error.message);
@@ -353,6 +376,7 @@ const Doc_Dash = ({ user }) => {
   }, [timeNow]);
 
   const isSchedToday = _.inRange(timeNow, checkIn, checkOut);
+
   useEffect(() => {
     //*Update start of queue
     const StartQueue = async () => {
@@ -367,11 +391,35 @@ const Doc_Dash = ({ user }) => {
               .eq("book_id", nextQueue[0]?.book_id);
             if (CurrentErr) throw CurrentErr;
           }
+          const templateParams = {
+            from_name: "MGHsite",
+            from_email: "loewiayon12@gmail.com",
+            to_email: nextQueue[0].email,
+            to_name: nextQueue[0]?.fname,
+            message: "Here is your gmeet link " + doctor.gmeet,
+          };
+
+          emailjs
+            .send(
+              "service_ftpnlnq",
+              "template_smy7g6s",
+              templateParams,
+              "pAzXNFE5xjRINEjRR"
+            )
+            .then(
+              function (response) {
+                console.log("SUCCESS!", response.status, response.text);
+              },
+              function (error) {
+                console.log("FAILED...", error);
+              }
+            );
         }
       } catch (error) {
         console.log(error.message);
       }
     };
+
     StartQueue();
   }, [isSchedToday]);
 

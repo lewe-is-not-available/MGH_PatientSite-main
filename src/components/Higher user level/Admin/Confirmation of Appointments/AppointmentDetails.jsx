@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
@@ -11,6 +11,9 @@ import ReschedConfirm from "./ReschedConfirm";
 import CancelConfirm from "./CancelConfirm";
 import ImageModal from "./ImageModal";
 import moment from "moment";
+import ReactToPrint from "react-to-print";
+import { TfiPrinter } from "react-icons/tfi";
+import AppDetailPDF from "../../../patient/Appointment Process/Appointment Status/AppDetailPDF";
 
 const AppointmentDetails = ({ user }) => {
   const CDNURL =
@@ -107,11 +110,11 @@ const AppointmentDetails = ({ user }) => {
   //*Get doctor details
   const [Doc, setDoc] = useState([]);
   async function fetchDoc() {
-    if (data.docname) {
+    if (data.doc_id) {
       const { data: DocDetails, error: failDoc } = await supabase
         .from("dr_information")
         .select()
-        .eq("name", data.docname)
+        .eq("id", data.doc_id)
         .single();
       try {
         if (failDoc) throw failDoc;
@@ -325,7 +328,7 @@ const AppointmentDetails = ({ user }) => {
   } else {
     document.documentElement.style.overflowY = "unset";
   }
-
+  const AppPrint = useRef();
   return (
     <>
       <div className="sticky top-1">
@@ -359,9 +362,42 @@ const AppointmentDetails = ({ user }) => {
       </div>
 
       <div className="back flex flex-col items-center h-auto pb-14 min-h-screen w-full">
-        <h1 className="w-full text-3xl mt-10 text-center font-semibold text-[#256e2b] uppercase">
-          Appointment details
-        </h1>
+        <div className="hidden">
+          <AppDetailPDF
+            AppPrint={AppPrint}
+            data={data}
+            isImgEmpty={isImgEmpty}
+            CDNURL={CDNURL}
+            imgName={imgName}
+            isSomeone={isSomeone}
+            payImg={payImg}
+            Doc={Doc}
+            isDocImgEmpty={isDocImgEmpty}
+            docImg={docImg}
+          />
+        </div>
+        <div className="grid grid-cols-3">
+          <div className=""></div>
+          <h1 className="w-full text-3xl mt-10 text-center font-semibold text-[#256e2b] uppercase">
+            Appointment details
+          </h1>
+          <div className="w-full flex justify-center items-center mt-5 -ml-6">
+            <ReactToPrint
+              trigger={() => {
+                return (
+                  <button className="flex items-center bg-primary-300 hover:text-white py-1 transition duration-100 hover:bg-primary-600 px-3 rounded-full">
+                    <TfiPrinter className="text-lg mr-1" />
+                    Print
+                  </button>
+                );
+              }}
+              content={() => AppPrint.current}
+              documentTitle="Appointment Details"
+              pageStyle="print"
+            />
+          </div>
+        </div>
+
         <section className="flex flex-col px-12 py-10 mt-10 rounded-xl bg-white w-[80%] abs">
           {loading ? (
             <div className="flex justify-center w-full ">
@@ -399,7 +435,7 @@ const AppointmentDetails = ({ user }) => {
                   <p>
                     <span className="font-semibold">Patient Email:</span>
                     <br />
-                    {data.email}{" "}
+                    {data.email}
                   </p>
                   <p>
                     <span className="font-semibold">Contact Number:</span>
@@ -464,12 +500,13 @@ const AppointmentDetails = ({ user }) => {
               </div>
               <div className="flex flex-col mt-10 space-y-4 mx-7">
                 {(data?.status === "Confirmed" ||
-                  data?.status === "rescheduled") && (
-                  <div className="flex flex-col justify-center mb-10 space-x-3">
-                    <span className="font-semibold">Queuing Number:</span>
-                    <h2 className="text-6xl font-semibold">{data.queue}</h2>
-                  </div>
-                )}
+                  data?.status === "rescheduled") &&
+                  data?.type !== "f2f" && (
+                    <div className="flex flex-col justify-center mb-10 space-x-3">
+                      <span className="font-semibold">Queuing Number:</span>
+                      <h2 className="text-6xl font-semibold">{data.queue}</h2>
+                    </div>
+                  )}
                 {/* Awaiting Doctor's Confirmation */}
                 <div className="flex flex-col text-left items-left">
                   <span className="font-semibold">Status:</span>
@@ -484,6 +521,11 @@ const AppointmentDetails = ({ user }) => {
                     </p>
                   )}
                   {data.status === "Confirmed" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-emerald-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "Completed" && (
                     <p className="px-4 py-1 flex items-center text-white rounded-full bg-emerald-500 w-fit">
                       {data.status}
                     </p>
@@ -509,6 +551,14 @@ const AppointmentDetails = ({ user }) => {
                     </p>
                   )}
                 </div>
+                {data?.status === "pending request" ||
+                  data?.status === "rescheduled" ||
+                  data?.status === "rejected"}
+                <p>
+                  <span className="font-semibold">Remarks:</span>
+                  <br />
+                  {data.remark}
+                </p>
               </div>
               <div className="col-span-2 h-full">
                 <h1 className="font-semibold">Payment</h1>
@@ -552,7 +602,8 @@ const AppointmentDetails = ({ user }) => {
               </div>
               {StatusVisible && (
                 <div className="flex items-center space-x-6 col-span-4 mt-3 justify-end">
-                  {data.status === "pending" && (
+                  {(data.status === "pending confirmation" ||
+                    data.status === "pending request") && (
                     <div>
                       <button
                         onClick={(e) => setAccept(true) || e.preventDefault()}

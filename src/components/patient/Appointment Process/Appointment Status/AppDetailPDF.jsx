@@ -132,7 +132,7 @@ const AppDetailPDF = ({
         </div>
 
         <div className="col-span-3 w-full h-full mt-6"></div>
-        <div className="flex flex-col space-x-3 mb-10">
+        <div className="flex flex-col space-x-3 mb-14">
           <h1 className="font-semibold">Payment Screenshot/s:</h1>
           {payImg ? (
             <>

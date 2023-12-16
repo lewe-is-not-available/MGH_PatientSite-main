@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@auth0/auth0-react": "^2.2.1",
+    "@emailjs/browser": "^3.11.0",
     "@headlessui/react": "^1.7.17",
     "@ramonak/react-progress-bar": "^5.1.1",
     "@supabase/supabase-js": "^2.33.1",
@@ -16,8 +17,10 @@
     "body-scroll-lock": "^4.0.0-beta.0",
     "ldrs": "^1.0.1",
     "lodash": "^4.17.21",
+    "maplibre-gl": "^3.6.2",
     "moment": "^2.29.4",
     "ra-data-simple-rest": "^4.14.3",
+    "radar-sdk-js": "^4.1.12",
     "react": "^18.2.0",
     "react-admin": "^4.14.3",
     "react-auth-kit": "^2.12.7",

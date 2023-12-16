@@ -1,54 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { cardio } from "ldrs";
-import { useNavigate } from "react-router-dom";
 import { TbCalendarTime } from "react-icons/tb";
 import supabase from "../../../config/Supabase";
 import { toast } from "react-toastify";
 
 cardio.register();
 
-const AcceptConfirm = ({ setResched, id, user }) => {
-  const nav = useNavigate();
+const ReschedModal = ({ setResched, id, user }) => {
   const [date, setDate] = useState();
   const [remark, setRemark] = useState();
-  const [lastReschedQue, setLastReschedQue] = useState();
   const [data, setData] = useState();
   async function fetchBook() {
+    //*Get reschedule count
     const { data: book, error: failDoc } = await supabase
       .from("patient_Appointments")
-      .select()
+      .select("reschedcount")
       .eq("book_id", id)
       .single();
     if (failDoc) throw failDoc;
-    setData(book);
-  }
-  async function fetchQue() {
-    try {
-      const { data: ResQueNum, error: ResQueErr } = await supabase
-        .from("patient_Appointments")
-        .select("queue")
-        .match({
-          doc_id: data?.doc_id,
-          date: date,
-          status: "rescheduled",
-        })
-        .order("queue", { ascending: false })
-        .limit(1);
-      if (ResQueNum) {
-        setLastReschedQue(ResQueNum[0]);
-      }
-      if (ResQueErr) {
-        throw Error(ResQueErr.message + "206");
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
+    setData(book.reschedcount);
   }
   //*realtime for fetching last queue number
   useEffect(() => {
-    fetchBook()
+    fetchBook();
     const fetchAndSubscribe = async () => {
-      await fetchQue();
       await fetchBook();
       const realtime = supabase
         .channel("room13")
@@ -58,34 +33,10 @@ const AcceptConfirm = ({ setResched, id, user }) => {
             event: "UPDATE",
             schema: "public",
             table: "patient_Appointments",
-            filter: `doc_id=eq.${data?.doc_id}`,
+            filter: `book_id=eq.${id}`,
           },
           (payload) => {
-            fetchQue(payload.new.data);
-          }
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "UPDATE",
-            schema: "public",
-            table: "patient_Appointments",
-            filter: `date=eq.${date}`,
-          },
-          (payload) => {
-            fetchQue(payload.new.data);
-          }
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "UPDATE",
-            schema: "public",
-            table: "patient_Appointments",
-            filter: `status=eq.rescheduled`,
-          },
-          (payload) => {
-            fetchQue(payload.new.data);
+            setData(payload.new.reschedcount);
           }
         )
         .subscribe();
@@ -96,8 +47,8 @@ const AcceptConfirm = ({ setResched, id, user }) => {
       };
     };
     fetchAndSubscribe();
-  }, [date]);
-
+  }, [id]);
+  console.log(3 - data);
   async function handleSubmit(e) {
     e.preventDefault();
     setResched(false);
@@ -105,16 +56,15 @@ const AcceptConfirm = ({ setResched, id, user }) => {
       const { error } = await supabase
         .from("patient_Appointments")
         .update({
-          status: "rescheduled",
+          status: "pending request",
           date,
           remark,
-          queue: lastReschedQue?.queue ? lastReschedQue.queue + 1 : 100 + 1,
+          reschedcount: data + 1,
         })
         .eq("book_id", id);
       if (error) throw error;
       else {
-        toast.success("Appointment Succesfully Rescheduled");
-        //window.location.reload();
+        toast.success("Appointment requested succesfully!");
       }
     } catch (error) {
       toast.error(error.message);
@@ -139,18 +89,23 @@ const AcceptConfirm = ({ setResched, id, user }) => {
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col items-start">
-              <h1 className="mb-2 font-semibold text-xl flex items-end">
-                <span>Reschedule Appointment</span>
+              <h1 className="font-semibold text-xl flex items-end">
+                <span>Request Reschedule</span>
               </h1>
+              <div className="text-primary mb-3">
+                Requesting a reschedule is only allowed for 3 attempts.{" "}
+                <span className="text-black">You have <span className="font-semibold">{3 - data}</span> attempts left.</span>
+              </div>
               <p className="mb-4">
-                Are you sure you want to reschedule this appointment?
+                Are you sure you want to request a reschedule for your
+                appointment?
               </p>
               <p>Select a date to reshedule:</p>
               <input
                 required
                 onChange={(e) => setDate(e.target.value)}
                 type="date"
-                //min={disablePastDate()}
+                min={disablePastDate()}
                 className="mb-4 bg-slate-200 px-3 py-1 w-[60%] focus:border-2 border-b-2 border-slate-400"
               />
               <p>Reason for rescheduling:</p>
@@ -158,8 +113,9 @@ const AcceptConfirm = ({ setResched, id, user }) => {
                 required
                 onChange={(e) => setRemark(e.target.value)}
                 type="text"
-                className="mb-4 bg-slate-200 px-3 py-1 w-[60%] focus:border-2 border-b-2 border-slate-400"
+                className="mb-4 bg-slate-200 px-3 py-1 w-[80%] focus:border-2 border-b-2 border-slate-400"
               />
+
               <div className="flex items-center justify-end w-full space-x-2 mt-3">
                 <button
                   onClick={(e) => setResched(false) || e.preventDefault()}
@@ -179,4 +135,4 @@ const AcceptConfirm = ({ setResched, id, user }) => {
   );
 };
 
-export default AcceptConfirm;
+export default ReschedModal;

@@ -181,6 +181,8 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
   } else {
     document.documentElement.style.overflowY = "unset";
   }
+
+  const bookSet = new Set();
   return (
     <>
       <div className="sticky top-1 z-50">
@@ -298,10 +300,17 @@ const AppointmentConfirmation = ({ CDNURL, user }) => {
                   onChange={(e) => setStatus(e.target.value)}
                 >
                   <option key="1">Show all</option>
-                  <option key="2">pending confirmation</option>
-                  <option key="3">Confirmed</option>
-                  <option key="4">rescheduled</option>
-                  <option key="5">rejected</option>
+                  {filt.map((item, i) => {
+                    if (
+                      item.status !== "Completed" &&
+                      item.status !== "rejected" &&
+                      !bookSet.has(item.status)
+                    ) {
+                      bookSet.add(item.status);
+                      return <option key={i}>{item.status}</option>;
+                    }
+                    return null;
+                  })}
                 </select>
               </div>
               <div className="flex flex-col">

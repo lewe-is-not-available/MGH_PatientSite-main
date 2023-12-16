@@ -10,6 +10,8 @@ import AddModal from "./AddModal";
 import ReactToPrint from "react-to-print";
 import { TfiPrinter } from "react-icons/tfi";
 import AppDetailPDF from "./AppDetailPDF";
+import { TbCalendarTime } from "react-icons/tb";
+import ReschedModal from "./ReschedModal";
 
 const AppointmentDetails = () => {
   const CDNURL =
@@ -111,7 +113,7 @@ const AppointmentDetails = () => {
       const { data: DocDetails, error: failDoc } = await supabase
         .from("dr_information")
         .select()
-        .eq("name", data.docname)
+        .eq("id", data.doc_id)
         .single();
       try {
         if (failDoc) throw failDoc;
@@ -244,6 +246,15 @@ const AppointmentDetails = () => {
       setLoad(false);
     }
   }
+
+  //*Resched modal
+  const [resched, setResched] = useState(false);
+  if (resched) {
+    document.documentElement.style.overflowY = "hidden";
+  } else {
+    document.documentElement.style.overflowY = "unset";
+  }
+
   return (
     <>
       <div className="sticky top-1">
@@ -258,6 +269,9 @@ const AppointmentDetails = () => {
         )}
         {addImg && (
           <AddModal payImg={payImg} data={data} setAddImg={setAddImg} />
+        )}
+        {resched && (
+          <ReschedModal user={data} setResched={setResched} id={id} />
         )}
       </div>
       <div className="back flex flex-col items-center min-h-screen h-auto pb-10 w-full">
@@ -284,21 +298,23 @@ const AppointmentDetails = () => {
           </h1>
 
           <div className="w-full flex justify-center items-center mt-5 -ml-6">
-            {(data.status !== "pending confirmation" || data.status !== "rejected") && (
-              <ReactToPrint
-                trigger={() => {
-                  return (
-                    <button className="flex items-center bg-primary-300 hover:text-white py-1 transition duration-100 hover:bg-primary-600 px-3 rounded-full">
-                      <TfiPrinter className="text-lg mr-1" />
-                      Print
-                    </button>
-                  );
-                }}
-                content={() => AppPrint.current}
-                documentTitle="Appointment Details"
-                pageStyle="print"
-              />
-            )}
+            {data.status !== "pending confirmation" &&
+              data.status !== "pending request" &&
+              data.status !== "rejected" && (
+                <ReactToPrint
+                  trigger={() => {
+                    return (
+                      <button className="flex items-center bg-primary-300 hover:text-white py-1 transition duration-100 hover:bg-primary-600 px-3 rounded-full">
+                        <TfiPrinter className="text-lg mr-1" />
+                        Print
+                      </button>
+                    );
+                  }}
+                  content={() => AppPrint.current}
+                  documentTitle="Appointment Details"
+                  pageStyle="print"
+                />
+              )}
           </div>
         </div>
 
@@ -350,11 +366,6 @@ const AppointmentDetails = () => {
               </div>
               <div className="flex flex-col text-left items-left mt-12 space-y-6 row-span-2">
                 <p>
-                  <span className="font-semibold">Booking Reference id:</span>
-                  <br />
-                  {data.book_id}
-                </p>
-                <p>
                   <span className="font-semibold">Booked at:</span>
                   <br />
                   {/* {formateDateTime(date)} */}
@@ -404,12 +415,13 @@ const AppointmentDetails = () => {
               </div>
               <div className="flex flex-col mt-10 space-y-4 mx-3">
                 {(data?.status === "Confirmed" ||
-                  data?.status === "rescheduled") && (
-                  <div className="flex flex-col justify-center mb-10 space-x-3">
-                    <span className="font-semibold">Queuing Number:</span>
-                    <h2 className="text-6xl font-semibold">{data.queue}</h2>
-                  </div>
-                )}
+                  data?.status === "rescheduled") &&
+                  data.type !== "f2f" && (
+                    <div className="flex flex-col justify-center mb-10 space-x-3">
+                      <span className="font-semibold">Queuing Number:</span>
+                      <h2 className="text-6xl font-semibold">{data.queue}</h2>
+                    </div>
+                  )}
                 <div>
                   <span className="font-semibold">Status:</span>
                   {data.status === "Consultation Ongoing" && (
@@ -423,6 +435,11 @@ const AppointmentDetails = () => {
                     </p>
                   )}
                   {data.status === "Confirmed" && (
+                    <p className="px-4 py-1 flex items-center text-white rounded-full bg-emerald-500 w-fit">
+                      {data.status}
+                    </p>
+                  )}
+                  {data.status === "Completed" && (
                     <p className="px-4 py-1 flex items-center text-white rounded-full bg-emerald-500 w-fit">
                       {data.status}
                     </p>
@@ -450,50 +467,56 @@ const AppointmentDetails = () => {
                 </div>
                 {(data.status === "rejected" ||
                   data.status === "rescheduled") && (
-                  <div><span className="font-semibold">remarks: <br /></span>{data.remark}</div>
+                  <div>
+                    <span className="font-semibold">
+                      remarks: <br />
+                    </span>
+                    {data.remark}
+                  </div>
                 )}
               </div>
 
-              {data.status !== "Completed" ? (
-                <div className="col-span-2 h-full mt-6">
-                  <h1 className="font-semibold">Payment</h1>
-                  <div className="flex space-x-3 items-center">
-                    {payImg ? (
-                      <>
-                        {payImg.map((item, i) => (
-                          <div
-                            key={i}
-                            className="flex flex-col text-left items-center"
-                          >
-                            <p className="w-full">
-                              {i === 0 && "1st attempt"}
-                              {i === 1 && "2nd attempt"}
-                              {i === 2 && "last attempt"}
-                            </p>
-                            <img
-                              onClick={(e) =>
-                                setImageModal(true) ||
-                                e.preventDefault() ||
-                                setPayName(item.name)
-                              }
-                              className="object-cover cursor-pointer shadow-xl w-[13rem] mb-5 h-[13rem]"
-                              src={
-                                CDNURL +
-                                data.email +
-                                "/payment/" +
-                                data.book_id +
-                                "/" +
-                                item.name
-                              }
-                              alt="/"
-                            />
-                          </div>
-                        ))}
-                      </>
-                    ) : (
-                      <p>No Payment Sent</p>
-                    )}
-                    {data.status !== "rejected" && payImg.length !== 3 && (
+              <div className="col-span-2 h-full mt-6">
+                <h1 className="font-semibold">Payment</h1>
+                <div className="flex space-x-3 items-center">
+                  {payImg ? (
+                    <>
+                      {payImg.map((item, i) => (
+                        <div
+                          key={i}
+                          className="flex flex-col text-left items-center"
+                        >
+                          <p className="w-full">
+                            {i === 0 && "1st attempt"}
+                            {i === 1 && "2nd attempt"}
+                            {i === 2 && "last attempt"}
+                          </p>
+                          <img
+                            onClick={(e) =>
+                              setImageModal(true) ||
+                              e.preventDefault() ||
+                              setPayName(item.name)
+                            }
+                            className="object-cover cursor-pointer shadow-xl w-[13rem] mb-5 h-[13rem]"
+                            src={
+                              CDNURL +
+                              data.email +
+                              "/payment/" +
+                              data.book_id +
+                              "/" +
+                              item.name
+                            }
+                            alt="/"
+                          />
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    <p>No Payment Sent</p>
+                  )}
+                  {data.status !== "rejected" &&
+                    data.status !== "Completed" &&
+                    payImg.length !== 3 && (
                       <div
                         onClick={() => setAddImg(true)}
                         className="w-[13rem] h-[13rem] transition duration-100 border-2 border-dashed 
@@ -505,63 +528,26 @@ const AppointmentDetails = () => {
                         </p>
                       </div>
                     )}
-                  </div>
                 </div>
-              ) : (
-                <>
-                  {Load ? (
-                    <>Loading</>
-                  ) : (
-                    <>
-                      {submitted ? (
-                        "submitted"
-                      ) : (
-                        <form onSubmit={onSubmit} className="w-full">
-                          <label className="text-lg">
-                            How was your consultation?
-                          </label>
-                          <div className="flex items-center justify-center mt-2 space-x-3 text-5xl text-slate-500">
-                            {[...Array(5)].map((star, i) => {
-                              const currentRating = i + 1;
-                              return (
-                                <label>
-                                  <input
-                                    type="radio"
-                                    className="hidden"
-                                    value={currentRating}
-                                    onClick={() => setRating(currentRating)}
-                                  />
-                                  <IoStar
-                                    className={
-                                      currentRating <= (hover || rating)
-                                        ? "text-[#ffc107]"
-                                        : "text-[#c4e5e9]"
-                                    }
-                                    onMouseEnter={() => setHover(currentRating)}
-                                    onMouseLeave={() => setHover(null)}
-                                  />
-                                </label>
-                              );
-                            })}
-                          </div>
-                          <textarea
-                            placeholder="Tell us something more about your experience"
-                            type="text"
-                            className="w-full p-2 border-2 border-slate-400 mt-3 mb-6"
-                            onChange={(e) => setMessage(e.target.value)}
-                          />
-                          <button
-                            type="submit"
-                            className="px-8 py-2 rounded-md transition duration-100 border-[#16891d] border-[2px] hover:bg-[#16891d] hover:text-white bg-[#a5e5a9] text-[#106716]"
-                          >
-                            Submit Feedback
-                          </button>
-                        </form>
-                      )}
-                    </>
+              </div>
+
+              <div className="flex items-center space-x-6 col-span-4 mt-3 justify-end">
+                {data.status !== "Completed" &&
+                  data.status !== "rejected" &&
+                  data.reschedcount !== 3 &&
+                  data?.status !== "pending confirmation" && (
+                    <div>
+                      <button
+                        onClick={(e) => setResched(true) || e.preventDefault()}
+                        className="transition flex px-7 py-2 text-white duration-100 hover:bg-primary-700 bg-primary-500 rounded-full "
+                      >
+                        <TbCalendarTime className="text-2xl mr-1" />
+
+                        <span>Request Reschedule</span>
+                      </button>
+                    </div>
                   )}
-                </>
-              )}
+              </div>
             </div>
           )}
         </section>

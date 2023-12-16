@@ -7,36 +7,6 @@ import { BsSearch } from "react-icons/bs";
 import { MagnifyingGlass } from "react-loader-spinner";
 
 const Status = ({ user }) => {
-  //*images function
-  const id = user.id;
-  const [imgName, setimgName] = useState([]);
-  const [isImgEmpty, setImgEmpty] = useState(false);
-
-  useEffect(() => {
-    if (user.email) {
-      async function getImages() {
-        const { data, error } = await supabase.storage
-          .from("images")
-          .list(user.email + "/profile/", {
-            limit: 10,
-            offset: 0,
-            sortBy: { column: "created_at", order: "asc" },
-          });
-
-        if (data[0]) {
-          setImgEmpty(true);
-          setimgName(data[0].name);
-        }
-
-        if (error) {
-          setImgEmpty(false);
-          console.log(error);
-        }
-      }
-      getImages();
-    }
-  }, [user, setimgName, id, setImgEmpty]);
-
   const [filt, setfilt] = useState([]);
   const [books, setBook] = useState([]);
   //*get filter inputs
@@ -91,14 +61,10 @@ const Status = ({ user }) => {
     setsearchLoad(false);
 
     const search = filt.filter((items) => {
-      console.log(items);
-      const fname = items.fname.toLowerCase().includes(Search.toLowerCase());
-      const lname = items.lname.toLowerCase().includes(Search.toLowerCase());
-      const mname = items.mname.toLowerCase().includes(Search.toLowerCase());
       const docname = items.docname
         .toLowerCase()
         .includes(Search.toLowerCase());
-      return fname || lname || mname || docname;
+      return docname;
     });
     setBook(search);
 
@@ -173,6 +139,8 @@ const Status = ({ user }) => {
       )
       .subscribe();
   }, [user.id]);
+
+  const bookSet = new Set();
   return (
     <div className="back min-h-screen h-auto flex justify-center">
       <div className="w-[70%]">
@@ -206,7 +174,7 @@ const Status = ({ user }) => {
         >
           <div className="bg-[#98dd93c4] px-5 pt-5 pb-8 mb-2 rounded-lg items-center gap-x-7 gap-y-4 grid grid-cols-3">
             <div className="flex flex-col">
-              <label className="mb-1">Search by name</label>
+              <label className="mb-1">Search by doctor's name</label>
               <div className="flex h-6 text-slate-500">
                 {!Search && (
                   <div
@@ -283,9 +251,17 @@ const Status = ({ user }) => {
                 onChange={(e) => setStatus(e.target.value)}
               >
                 <option key="1">Show all</option>
-                <option key="2">pending confirmation</option>
-                <option key="3">Confirmed</option>
-                <option key="4">rescheduled</option>
+                {filt.map((item, i) => {
+                  if (
+                    item.status !== "Completed" &&
+                    item.status !== "rejected" &&
+                    !bookSet.has(item.status)
+                  ) {
+                    bookSet.add(item.status);
+                    return <option key={i}>{item.status}</option>;
+                  }
+                  return null;
+                })}
               </select>
             </div>
             <div className="flex flex-col">
@@ -308,12 +284,10 @@ const Status = ({ user }) => {
           >
             {searchLoad ? (
               <StatusPaginated
-                imgName={imgName}
                 books={books}
                 setLoaded={setLoaded}
                 Loaded={Loaded}
                 user={user}
-                isImgEmpty={isImgEmpty}
               />
             ) : (
               <div className="w-full flex justify-center mt-20">
