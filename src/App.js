@@ -30,6 +30,7 @@ import PatientDetails from "./components/Higher user level/Admin/Edit Patients/P
 //Doctor
 import DoctorConsultHistory from "./components/Higher user level/Doctor/Archives/DoctorConsulHistory";
 import DocAppointments from "./components/Higher user level/Doctor/Appointments/Doc_Appointments";
+import Room from "./components/Higher user level/Doctor/Room";
 
 //admin
 import EditDoctors from "./components/Higher user level/Admin/Edit Doctors/EditDoctors";
@@ -259,6 +260,11 @@ function App() {
           />
           {token && (
             <>
+              {/* Room */}
+              <Route
+                path="/Room/:id"
+                element={<Room user={user} />}
+              />
               {/* Doctor's side */}
               {isDoctor && (
                 <>

@@ -6,6 +6,7 @@ import { AiOutlineDown } from "react-icons/ai";
 import { MdEmail, MdPhone, MdAccessTimeFilled } from "react-icons/md";
 import { BsFillCalendarCheckFill } from "react-icons/bs";
 import supabase from "../../../config/Supabase";
+import moment from "moment";
 
 const ArchiveMap = ({ ol, CDNURL }) => {
   //TODO fix scroll animation
@@ -156,7 +157,10 @@ const ArchiveMap = ({ ol, CDNURL }) => {
             <div className="flex">
               <BsFillCalendarCheckFill className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[24px]  text-green-600" />
               <label className="w-fit ml-4 text-left text-base text-black">
-                Scheduled at <p className="text-slate-400">{ol.date}</p>
+                Scheduled at{" "}
+                <p className="text-slate-400">
+                  {moment(new Date(ol.date)).format("LL")}
+                </p>
               </label>
             </div>
 

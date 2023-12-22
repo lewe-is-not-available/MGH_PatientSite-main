@@ -160,13 +160,13 @@ const DocCurrentModal = ({
               </>
             </div>
             <div className="sticky bottom-9 py-2 w-full space-x-7 bg-white flex justify-center items-center my-3">
-              <a
-                href={doc?.gmeet}
+              <Link
+                to={"/Room/" + doc.id}
                 className="flex items-center text-xl mt-6 rounded-lg transition duration-100 hover:bg-green-600 bg-green-500 px-5 py-[6px] w-fit text-white"
               >
                 <IoEnterOutline className="text-3xl mr-2" />
-                Enter Gmeet
-              </a>
+                Enter Room
+              </Link>
               {nextQueue.length === 0 ? (
                 <button
                   onClick={(e) => setLast(true) || e.preventDefault()}

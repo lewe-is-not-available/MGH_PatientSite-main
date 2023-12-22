@@ -87,7 +87,8 @@ const Doc_Dash = ({ user }) => {
             filter: `email=eq.${doctor.email}`,
           },
           (payload) => {
-            fetchDoctor(payload.new);
+            setdoctor(payload.new);
+            setDOC(payload.new.id);
           }
         )
         .subscribe();
@@ -148,7 +149,7 @@ const Doc_Dash = ({ user }) => {
           .from("patient_Appointments")
           .select()
           .match({
-            doc_id: doctor?.id,
+            doc_id: DOC,
             date: moment(new Date()).format("yyyy-M-D"),
           })
           .or("status.eq.Confirmed,status.eq.rescheduled")
@@ -164,8 +165,7 @@ const Doc_Dash = ({ user }) => {
           .from("patient_Appointments")
           .select()
           .match({
-            doc_id: doctor?.id,
-            date: moment(new Date())?.format("yyyy-M-D"),
+            doc_id: DOC,
             status: "Consultation Ongoing",
           });
         if (currErr) {
@@ -251,7 +251,6 @@ const Doc_Dash = ({ user }) => {
       setImgEmpty1(false);
     }
   }
-
   useEffect(() => {
     if ((currentQueue, nextSched)) {
       getImages();
@@ -327,7 +326,7 @@ const Doc_Dash = ({ user }) => {
           to_name: nextQueue[0]?.fname,
           message: "Here is your gmeet link " + doctor.gmeet,
         };
-        
+
         emailjs
           .send(
             "service_ftpnlnq",
@@ -391,29 +390,29 @@ const Doc_Dash = ({ user }) => {
               .eq("book_id", nextQueue[0]?.book_id);
             if (CurrentErr) throw CurrentErr;
           }
-          const templateParams = {
-            from_name: "MGHsite",
-            from_email: "loewiayon12@gmail.com",
-            to_email: nextQueue[0].email,
-            to_name: nextQueue[0]?.fname,
-            message: "Here is your gmeet link " + doctor.gmeet,
-          };
+          // const templateParams = {
+          //   from_name: "MGHsite",
+          //   from_email: "loewiayon12@gmail.com",
+          //   to_email: nextQueue[0]?.email,
+          //   to_name: nextQueue[0]?.fname,
+          //   message: "Here is your gmeet link " + doctor.gmeet,
+          // };
 
-          emailjs
-            .send(
-              "service_ftpnlnq",
-              "template_smy7g6s",
-              templateParams,
-              "pAzXNFE5xjRINEjRR"
-            )
-            .then(
-              function (response) {
-                console.log("SUCCESS!", response.status, response.text);
-              },
-              function (error) {
-                console.log("FAILED...", error);
-              }
-            );
+          // emailjs
+          //   .send(
+          //     "service_ftpnlnq",
+          //     "template_smy7g6s",
+          //     templateParams,
+          //     "pAzXNFE5xjRINEjRR"
+          //   )
+          //   .then(
+          //     function (response) {
+          //       console.log("SUCCESS!", response.status, response.text);
+          //     },
+          //     function (error) {
+          //       console.log("FAILED...", error);
+          //     }
+          //   );
         }
       } catch (error) {
         console.log(error.message);
@@ -421,8 +420,7 @@ const Doc_Dash = ({ user }) => {
     };
 
     StartQueue();
-  }, [isSchedToday]);
-
+  }, [isSchedToday, nextSched]);
   const nextSchedDay =
     nextSched &&
     _.filter(doctor?.schedule, {
@@ -430,11 +428,15 @@ const Doc_Dash = ({ user }) => {
     })[0];
   //*Update status for the rest of queue if time exceeded
   const isElapsed = _.lte(checkOut, timeNow);
+  const isSchedPassed = moment(
+    moment(currentQueue?.date).format("LL")
+  ).isBefore(moment(new Date()).format("LL"));
+
   useEffect(() => {
     //*Update start of queue
     const StartQueue = async () => {
       try {
-        if (isElapsed) {
+        if (isElapsed || isSchedPassed) {
           const { error: CurrentErr } = await supabase
             .from("patient_Appointments")
             .update({ status: "Awaiting Doctor's Confirmation" })
@@ -462,7 +464,6 @@ const Doc_Dash = ({ user }) => {
     };
     StartQueue();
   }, [isElapsed]);
-
   //*Modal states
   const [todayModal, setTodayModal] = useState(false);
   const [currModal, setCurrModal] = useState(false);
@@ -581,27 +582,57 @@ const Doc_Dash = ({ user }) => {
                         ? "Your schedule for Today"
                         : "You have no schedule for today"}
                     </p>
-                    {!isSchedToday && (
+                    {!isSchedToday && nextSchedDay && (
                       <p className="text-xl">next schedule is at:</p>
                     )}
-                    <div className="text-xl font-thin flex items-center">
-                      <p className="">{nextSchedDay?.day}</p>
-                      <p className="mx-4">|</p>
-                      <p>
-                        {" "}
-                        {moment(
-                          new Date(`2000-01-01T${nextSchedDay?.startTime}`)
-                        ).format("LT")}{" "}
-                        -{" "}
-                        {moment(
-                          new Date(`2000-01-01T${nextSchedDay?.endTime}`)
-                        ).format("LT")}
-                      </p>
-                    </div>
+
+                    {docSchedToday?.length !== 0 && isSchedToday ? (
+                      <div className="text-xl font-thin flex items-center">
+                        <p className="">{docSchedToday[0]?.day}</p>
+                        <p className="mx-4">|</p>
+                        <p>
+                          {" "}
+                          {moment(
+                            new Date(
+                              `2000-01-01T${docSchedToday[0]?.startTime}`
+                            )
+                          ).format("LT")}{" "}
+                          -{" "}
+                          {moment(
+                            new Date(`2000-01-01T${docSchedToday[0]?.endTime}`)
+                          ).format("LT")}
+                        </p>
+                      </div>
+                    ) : (
+                      nextSchedDay && (
+                        <div className="text-xl font-thin flex items-center">
+                          <p className="">{nextSchedDay?.day}</p>
+                          <p className="mx-4">|</p>
+                          <p>
+                            {" "}
+                            {moment(
+                              new Date(`2000-01-01T${nextSchedDay?.startTime}`)
+                            ).format("LT")}{" "}
+                            -{" "}
+                            {moment(
+                              new Date(`2000-01-01T${nextSchedDay?.endTime}`)
+                            ).format("LT")}
+                          </p>
+                        </div>
+                      )
+                    )}
                   </div>
                   <div className="justify-center flex">
                     {!currentQueue && !lastQueue ? (
                       <div></div>
+                    ) : lastQueue ? (
+                      <button
+                        onClick={() => setCurrModal(true)}
+                        className="px-3 py-1 flex items-center rounded-lg hover:bg-green-600 hover:text-lg transition duration-75 text-base text-white border-2 border-white font-semibold bg-green-500"
+                      >
+                        <CgEnter className="mr-1 text-xl" />
+                        <span>Confirm last meeting</span>
+                      </button>
                     ) : (
                       <button
                         onClick={() => setCurrModal(true)}
@@ -615,9 +646,7 @@ const Doc_Dash = ({ user }) => {
                 </div>
                 <div className="w-full rounded-xl mb-4">
                   <div className="text-3xl font-semibold mt-4">
-                    {nextSched !== undefined &&
-                    nextSched?.length !== 0 &&
-                    Loaded ? (
+                    {Loaded ? (
                       <div className="flex">
                         {currentQueue ? (
                           <>
@@ -676,48 +705,58 @@ const Doc_Dash = ({ user }) => {
                           </>
                         ) : (
                           <>
-                            <img
-                              className="object-cover rounded-full w-[5.6rem] h-fit mr-3"
-                              src={`${
-                                isImgEmpty1
-                                  ? CDNURL +
-                                    nextSched[0]?.email +
-                                    "/profile/" +
-                                    imgName1
-                                  : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
-                              }`}
-                              alt="/"
-                            />{" "}
-                            <div className="text-xl flex flex-col font-light space-y-3 w-1/2">
-                              <p className="w-full text-lg text-left">
-                                Your next appointment schedule is with <br />
-                                <span className="font-semibold mx-1">
-                                  {nextSched[0]?.fname}
-                                </span>{" "}
-                                at:
-                                <br />
-                                <p className="text-3xl font-semibold mt-3">
-                                  {moment(new Date(nextSched[0]?.date)).format(
-                                    "LL"
-                                  )}
-                                </p>
-                              </p>
-                            </div>
-                            <div className="text-lg mx-2 w-1/2 font-light flex-col flex items-start">
-                              Your total of confirmed appointments for the next
-                              schedule
-                              <div className="text-6xl flex font-semibold my-2">
-                                <h1>{nextSched?.length}</h1>
+                            {nextSched !== undefined &&
+                            nextSched?.length !== 0 ? (
+                              <>
+                                <img
+                                  className="object-cover rounded-full w-[5.6rem] h-fit mr-3"
+                                  src={`${
+                                    isImgEmpty1
+                                      ? CDNURL +
+                                        nextSched[0]?.email +
+                                        "/profile/" +
+                                        imgName1
+                                      : "https://iniadwocuptwhvsjrcrw.supabase.co/storage/v1/object/public/images/alternative_pic.png"
+                                  }`}
+                                  alt="/"
+                                />{" "}
+                                <div className="text-xl flex flex-col font-light space-y-3 w-1/2">
+                                  <p className="w-full text-lg text-left">
+                                    Your next appointment schedule is with{" "}
+                                    <br />
+                                    <span className="font-semibold mx-1">
+                                      {nextSched[0]?.fname}
+                                    </span>{" "}
+                                    at:
+                                    <br />
+                                    <p className="text-3xl font-semibold mt-3">
+                                      {moment(
+                                        new Date(nextSched[0]?.date)
+                                      ).format("LL")}
+                                    </p>
+                                  </p>
+                                </div>
+                                <div className="text-lg mx-2 w-1/2 font-light flex-col flex items-start">
+                                  Your total of confirmed appointments for the
+                                  next schedule
+                                  <div className="text-6xl flex font-semibold my-2">
+                                    <h1>{nextSched?.length}</h1>
+                                  </div>
+                                  <p
+                                    onClick={(e) =>
+                                      setTodayModal(true) || e.preventDefault()
+                                    }
+                                    className="text-lg select-none cursor-pointer font-light text-primary"
+                                  >
+                                    View all
+                                  </p>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="text-center w-full my-5">
+                                You have no confirmed appointments yet
                               </div>
-                              <p
-                                onClick={(e) =>
-                                  setTodayModal(true) || e.preventDefault()
-                                }
-                                className="text-lg select-none cursor-pointer font-light text-primary"
-                              >
-                                View all
-                              </p>
-                            </div>
+                            )}
                           </>
                         )}
                       </div>

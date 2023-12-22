@@ -135,7 +135,10 @@ const CurrentModal = ({ data, doc, isElapsed, setCurrModal }) => {
                       </div>
                     ) : (
                       <form onSubmit={onSubmit} className="w-full">
-                        <label className="text-lg">How was your consultation with {doc.honorific} {doc.name}?</label>
+                        <label className="text-lg">
+                          How was your consultation with {doc.honorific}{" "}
+                          {doc.name}?
+                        </label>
                         <div className="flex items-center justify-center mt-2 space-x-3 text-5xl text-slate-500">
                           {[...Array(5)].map((star, i) => {
                             const currentRating = i + 1;
@@ -150,9 +153,9 @@ const CurrentModal = ({ data, doc, isElapsed, setCurrModal }) => {
                                 />
                                 <IoStar
                                   className={
-                                    currentRating <= (hover || rating)
+                                    `${currentRating <= (hover || rating)
                                       ? "text-[#ffc107]"
-                                      : "text-[#c4e5e9]"
+                                      : "text-[#c4e5e9]"} text-5xl`
                                   }
                                   onMouseEnter={() => setHover(currentRating)}
                                   onMouseLeave={() => setHover(null)}
@@ -225,13 +228,14 @@ const CurrentModal = ({ data, doc, isElapsed, setCurrModal }) => {
                           meeting
                         </span>
 
-                        <a
-                          href={doc?.gmeet}
+                        <Link
+                          to={"/room/" + doc?.id}
+                          onClick={() => setCurrModal(false)}
                           className="flex items-center mt-6 rounded-lg bg-green-500 px-5 py-[6px] w-fit text-white"
                         >
                           <IoEnterOutline className="text-3xl mr-2" />
                           Enter Consultation
-                        </a>
+                        </Link>
                       </div>
                     </div>
                     <div className="flex items-center my-3">

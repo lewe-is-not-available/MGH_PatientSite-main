@@ -77,10 +77,10 @@ const Archive = ({ CDNURL }) => {
   const handleSearch = () => {
     setsearchLoad(false);
     const search = filt.filter((items) => {
-      const fname = items.fname.toLowerCase().includes(Search.toLowerCase());
-      const lname = items.lname.toLowerCase().includes(Search.toLowerCase());
-      const mname = items.mname.toLowerCase().includes(Search.toLowerCase());
-      const docname = items.docname
+      const fname = items.fname?.toLowerCase().includes(Search?.toLowerCase());
+      const lname = items.lname?.toLowerCase().includes(Search?.toLowerCase());
+      const mname = items.mname?.toLowerCase().includes(Search?.toLowerCase());
+      const docname = items?.docname
         .toLowerCase()
         .includes(Search.toLowerCase());
       return fname || lname || mname || docname;

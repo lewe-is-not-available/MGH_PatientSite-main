@@ -232,7 +232,7 @@ const Sidebar = ({
         )}
 
         {/* Sidebar contents */}
-        <div className="text-lg max-[]  max-h-[28rem] overflow-y-auto overflow-x-hidden ">
+        <div className="text-lg max-h-[25rem] overflow-y-auto overflow-x-hidden ">
           {admin || doctor ? (
             ""
           ) : (

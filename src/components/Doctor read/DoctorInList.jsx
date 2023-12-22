@@ -165,22 +165,7 @@ const DoctorInList = ({ ol }) => {
                   </p>
                 </label>
               </div>
-  
-              <div className="flex">
-                {" "}
-                <MdEmail className="text-lg pr-[2px]pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
-                <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                  Email <p className="text-slate-400">{ol.email}</p>
-                </label>
-              </div>
-  
-              <div className="flex">
-                {" "}
-                <MdPhone className="text-lg pr-[2px] pb-4 pt-2 row-span-2 h-full w-[26px] text-green-600" />
-                <label className="w-fit ml-4 text-left text-base grid row-span-2 text-black">
-                  Phone <p className="text-slate-400">{ol.phone}</p>
-                </label>
-              </div>
+
             </div>
             <div className="max-w-full mb-5 flex justify-center space-x-10">
               <Link

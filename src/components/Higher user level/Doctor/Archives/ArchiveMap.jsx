@@ -8,7 +8,6 @@ import supabase from "../../../config/Supabase";
 import moment from "moment";
 
 import { BiDetail } from "react-icons/bi";
-import { TbCalendarTime } from "react-icons/tb";
 import { RiMessageFill } from "react-icons/ri";
 
 const ArchiveMap = ({ ol, CDNURL, setResched, setBookID }) => {
@@ -105,7 +104,7 @@ const ArchiveMap = ({ ol, CDNURL, setResched, setBookID }) => {
                   <span className="font-semibold text-green-950">
                     Scheduled at:{" "}
                   </span>
-                  {moment(new Date(ol.date)).format("ll")}
+                  {moment(new Date(ol.date)).format("LL")}
                 </p>
               </div>
             </div>

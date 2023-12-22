@@ -131,13 +131,6 @@ const Navbar = ({
     moment(new Date()).format(`YYYYMD${timeNow}`)
   );
   const isSchedToday = _.inRange(timeNow, checkIn, checkOut);
-  // console.log(
-  //   moment(new Date(moment(new Date(currentQueue.date)).format(`yyyy-M-D ${checkOutNormal}`))).isBefore(
-  //     moment(new Date(currentQueue.date)).format("yyyy-M-20 LT")
-  //   )
-  // );
-
-  // console.log(moment(new Date(currentQueue.date)).format)
 
   //*Disable scroll when modal is open
   if (Show || regOpen || isRead || currModal) {
@@ -145,12 +138,6 @@ const Navbar = ({
   } else {
     document.documentElement.style.overflowY = "unset";
   }
-  // console.log((isSchedToday || isElapsed) &&
-  // currentQueue?.status !== "undefined" &&
-  // currentQueue?.status !== "pending" &&
-  // currentQueue?.status !== "rejected" &&
-  // currentQueue?.status !== "rescheduled" &&
-  // currentQueue?.status !== "Confirmed");
   //*function that opens modal
   useEffect(() => {
     if (
@@ -168,7 +155,6 @@ const Navbar = ({
   }, [currentQueue, isSchedToday]);
 
   //*update status of f2f to complete
-
   const [f2fData, setF2fData] = useState([]);
   async function updateF2f() {
     try {

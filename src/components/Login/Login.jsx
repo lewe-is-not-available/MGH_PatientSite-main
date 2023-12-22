@@ -1,12 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-//import useAuth from "../Hooks/useAuth";
+import React, { useRef, useState } from "react";
 import supabase from "../config/Supabase";
 import { useNavigate } from "react-router-dom";
 import { PiEye, PiEyeClosed } from "react-icons/pi";
+import { Auth } from "@supabase/auth-ui-react";
 
 const Login = ({ close, openReg, setToken, patient, token }) => {
-  //TODO: Make registration
-  //!Fix login
   // const navigate = useNavigate()
   //*open registration while preventing form to submit
   function handleRegistration(e) {
@@ -135,13 +133,16 @@ const Login = ({ close, openReg, setToken, patient, token }) => {
                     Sign in
                   </button>
                 </div>
-                <div className="text-center">
+                <div className="text-center flex flex-col items-center">
                   <p className="pt-4">No account?</p>
+                  {/* <Auth 
+                  supabaseClient={supabase}
+                  providers={["google"]}
+                  /> */}
                   <button
                     className="text-blue-600"
                     onClick={handleRegistration}
                   >
-                    {" "}
                     create one
                   </button>
                 </div>
