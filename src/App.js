@@ -18,7 +18,6 @@ import FillupForm from "./components/patient/Appointment Process/FillupForm";
 import Appointment from "./components/patient/Appointment Process/Appointment";
 import AppointDetails from "./components/patient/Appointment Process/Appointment Status/PatientAppointDetails";
 import DocInfo from "./components/Doctor read/DoctorInfo";
-import F2f from "./components/patient/Appointment Process/Face2face";
 import OnlineConsultationHistory from "./components/patient/Appointment Process/Archives/OnlineConsultationHistory";
 import PatientDashboard from "./components/patient/Dashboard";
 import OnlineDash from "./components/patient/OnlineDash";
