@@ -349,7 +349,7 @@ const Dashboard = ({ token, showLogin, patient, admin, doctor, user }) => {
                   <p>Keep track of your appointment status</p>
                 </Link>
               )}
-              <div className="grid grid-cols-2 col-span-3 gap-x-10 w-full">
+              <div className="grid grid-cols-2 col-span-3 features__bottom gap-x-10 w-full">
                 {/* Contact us */}
                 <Link
                   to="/Contacts"

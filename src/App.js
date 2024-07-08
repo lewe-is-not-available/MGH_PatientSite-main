@@ -1,6 +1,6 @@
 import supabase from "./components/config/Supabase";
 import { Routes, Route } from "react-router-dom";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -70,7 +70,7 @@ function App() {
       console.log(error);
     }
 
-    if (data.role) {
+    if (data?.role) {
       if (data.role === "admin") {
         setIsAdmin(true);
       }
@@ -88,7 +88,7 @@ function App() {
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", JSON.stringify(token));
-      fetchProfile();
+      //fetchProfile();
 
       supabase
         .channel("custom-all-channel")
@@ -105,7 +105,12 @@ function App() {
         )
         .subscribe();
     }
-  }, [token]);
+    if (localStorage.getItem("token")) {
+      let data = JSON.parse(localStorage.getItem("token"));
+      setToken(data);
+    }
+    console.log("first")
+  }, []);
   //*For passing image data
   const [imgName, setimgName] = useState([]);
   const [isImgEmpty, setImgEmpty] = useState(null);
@@ -124,12 +129,6 @@ function App() {
   const [open, setOpen] = useState(false);
   const openSide = () => setOpen(true);
   const closeSide = () => setOpen(false);
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      let data = JSON.parse(localStorage.getItem("token"));
-      setToken(data);
-    }
-  }, []);
 
   return (
     <div className=" flex flex-col ">
@@ -260,10 +259,7 @@ function App() {
           {token && (
             <>
               {/* Room */}
-              <Route
-                path="/Room/:id"
-                element={<Room user={user} />}
-              />
+              <Route path="/Room/:id" element={<Room user={user} />} />
               {/* Doctor's side */}
               {isDoctor && (
                 <>
