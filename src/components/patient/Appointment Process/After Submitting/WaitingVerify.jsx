@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import supabase from "../../../config/Supabase";
 import { useEffect } from "react";
 import supabaseAdmin from "../../../config/SupabaseAdmin";
-import SuccessAppointment from "./SuccessAppointment";
 
 dotWave.register();
 
